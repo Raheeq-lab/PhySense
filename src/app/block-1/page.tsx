@@ -1,109 +1,148 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
 
-const lessons = [
-  { number: '1.1', slug: '1-1', title: 'Kinematics', description: 'How position, velocity, and acceleration relate.', icon: 'motion' },
-  { number: '1.2', slug: '1-2', title: 'Forces', description: 'Why motion changes — and how to predict it.', icon: 'force' },
-  { number: '1.3', slug: '1-3', title: 'Circular Motion', description: 'Turning without slowing down.', icon: 'circle' },
-  { number: '1.4', slug: '1-4', title: 'Energy', description: 'The currency of the universe.', icon: 'energy' },
-  { number: '1.5', slug: '1-5', title: 'Momentum', description: 'Collisions, recoil, and score-keeping.', icon: 'momentum' },
-  { number: '1.6', slug: '1-6', title: 'Math Spark', description: 'The calculus hiding under every formula.', icon: 'calculus' },
+type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
+
+function Icon({ name, className }: { name: IconName; className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" aria-hidden="true"><use href={`#icon-${name}`} /></svg>;
+}
+
+function IconLibrary() {
+  return <svg className={styles.iconLibrary} aria-hidden="true"><defs>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="icon-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+    <symbol id="icon-atom" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></symbol>
+    <symbol id="icon-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><circle cx="18.5" cy="7.5" r="1.5"/></symbol>
+    <symbol id="icon-wave" viewBox="0 0 24 24"><path d="M2 12c3-8 5 8 8 0s5 8 8 0 4 0 4 0"/></symbol>
+    <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7z"/></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9m4 12h4"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/></symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20 16a9 9 0 0 1-12-12 9 9 0 1 0 12 12"/></symbol>
+    <symbol id="icon-magnifier-plus" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6M10 6v8M6 10h8"/></symbol>
+    <symbol id="icon-magnifier" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6M6 10h8"/></symbol>
+    <symbol id="icon-expand" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M9 21H3v-6m12 6h6v-6"/></symbol>
+    <symbol id="icon-function" viewBox="0 0 24 24"><path d="M15 3c-4 0-4 4-5 9s-1 9-5 9m2-9h8m2-4 4 8m0-8-4 8"/></symbol>
+  </defs></svg>;
+}
+
+const nav = [
+  ['home','Home',''], ['atom','Block 1','The Intuition & Calculus Spark'], ['wave','Block 2','Fields, Waves, and Math Tools'],
+  ['orbit','Block 3','The Intermediate Bridge'], ['bolt','Block 4','The Advanced Pillars'], ['function','Math Spark','Calculus, ODEs, Linear Algebra'],
+  ['bookmark','Reference','Equations & constants'],
 ] as const;
 
-function LessonIcon({ type }: { type: (typeof lessons)[number]['icon'] }) {
-  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-  return (
-    <svg viewBox="0 0 48 48" aria-hidden="true" {...common}>
-      {type === 'motion' && <><path d="M7 32h34"/><circle cx="15" cy="27" r="5"/><path d="M12 17c8-8 17-8 25 0M31 13l6 4-5 5"/></>}
-      {type === 'force' && <><rect x="16" y="17" width="16" height="16" rx="2"/><path d="M5 25h11M10 20l-5 5 5 5M32 25h11M38 20l5 5-5 5"/></>}
-      {type === 'circle' && <><circle cx="24" cy="24" r="15"/><circle cx="24" cy="9" r="3"/><path d="M24 12v12M24 24l8-5"/></>}
-      {type === 'energy' && <><path d="M27 5 13 27h10l-2 16 14-23H25z"/></>}
-      {type === 'momentum' && <><circle cx="13" cy="24" r="6"/><circle cx="35" cy="24" r="6"/><path d="M19 24h10M25 20l4 4-4 4"/></>}
-      {type === 'calculus' && <><path d="M8 34c7 0 7-20 14-20s7 20 18 20"/><path d="M8 39h32M13 8v31"/><circle cx="29" cy="25" r="2.5"/></>}
-    </svg>
-  );
-}
-
-function readCompletedCount() {
-  try {
-    const raw = window.localStorage.getItem('physense.block1');
-    if (!raw) return 0;
-    const value: unknown = JSON.parse(raw);
-    if (Array.isArray(value)) return Math.min(6, new Set(value).size);
-    if (typeof value === 'number') return Math.min(6, Math.max(0, value));
-    if (value && typeof value === 'object') {
-      const record = value as Record<string, unknown>;
-      if (Array.isArray(record.completed)) return Math.min(6, new Set(record.completed).size);
-      return Math.min(6, lessons.filter(({ number, slug }) => record[number] === true || record[slug] === true).length);
-    }
-  } catch {
-    return 0;
-  }
-  return 0;
-}
+const lessons = [
+  ['1.1','Kinematics','Motion in 1D & 2D'], ['1.2','Forces','Why motion changes'], ['1.3','Circular','Turning without slowing'],
+  ['1.4','Energy','The currency of the universe'], ['1.5','Momentum','Collisions and recoil'], ['1.6','Math Spark','The calculus underneath'],
+];
 
 export default function BlockOneHub() {
-  const [completed, setCompleted] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const actions = useRef({ zoomIn:()=>{}, zoomOut:()=>{}, turn:(_n:number)=>{}, reset:()=>{} });
+  const [dusk,setDusk]=useState(false), [focus,setFocus]=useState(false), [hint,setHint]=useState(true), [zoomState,setZoomState]=useState(1), [tab,setTab]=useState(0), [loading,setLoading]=useState(false);
 
-  useEffect(() => {
-    setCompleted(readCompletedCount());
-  }, []);
+  const switchTab=(next:number)=>{ if(next===tab) return; setLoading(true); setTab(next); window.setTimeout(()=>setLoading(false),500); };
 
-  return (
-    <main className={styles.page}>
-      <div className={styles.container}>
-        <header className={styles.hero}>
-          <p className={styles.eyebrow}>Block 1</p>
-          <h1>The Intuition &amp; Calculus Spark</h1>
-          <p className={styles.subtitle}>Build physical reality with your hands — then learn the math that describes it.</p>
-          <p className={styles.why}>Why this matters: intuition gives every equation something real to describe.</p>
-        </header>
+  useEffect(()=>{
+    const canvas=canvasRef.current, hero=heroRef.current, stage=stageRef.current;
+    if(!canvas||!hero||!stage) return;
+    let disposed=false;
+    let cleanup=()=>{};
+    import('three').then(async THREE=>{
+      if(disposed) return;
+      const { RoomEnvironment }=await import('three/examples/jsm/environments/RoomEnvironment.js');
+      if(disposed) return;
+      const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+      renderer.outputColorSpace=THREE.SRGBColorSpace;
+      renderer.toneMapping=THREE.NeutralToneMapping;
+      renderer.toneMappingExposure=1.05;
+      const scene=new THREE.Scene();
+      const camera=new THREE.PerspectiveCamera(26,1,.1,100);
+      const pmrem=new THREE.PMREMGenerator(renderer);
+      const environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
+      scene.environment=environment;
+      scene.environmentIntensity=.95;
+      const key=new THREE.DirectionalLight(0xfff4e2,1.6); key.position.set(2.5,4,5); scene.add(key);
+      const rim=new THREE.DirectionalLight(0xbfd8ff,.5); rim.position.set(-4,2,-3); scene.add(rim);
+      const pivot=new THREE.Group(), spin=new THREE.Group(); pivot.add(spin); scene.add(pivot);
+      spin.rotation.set(.12,.75,0);
+      const accent=new THREE.Color(getComputedStyle(hero).getPropertyValue('--accent').trim()||'#3a5bdb');
+      const ball=new THREE.Mesh(new THREE.SphereGeometry(1,64,64),new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:.48,roughness:.35,metalness:.05})); spin.add(ball);
+      const pts=new Float32Array(1500);
+      for(let i=0;i<500;i++){const a=i*2.39996,r=1.08+(i%19)/115, y=((i%43)/42-.5)*1.9;pts[i*3]=Math.cos(a)*Math.sqrt(Math.max(0,r*r-y*y*.45));pts[i*3+1]=y;pts[i*3+2]=Math.sin(a)*Math.sqrt(Math.max(0,r*r-y*y*.45));}
+      const haloGeo=new THREE.BufferGeometry(); haloGeo.setAttribute('position',new THREE.BufferAttribute(pts,3));
+      const halo=new THREE.Points(haloGeo,new THREE.PointsMaterial({color:accent,size:.025,transparent:true,opacity:.42,blending:THREE.AdditiveBlending,depthWrite:false})); spin.add(halo);
+      const curve=new THREE.CatmullRomCurve3(Array.from({length:48},(_,i)=>{const a=i/47*Math.PI*1.7;return new THREE.Vector3(Math.cos(a)*2.15,Math.sin(a*.65)*.35,Math.sin(a)*2.15)}));
+      const trail=new THREE.Mesh(new THREE.TubeGeometry(curve,80,.018,8,false),new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:.18})); spin.add(trail);
+      let W=1,H=1,cx=1,cy=1,px=200,tcx=1,tcy=1,tpx=200,zoom=1,targetZoom=1,queue=0,last=performance.now(),lastInteraction=performance.now(),drag=false,pointerId=-1,lastX=0,lastY=0,vx=0,vy=0,resetting=false;
+      const home=new THREE.Quaternion().setFromEuler(new THREE.Euler(.12,.75,0));
+      const mark=()=>{lastInteraction=performance.now();setHint(false)};
+      const measure=()=>{const hr=hero.getBoundingClientRect(),sr=stage.getBoundingClientRect();W=Math.max(1,hr.width);H=Math.max(1,hr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-hr.left+sr.width*.5;tcy=focus?H*.5:sr.top-hr.top+sr.height*.44;tpx=Math.min((focus?W:sr.width)*.5,(focus?H:sr.height)*.6)*1.16;};
+      const ro=new ResizeObserver(measure);ro.observe(hero);ro.observe(stage);measure();cx=tcx;cy=tcy;px=tpx;
+      const down=(e:PointerEvent)=>{drag=true;pointerId=e.pointerId;lastX=e.clientX;lastY=e.clientY;stage.setPointerCapture(e.pointerId);stage.classList.add(styles.grabbing);mark()};
+      const move=(e:PointerEvent)=>{if(!drag||e.pointerId!==pointerId)return;const dx=e.clientX-lastX,dy=e.clientY-lastY,k=Math.PI/Math.max(260,px*1.6);lastX=e.clientX;lastY=e.clientY;vx=dx*k;vy=dy*k;const qy=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),vx),qx=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),vy);spin.quaternion.premultiply(qy).premultiply(qx)};
+      const up=(e:PointerEvent)=>{if(e.pointerId===pointerId){drag=false;stage.classList.remove(styles.grabbing)}};
+      const wheel=(e:WheelEvent)=>{e.preventDefault();mark();targetZoom=Math.min(3.4,Math.max(.55,targetZoom*Math.exp(-e.deltaY*(e.ctrlKey?.01:.0016))));setZoomState(targetZoom)};
+      const keydown=(e:KeyboardEvent)=>{const q=new THREE.Quaternion();if(e.key==='ArrowLeft'||e.key==='ArrowRight'){q.setFromAxisAngle(new THREE.Vector3(0,1,0),e.key==='ArrowLeft'?-.18:.18);spin.quaternion.premultiply(q)}else if(e.key==='ArrowUp'||e.key==='ArrowDown'){q.setFromAxisAngle(new THREE.Vector3(1,0,0),e.key==='ArrowUp'?-.18:.18);spin.quaternion.premultiply(q)}else if(e.key==='+'||e.key==='='){targetZoom=Math.min(3.4,targetZoom*1.2)}else if(e.key==='-'){targetZoom=Math.max(.55,targetZoom/1.2)}else if(e.key==='0'){resetting=true;targetZoom=1}else if(e.key==='Escape'){setFocus(false)}else return;e.preventDefault();mark();setZoomState(targetZoom)};
+      stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('wheel',wheel,{passive:false});stage.addEventListener('keydown',keydown);
+      actions.current={zoomIn:()=>{targetZoom=Math.min(3.4,targetZoom*1.35);setZoomState(targetZoom);mark()},zoomOut:()=>{targetZoom=Math.max(.55,targetZoom/1.35);setZoomState(targetZoom);mark()},turn:(n)=>{queue+=n;mark()},reset:()=>{resetting=true;targetZoom=1;setZoomState(1);mark()}};
+      let frame=0;
+      const render=(now:number)=>{const dt=Math.min(.05,(now-last)/1000);last=now;const e7=1-Math.exp(-dt*7);cx+=(tcx-cx)*e7;cy+=(tcy-cy)*e7;px+=(tpx-px)*e7;zoom+=(targetZoom-zoom)*(1-Math.exp(-dt*6));camera.position.z=H/(2*Math.tan(THREE.MathUtils.degToRad(13))*Math.max(1,px)*zoom);camera.setViewOffset(W,H,W/2-cx,H/2-cy,W,H);camera.lookAt(0,0,0);if(Math.abs(queue)>.001){const step=queue*(1-Math.exp(-dt*4.2));queue-=step;spin.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),step))}if(!drag){vx*=Math.exp(-dt*4.5);vy*=Math.exp(-dt*4.5);spin.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),vx)).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),vy))}if(resetting){spin.quaternion.slerp(home,1-Math.exp(-dt*6));if(spin.quaternion.angleTo(home)<.002)resetting=false}if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const idle=Math.min(1,Math.max(0,(now-lastInteraction-1800)/1500));pivot.rotation.y=Math.sin(now*.00055)*.16*idle;pivot.rotation.x=Math.sin(now*.0009)*.03*idle;pivot.position.y=Math.sin(now*.0013)*.028*idle}const duskNow=hero.dataset.light==='dusk';scene.environmentIntensity+=( (duskNow?.28:.95)-scene.environmentIntensity)*(1-Math.exp(-dt*4));key.intensity+=((duskNow?2.6:1.6)-key.intensity)*(1-Math.exp(-dt*4));rim.intensity+=((duskNow?1.9:.5)-rim.intensity)*(1-Math.exp(-dt*4));renderer.render(scene,camera);frame=requestAnimationFrame(render)};frame=requestAnimationFrame(render);
+      cleanup=()=>{cancelAnimationFrame(frame);ro.disconnect();stage.removeEventListener('pointerdown',down);stage.removeEventListener('pointermove',move);stage.removeEventListener('pointerup',up);stage.removeEventListener('pointercancel',up);stage.removeEventListener('wheel',wheel);stage.removeEventListener('keydown',keydown);ball.geometry.dispose();ball.material.dispose();haloGeo.dispose();halo.material.dispose();trail.geometry.dispose();trail.material.dispose();environment.dispose();pmrem.dispose();renderer.dispose()};
+    });
+    return()=>{disposed=true;cleanup()};
+  },[focus]);
 
-        <section className={styles.intro} aria-label="About this block">
-          <p>Physics starts with your eyes and hands, not with formulas. In this block you&apos;ll watch things move, push things, spin things, drop things, and crash things.</p>
-          <p>Then — only then — you&apos;ll learn the math that makes sense of all of it.</p>
-          <p>By the end of this block you&apos;ll solve real motion problems with <strong>calculus</strong> (math for describing change) instead of memorised algebra.</p>
-          <p className={styles.note}>New to physics? Start at 1.1 and go in order. Lesson 1.6 (Math Spark) will feel easier after you&apos;ve seen the physics first.</p>
-          <p className={styles.why}>Why this matters: understanding grows faster when experience comes before symbols.</p>
-        </section>
+  useEffect(()=>{document.body.style.background=dusk?'#0f1116':'#f4f2ec';return()=>{document.body.style.background=''}},[dusk]);
 
-        <section className={styles.progressSection} aria-labelledby="progress-title">
-          <div className={styles.progressLabel}>
-            <h2 id="progress-title">Your progress in Block 1</h2>
-            <span>{completed} / 6 completed</span>
-          </div>
-          <div className={styles.progressTrack} role="progressbar" aria-valuemin={0} aria-valuemax={6} aria-valuenow={completed} aria-label={`${completed} of 6 lessons completed`}>
-            <span style={{ width: `${(completed / 6) * 100}%` }} />
-          </div>
-          <p className={styles.why}>Why this matters: small, visible steps make a big subject feel possible.</p>
-        </section>
-
-        <section className={styles.lessonSection} aria-labelledby="lessons-title">
-          <div className={styles.sectionHeading}>
-            <p className={styles.eyebrow}>Your path</p>
-            <h2 id="lessons-title">Six ideas that build on each other</h2>
-          </div>
-          <div className={styles.grid}>
-            {lessons.map((lesson) => (
-              <article className={styles.card} key={lesson.number}>
-                <div className={styles.icon}><LessonIcon type={lesson.icon} /></div>
-                <span className={styles.tag}>Lesson {lesson.number}</span>
-                <h3>{lesson.title}</h3>
-                <p>{lesson.description}</p>
-                <Link href={`/block-1/${lesson.slug}`}>Start lesson</Link>
-              </article>
-            ))}
-          </div>
-          <p className={styles.why}>Why this matters: each lesson adds one tool you will use in every block that follows.</p>
-        </section>
-
-        <footer className={styles.footer}>
-          <p>This block is the foundation. Every later block reuses the ideas you build here. Take your time.</p>
-        </footer>
+  return <div ref={heroRef} className={`${styles.hero} ${focus?styles.focus:''}`} data-light={dusk?'dusk':'day'}>
+    <IconLibrary/><canvas id="gl" ref={canvasRef} className={styles.canvas}/>
+    <aside className={styles.sidebar}>
+      <div className={styles.brand}>PhySense<small>A field guide to physical law.</small></div>
+      <nav>{nav.map(([icon,label,sub])=><button key={label} className={label==='Block 1'?styles.current:''} aria-current={label==='Block 1'?'page':undefined}><Icon name={icon}/><span>{label}{sub&&<small>{sub}</small>}</span></button>)}</nav>
+      <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/">Continue lesson <Icon name="arrow-right"/></Link></div>
+    </aside>
+    <section className={styles.main}>
+      <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search"><Icon name="search"/></button><button aria-label="Notifications"><Icon name="bell"/></button><button className={styles.account} aria-label="Account"><Icon name="user"/></button></div></div>
+      <div className={styles.tabs} role="tablist" aria-label="Learning blocks">
+        <button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button>
+        <button role="tab" aria-selected={tab===1} onClick={()=>switchTab(1)}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button>
       </div>
-    </main>
-  );
+      <div ref={stageRef} className={styles.stage} tabIndex={0} onDoubleClick={()=>actions.current.reset()} aria-label="Interactive charged particle. Drag to rotate, scroll or pinch to zoom, and double-click to reset.">
+        <div className={`${styles.shadow} ${loading?styles.hidden:''}`}/><div className={`${styles.loader} ${loading?styles.visible:''}`}><i/>Preparing the lesson…</div>
+        {hint&&<div className={styles.hint}>Drag to turn · scroll to zoom</div>}
+        <div className={styles.rail}>
+          <button aria-label="Zoom in" aria-pressed={zoomState>=1} onClick={()=>actions.current.zoomIn()}><Icon name="magnifier-plus"/></button>
+          <button aria-label="Zoom out" aria-pressed={zoomState<1} onClick={()=>actions.current.zoomOut()}><Icon name="magnifier"/></button>
+          <button aria-label="Expand scene" aria-pressed={focus} onClick={()=>setFocus(!focus)}><Icon name="expand"/></button>
+          <button aria-label={dusk?'Use day light':'Use dusk light'} aria-pressed={dusk} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/></button>
+        </div>
+        <div className={styles.turn}><button aria-label="Turn left" onClick={()=>actions.current.turn(-Math.PI/2)}><Icon name="arrow-left"/></button><button onClick={()=>actions.current.turn(Math.PI*2)}>360°</button><button aria-label="Turn right" onClick={()=>actions.current.turn(Math.PI/2)}><Icon name="arrow-right"/></button></div>
+        <p className={styles.caption}>Every law of physics is a promise the universe keeps.</p>
+      </div>
+    </section>
+    <section className={styles.info}>
+      <div className={styles.tools}><label><Icon name="search"/><input aria-label="Search" placeholder="Search topics, laws, or equations…"/></label><button aria-label="Notifications"><Icon name="bell"/></button><button className={styles.account} aria-label="Account"><Icon name="user"/></button></div>
+      <article className={styles.detail} aria-live="polite">
+        <span className={styles.eyebrow}>Block 1 · Foundation</span><h1>The Intuition &amp; Calculus Spark</h1>
+        <div className={styles.tags}><span>Mechanics</span><span>Calculus</span><span>6 lessons</span></div>
+        <p>Build physical reality with your hands — motion, forces, spin, energy, collisions — then learn the calculus that describes all of it. Six lessons, no prerequisites beyond middle-school math.</p>
+        <h2 id="lesson-map">What you&apos;ll learn</h2><div className={styles.lessons}>{lessons.map(([n,name,text])=><div key={n}><b>{n}</b><span>{name}</span><small>{text}</small></div>)}</div>
+        <h2>Starting point</h2><div className={styles.starting}><Icon name="arrow-right"/><span>Begin at Lesson 1.1 — Kinematics</span></div>
+        <Link className={styles.startButton} href="/"><svg viewBox="0 0 76 58" aria-hidden="true"><path d="M7 48c12-2 18-19 29-25s19-5 33-14"/><path d="M31 42 61 12"/><circle cx="43" cy="29" r="3"/></svg><span><b>Start Block 1</b><small>Six lessons. Take them in order.</small></span><Icon name="chevron-right"/></Link>
+      </article>
+    </section>
+  </div>;
 }

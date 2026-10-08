@@ -64,6 +64,44 @@ const atomFacts = {
 type AtomFactName=keyof typeof atomFacts;
 function AtomLabelIcon({name,check=false}:{name:AtomFactName;check?:boolean}){return <svg className={check?styles.atomCheck:styles.atomLabelIcon} viewBox="0 0 14 14" aria-hidden="true">{check?<path d="m2.5 7 3 3 6-7"/>:name==='charge'?<path d="m8 1-5 7h4l-1 5 5-7H7z"/>:name==='protons'?<path d="M7 2v10M2 7h10"/>:name==='neutrons'?<circle cx="7" cy="7" r="4.5"/>:name==='nucleus'?<><circle cx="7" cy="7" r="5"/><circle cx="7" cy="7" r="1.5"/></>:<path d="M2 7h10"/>}</svg>}
 
+const tourCards=[
+  {label:'Blocks',title:'Four blocks, from intuition to mastery.',description:'The whole course is split into four big blocks. Each block builds on the one before it. You start with how things move — and end with the quantum world.',example:'Block 1 → Block 2 → Block 3 → Block 4'},
+  {label:'Phases',title:'Each block splits into small, ordered lessons.',description:'Inside every block there are phases. Each phase groups a few lessons that belong together. You always know where you are and what comes next.',example:'Phase A · Mechanics → Phase B · Calculus → Phase C · Integration'},
+  {label:'Labs',title:'Every lesson has something to drag, launch, or watch.',description:'You will not just read about physics. You will move a car along a road, launch a ball, drag a charge, watch a wave. The lab comes before the equation.',example:'Drag → See → Understand'},
+  {label:'Equations',title:"Formulas come last — after you've earned them.",description:'You will see the physics first. You will play with it. Only then does the equation appear — as a summary of something you already understand.',example:'See it → Feel it → Then write it.'},
+  {label:'Challenges',title:'One real-world problem per lesson to prove it.',description:'At the end of every lesson there is one problem. It is not a test — it is a chance to check that the idea really landed. If you get it wrong, you will see why.',example:'Read → Explore → Check yourself.'},
+] as const;
+
+function TourVisual({index}:{index:number}){
+  if(index===0)return <svg className={styles.tourVisual} viewBox="0 0 260 260" aria-hidden="true"><g className={styles.blockPulse}>{[34,83,136,193].map((x,i)=><rect key={x} x={x} y={120-i*6} width={28+i*3} height={28+i*3} rx="5"/>)}<path d="M65 136h14m-5-5 5 5-5 5M118 133h14m-5-5 5 5-5 5M174 130h14m-5-5 5 5-5 5"/></g></svg>;
+  if(index===1)return <svg className={styles.tourVisual} viewBox="0 0 260 260" aria-hidden="true"><g className={styles.phaseBars}><g><rect x="43" y="55" width="174" height="38" rx="8"/><text x="62" y="79">PHASE A</text></g><g><rect x="43" y="111" width="174" height="38" rx="8"/><text x="62" y="135">PHASE B</text></g><g><rect x="43" y="167" width="174" height="38" rx="8"/><text x="62" y="191">PHASE C</text></g></g></svg>;
+  if(index===2)return <svg className={styles.tourVisual} viewBox="0 0 260 260" aria-hidden="true"><path className={styles.labArc} d="M35 150Q130 28 225 150"/><circle className={styles.labBall} cx="35" cy="150" r="12"/><path d="M38 202h184"/><rect x="38" y="196" width="184" height="12" rx="6"/><circle className={styles.labSlider} cx="70" cy="202" r="14"/></svg>;
+  if(index===3)return <svg className={styles.tourVisual} viewBox="0 0 260 260" aria-hidden="true"><rect x="25" y="76" width="210" height="108" rx="14"/><text className={styles.equationSymbols} x="130" y="145" textAnchor="middle"><tspan>v</tspan><tspan> = </tspan><tspan>u</tspan><tspan> + </tspan><tspan>at</tspan></text></svg>;
+  return <svg className={styles.tourVisual} viewBox="0 0 260 260" aria-hidden="true"><circle className={styles.checkCircle} cx="130" cy="130" r="70"/><path className={styles.checkDraw} d="m91 131 27 28 54-66"/></svg>;
+}
+
+function TourOverlay({onClose,onFinish}:{onClose:()=>void;onFinish:()=>void}){
+  const [index,setIndex]=useState(0),[direction,setDirection]=useState(1),[closing,setClosing]=useState(false);
+  const dialogRef=useRef<HTMLDivElement>(null),closeRef=useRef<HTMLButtonElement>(null),touchStart=useRef<number|null>(null);
+  const move=(next:number)=>{const clamped=Math.max(0,Math.min(tourCards.length-1,next));if(clamped===index)return;setDirection(clamped>index?1:-1);setIndex(clamped)};
+  const moveBy=(amount:number)=>setIndex(current=>{const next=Math.max(0,Math.min(tourCards.length-1,current+amount));if(next!==current)setDirection(amount>0?1:-1);return next});
+  const dismiss=(finish=false)=>{setClosing(true);window.setTimeout(finish?onFinish:onClose,220)};
+  useEffect(()=>{const previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';closeRef.current?.focus();const key=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();dismiss()}else if(event.key==='ArrowLeft'){event.preventDefault();moveBy(-1)}else if(event.key==='ArrowRight'){event.preventDefault();moveBy(1)}else if(event.key==='Tab'){const nodes=dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])');if(!nodes?.length)return;const first=nodes[0],last=nodes[nodes.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}};document.addEventListener('keydown',key);return()=>{document.body.style.overflow=previousOverflow;document.removeEventListener('keydown',key)}},[]);
+  const card=tourCards[index];
+  return <div className={`${styles.tourBackdrop} ${closing?styles.tourClosing:''}`}>
+    <div ref={dialogRef} className={styles.tourDialog} role="dialog" aria-modal="true" aria-labelledby={`tour-title-${index}`}>
+      <header className={styles.tourHeader}><span>How to use PhySense</span><button ref={closeRef} type="button" aria-label="Close tour" onClick={()=>dismiss()}>×</button></header>
+      <div className={styles.tourCarousel} onTouchStart={event=>{touchStart.current=event.touches[0].clientX}} onTouchEnd={event=>{if(touchStart.current===null)return;const delta=event.changedTouches[0].clientX-touchStart.current;if(Math.abs(delta)>45)move(index+(delta<0?1:-1));touchStart.current=null}}>
+        <section key={index} className={`${styles.tourCard} ${direction>0?styles.tourForward:styles.tourBackward}`}>
+          <div className={styles.tourCopy}><span>{index+1} / 5 · {card.label}</span><h2 id={`tour-title-${index}`}>{card.title}</h2><p>{card.description}</p><em>{card.example}</em></div>
+          <TourVisual index={index}/>
+        </section>
+      </div>
+      <footer className={styles.tourFooter}><button className={styles.tourSkip} type="button" onClick={()=>dismiss()}>Skip tour</button><div className={styles.tourDots} aria-label="Tour steps">{tourCards.map((item,i)=><button key={item.label} type="button" className={i===index?styles.tourDotActive:''} aria-label={`Go to ${item.label}`} aria-current={i===index?'step':undefined} onClick={()=>move(i)}/>)}</div><div className={styles.tourArrows}><button type="button" aria-label="Previous card" disabled={index===0} onClick={()=>move(index-1)}><Icon name="chevron-left"/></button>{index===tourCards.length-1?<button className={styles.tourFinish} type="button" onClick={()=>dismiss(true)}>Got it — start learning</button>:<button type="button" aria-label="Next card" onClick={()=>move(index+1)}><Icon name="chevron-right"/></button>}</div></footer>
+    </div>
+  </div>;
+}
+
 export function PhysicsHub({ home = false }: { home?: boolean }) {
   const router = useRouter();
   const heroRef = useRef<HTMLDivElement>(null);
@@ -72,11 +110,13 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
   const dragRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const atomLabelOpener = useRef<HTMLButtonElement|null>(null);
+  const tourTriggerRef = useRef<HTMLButtonElement|null>(null);
   const actions = useRef({ zoomIn:()=>{}, zoomOut:()=>{}, turn:(_n:number)=>{}, reset:()=>{} });
   const defaultZoom=1;
   const [dusk,setDusk]=useState(false), [focus,setFocus]=useState(false), [hint,setHint]=useState(true), [zoomState,setZoomState]=useState(defaultZoom), [tab,setTab]=useState(0), [loading,setLoading]=useState(false), [toast,setToast]=useState<string|null>(null);
   const [atomInfo,setAtomInfo]=useState<{name:keyof typeof atomFacts;left:number;top:number;maxHeight:number}|null>(null);
   const [visitedLabels,setVisitedLabels]=useState<AtomFactName[]>([]),[visitedLoaded,setVisitedLoaded]=useState(false),[labelHint,setLabelHint]=useState(true);
+  const [tourOpen,setTourOpen]=useState(false);
 
   const switchTab=(next:number)=>{ if(next===tab) return; setLoading(true); setTab(next); window.setTimeout(()=>setLoading(false),500); };
   const notify=(message:string)=>{setToast(message);window.setTimeout(()=>setToast(null),2400)};
@@ -177,7 +217,7 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
       </div>}
       <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search" onClick={()=>notify('Search is coming soon.')}><Icon name="search"/></button><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div></div>
       <div className={styles.tabs} role="tablist" aria-label="Learning blocks">
-        {home ? <><button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="home"/><span>Welcome<small>start here</small></span></button><button role="tab" aria-selected={tab===1} onClick={()=>switchTab(1)}><Icon name="map"/><span>How to use PhySense<small>five simple parts</small></span></button></> : <><button role="tab" aria-selected="true" onClick={()=>router.push('/block-1')}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button><button role="tab" aria-selected="false" aria-disabled="true" data-locked onClick={()=>notify('Block 2 unlocks after Block 1.')}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button></>}
+        {home ? <><button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="home"/><span>Welcome<small>start here</small></span></button><button ref={tourTriggerRef} role="tab" aria-selected={tourOpen} aria-haspopup="dialog" onClick={()=>{setTab(1);setTourOpen(true)}}><Icon name="map"/><span>How to use PhySense<small>five simple parts</small></span></button></> : <><button role="tab" aria-selected="true" onClick={()=>router.push('/block-1')}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button><button role="tab" aria-selected="false" aria-disabled="true" data-locked onClick={()=>notify('Block 2 unlocks after Block 1.')}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button></>}
       </div>
       <div ref={dragRef} className={styles.dragSurface} tabIndex={0} onDoubleClick={()=>actions.current.reset()} aria-label="Interactive atom. Drag to rotate. Use the zoom buttons or Ctrl + scroll to zoom. Press arrow left and arrow right to rotate."/>
       <div ref={stageRef} className={styles.stage}>
@@ -199,6 +239,7 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
       <div className={styles.tools}><label><Icon name="search"/><input aria-label="Search" placeholder="Search topics, laws, or equations…"/></label><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div>
       <article className={styles.detail} aria-live="polite">{home?<HomeDetail/>:<BlockDetail/>}</article>
     </section>
+    {home&&tourOpen&&<TourOverlay onClose={()=>{setTourOpen(false);setTab(0);window.requestAnimationFrame(()=>tourTriggerRef.current?.focus())}} onFinish={()=>{setTourOpen(false);router.push('/block-1')}}/>}
   </div>;
 }
 

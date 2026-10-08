@@ -3,28 +3,13 @@
 import React, { useState } from 'react';
 import { SYLLABUS_DATA, Topic, SubTopic } from '@/data/syllabus';
 import {
-  Rocket,
-  Zap,
-  Radio,
-  Flame,
-  Atom,
-  ChevronDown,
-  ChevronRight,
-  BookOpen,
-  CheckCircle2,
-  Bookmark,
-  Layers,
   Sparkles,
-  ArrowRight,
-  Calculator,
+  ChevronDown, ChevronRight, BookOpen, Layers,
+  Calculator, ArrowRight, Search,
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  Rocket,
-  Zap,
-  Radio,
-  Flame,
-  Atom,
+  Sparkles,
 };
 
 interface SyllabusTreeProps {
@@ -34,102 +19,108 @@ interface SyllabusTreeProps {
 
 export default function SyllabusTree({ onSelectSubTopic, selectedSubTopicId }: SyllabusTreeProps) {
   const [expandedTopics, setExpandedTopics] = useState<Record<string, boolean>>({
-    'space-time-motion': true,
-    'fields-electromagnetism': true,
+    'block-1-intuition-calculus-spark': true,
   });
-  const [filterMode, setFilterMode] = useState<'all' | 'hl' | 'foundation'>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterMode, setFilterMode] = useState<'all' | 'foundation' | 'advanced'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const toggleTopic = (id: string) => {
-    setExpandedTopics((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
+  const toggleTopic = (id: string) =>
+    setExpandedTopics((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  const filteredTopics = SYLLABUS_DATA.map((topic) => {
-    const matchingSubtopics = topic.subtopics.filter((sub) => {
-      const matchesSearch =
-        sub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sub.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sub.code.toLowerCase().includes(searchQuery.toLowerCase());
-
-      if (!matchesSearch) return false;
-      if (filterMode === 'hl') return sub.hlOnly;
-      if (filterMode === 'foundation') return sub.difficulty === 'Foundation';
-      return true;
-    });
-
-    return {
+  const filteredTopics = SYLLABUS_DATA
+    .map((topic) => ({
       ...topic,
-      subtopics: matchingSubtopics,
-    };
-  }).filter((topic) => topic.subtopics.length > 0 || searchQuery === '');
+      subtopics: topic.subtopics.filter((sub) => {
+        const q = searchQuery.toLowerCase();
+        const matchesSearch =
+          !q ||
+          sub.title.toLowerCase().includes(q) ||
+          sub.summary.toLowerCase().includes(q) ||
+          sub.code.toLowerCase().includes(q);
+        if (!matchesSearch) return false;
+        if (filterMode === 'foundation') return sub.difficulty === 'Foundation';
+        if (filterMode === 'advanced') return sub.difficulty === 'Advanced';
+        return true;
+      }),
+    }))
+    .filter((t) => t.subtopics.length > 0 || !searchQuery);
 
   return (
-    <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
-      {/* Header controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800/70 mb-6">
+    <div
+      className="rounded-2xl border overflow-hidden"
+      style={{ background: 'var(--panel)', borderColor: 'var(--line)' }}
+    >
+      {/* Header */}
+      <div
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 border-b"
+        style={{ borderColor: 'var(--line)' }}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div
+              className="p-1.5 rounded-lg"
+              style={{ background: 'var(--sage-tint)', color: 'var(--sage)' }}
+            >
               <Layers className="w-4 h-4" />
-            </span>
-            <h2 className="text-xl font-bold text-white tracking-tight">Structured Physics Syllabus</h2>
+            </div>
+            <h2
+              className="text-xl font-semibold tracking-tight"
+              style={{
+                fontFamily: 'var(--font-newsreader), Georgia, serif',
+                color: 'var(--ink)',
+                letterSpacing: '-0.015em',
+              }}
+            >
+              Block 1
+            </h2>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Hierarchical syllabus taxonomy • Standard &amp; Higher Level curriculum
+          <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>
+            Intuition first · Calculus unlocked
           </p>
         </div>
 
-        {/* Filter pills */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setFilterMode('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              filterMode === 'all'
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                : 'text-slate-400 hover:text-white bg-slate-800/40 border border-slate-800'
-            }`}
-          >
-            All Topics
-          </button>
-          <button
-            onClick={() => setFilterMode('hl')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              filterMode === 'hl'
-                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                : 'text-slate-400 hover:text-white bg-slate-800/40 border border-slate-800'
-            }`}
-          >
-            HL Only (Higher Level)
-          </button>
-          <button
-            onClick={() => setFilterMode('foundation')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              filterMode === 'foundation'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                : 'text-slate-400 hover:text-white bg-slate-800/40 border border-slate-800'
-            }`}
-          >
-            Core Foundations
-          </button>
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5">
+          {(['all', 'foundation', 'advanced'] as const).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setFilterMode(mode)}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
+              style={
+                filterMode === mode
+                  ? { background: 'var(--sage-tint)', color: 'var(--sage)', borderColor: 'var(--sage)' }
+                  : { background: 'var(--bg)', color: 'var(--muted)', borderColor: 'var(--line)' }
+              }
+            >
+              {mode === 'all' ? 'All' : mode === 'foundation' ? 'Start Here' : 'Math Spark'}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Filter by concept, equation, or keyword (e.g. projectile, Doppler, flux, Kepler)..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/50 transition-all font-sans"
-        />
+      {/* Search */}
+      <div className="px-5 pt-4 pb-3">
+        <div
+          className="flex items-center gap-2 h-[34px] px-3 rounded-xl border text-xs transition-all"
+          style={{ background: 'var(--bg)', borderColor: 'var(--line)' }}
+        >
+          <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--muted)' }} />
+          <input
+            type="text"
+            placeholder="Search topics, formulas, concepts…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-transparent outline-none"
+            style={{
+              color: 'var(--ink)',
+              fontFamily: 'var(--font-nunito-sans)',
+            }}
+          />
+        </div>
       </div>
 
-      {/* Topics Tree List */}
-      <div className="space-y-4">
+      {/* Topic List */}
+      <div className="px-3 pb-4 space-y-2">
         {filteredTopics.map((topic) => {
           const isExpanded = !!expandedTopics[topic.id];
           const IconComponent = ICON_MAP[topic.icon] || BookOpen;
@@ -137,110 +128,161 @@ export default function SyllabusTree({ onSelectSubTopic, selectedSubTopicId }: S
           return (
             <div
               key={topic.id}
-              className="rounded-xl border border-slate-800/80 bg-slate-950/50 overflow-hidden transition-all duration-200 hover:border-slate-700/80"
+              className="rounded-xl border overflow-hidden transition-all"
+              style={{
+                background: 'var(--bg)',
+                borderColor: 'var(--line)',
+              }}
             >
-              {/* Topic header banner */}
+              {/* Topic Header */}
               <button
                 onClick={() => toggleTopic(topic.id)}
-                className="w-full flex items-center justify-between p-4 text-left transition-colors hover:bg-slate-800/30 group"
+                className="w-full flex items-center justify-between p-3.5 text-left group hover:bg-[var(--chip)] transition-all"
               >
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3">
                   <span
-                    className="flex h-10 w-10 items-center justify-center rounded-xl font-bold shadow-md ring-1 ring-white/10"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border"
                     style={{
-                      background: `linear-gradient(135deg, ${topic.accentHex}25, ${topic.accentHex}05)`,
-                      color: topic.accentHex,
+                      background: 'var(--sage-tint)',
+                      color: 'var(--sage)',
+                      borderColor: 'var(--line)',
                     }}
                   >
-                    <IconComponent className="w-5 h-5" />
+                    <IconComponent className="w-4.5 h-4.5" />
                   </span>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
-                        Topic {topic.number}
+                      <span
+                        className="text-[10px] font-mono font-semibold uppercase tracking-widest"
+                        style={{ color: 'var(--muted)' }}
+                      >
+                        Learning Block {topic.number}
                       </span>
-                      <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
-                        {topic.title}
-                      </h3>
                     </div>
-                    <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">{topic.description}</p>
+                    <h3
+                      className="text-sm font-semibold group-hover:text-[var(--sage)] transition-colors"
+                      style={{
+                        fontFamily: 'var(--font-newsreader), serif',
+                        color: 'var(--ink)',
+                        fontSize: '15px',
+                        letterSpacing: '-0.01em',
+                      }}
+                    >
+                      {topic.title}
+                    </h3>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono font-medium text-slate-500 hidden sm:inline-block">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] hidden sm:inline" style={{ color: 'var(--muted)' }}>
                     {topic.subtopics.length} modules
                   </span>
-                  <span className="text-slate-400 group-hover:text-white transition-colors">
-                    {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                  <span style={{ color: 'var(--muted)' }}>
+                    {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                   </span>
                 </div>
               </button>
 
-              {/* Subtopics accordion container */}
+              {/* Subtopics */}
               {isExpanded && (
-                <div className="p-3 pt-0 border-t border-slate-800/50 space-y-2 bg-slate-900/30">
+                <div className="p-2 pt-0 space-y-1.5 border-t" style={{ borderColor: 'var(--line)' }}>
                   {topic.subtopics.map((sub) => {
                     const isSelected = selectedSubTopicId === sub.id;
-
                     return (
                       <div
                         key={sub.id}
                         onClick={() => onSelectSubTopic && onSelectSubTopic(sub, topic)}
-                        className={`p-3.5 rounded-lg border transition-all cursor-pointer group/sub ${
+                        className="p-3 rounded-lg border cursor-pointer transition-all group/sub"
+                        style={
                           isSelected
-                            ? 'bg-cyan-950/40 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                            : 'bg-slate-950/40 border-slate-800/60 hover:border-slate-700 hover:bg-slate-800/20'
-                        }`}
+                            ? {
+                                background: 'var(--sage-tint)',
+                                borderColor: 'var(--sage)',
+                              }
+                            : {
+                                background: 'var(--panel)',
+                                borderColor: 'var(--line)',
+                              }
+                        }
                       >
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                        {/* Sub header row */}
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
                           <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-slate-800 text-cyan-300 border border-slate-700">
+                            <span
+                              className="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold border"
+                              style={{
+                                background: 'var(--chip)',
+                                color: 'var(--sage)',
+                                borderColor: 'var(--line)',
+                              }}
+                            >
                               {sub.code}
                             </span>
-                            <span className="text-sm font-semibold text-slate-200 group-hover/sub:text-white transition-colors">
+                            <span
+                              className="text-sm font-semibold"
+                              style={{
+                                fontFamily: 'var(--font-newsreader), serif',
+                                color: 'var(--ink)',
+                                letterSpacing: '-0.01em',
+                              }}
+                            >
                               {sub.title}
                             </span>
                           </div>
-
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             {sub.hlOnly && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-950/70 text-purple-300 border border-purple-800/60">
-                                Higher Level (HL)
+                              <span
+                                className="px-1.5 py-0.5 rounded text-[10px] font-semibold border"
+                                style={{
+                                  background: 'var(--chip)',
+                                  color: 'var(--muted)',
+                                  borderColor: 'var(--line)',
+                                }}
+                              >
+                                HL
                               </span>
                             )}
                             <span
-                              className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                                sub.difficulty === 'Foundation'
-                                  ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/40'
-                                  : sub.difficulty === 'Intermediate'
-                                  ? 'bg-amber-950/60 text-amber-300 border border-amber-800/40'
-                                  : 'bg-rose-950/60 text-rose-300 border border-rose-800/40'
-                              }`}
+                              className="px-1.5 py-0.5 rounded text-[10px] font-semibold border"
+                              style={{
+                                background:
+                                  sub.difficulty === 'Foundation'
+                                    ? 'var(--sage-tint)'
+                                    : 'var(--chip)',
+                                color:
+                                  sub.difficulty === 'Foundation'
+                                    ? 'var(--sage)'
+                                    : 'var(--muted)',
+                                borderColor: 'var(--line)',
+                              }}
                             >
                               {sub.difficulty}
                             </span>
                           </div>
                         </div>
 
-                        <p className="text-xs text-slate-400 mb-2.5 leading-relaxed">{sub.summary}</p>
+                        <p className="text-xs leading-relaxed mb-2" style={{ color: 'var(--muted)' }}>
+                          {sub.summary}
+                        </p>
 
-                        {/* Formulas & Concept tags */}
-                        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/50">
-                          <span className="flex items-center gap-1 text-[11px] text-cyan-400/80 font-mono">
+                        {/* Formulas + Open link */}
+                        <div
+                          className="flex items-center justify-between pt-2 border-t"
+                          style={{ borderColor: 'var(--line)' }}
+                        >
+                          <span className="flex items-center gap-1 text-[11px] font-mono" style={{ color: 'var(--sage)' }}>
                             <Calculator className="w-3 h-3" />
-                            {sub.formulas.slice(0, 2).join(' • ')}
+                            {sub.formulas.slice(0, 2).join(' · ')}
                             {sub.formulas.length > 2 && (
-                              <span className="text-slate-500 font-sans text-[10px]">
-                                +{sub.formulas.length - 2} more
-                              </span>
+                              <span style={{ color: 'var(--muted)' }}>+{sub.formulas.length - 2}</span>
                             )}
                           </span>
-
-                          <div className="ml-auto flex items-center gap-1 text-[11px] text-slate-400 group-hover/sub:text-cyan-300 transition-colors">
-                            <span>Open Notes</span>
+                          <span
+                            className="flex items-center gap-1 text-[11px] font-semibold transition-colors group-hover/sub:text-[var(--sage)]"
+                            style={{ color: 'var(--muted)' }}
+                          >
+                            Open Notes
                             <ArrowRight className="w-3 h-3 transition-transform group-hover/sub:translate-x-0.5" />
-                          </div>
+                          </span>
                         </div>
                       </div>
                     );

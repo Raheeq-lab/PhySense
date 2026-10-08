@@ -1,104 +1,64 @@
 'use client';
 
-import React from 'react';
+import { AlertTriangle, Calculator, CheckCircle, FlaskConical, Lightbulb, Map, SlidersHorizontal, X } from 'lucide-react';
 import { SubTopic, Topic } from '@/data/syllabus';
-import { X, BookOpen, CheckCircle, Lightbulb, AlertTriangle, Calculator, Sparkles, ExternalLink } from 'lucide-react';
 
-interface TopicDetailModalProps {
-  topic: Topic | null;
-  subtopic: SubTopic | null;
-  onClose: () => void;
-}
+interface TopicDetailModalProps { topic: Topic | null; subtopic: SubTopic | null; onClose: () => void; }
 
 export default function TopicDetailModal({ topic, subtopic, onClose }: TopicDetailModalProps) {
   if (!topic || !subtopic) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl text-white">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5" style={{ background: 'rgba(16,18,12,.66)', backdropFilter: 'blur(10px)' }} role="dialog" aria-modal="true" aria-labelledby="lesson-title">
+      <article className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-2xl border p-5 sm:p-8 shadow-2xl" style={{ background: 'var(--panel)', borderColor: 'var(--line)', color: 'var(--ink)' }}>
+        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full border" style={{ background: 'var(--bg)', borderColor: 'var(--line)' }} aria-label="Close lesson"><X className="w-4 h-4" /></button>
 
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-2">
-          <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-800/80">
-            {subtopic.code}
-          </span>
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            Topic {topic.number} • {topic.title}
-          </span>
+        <div className="pr-12">
+          <span className="eyebrow">Block 1 · Lesson {subtopic.code}</span>
+          <h2 id="lesson-title" className="mt-2 mb-3" style={{ fontFamily: 'var(--font-newsreader), Georgia, serif', fontSize: 'clamp(32px,5vw,52px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: .98 }}>{subtopic.title}</h2>
+          <p className="text-sm leading-relaxed max-w-2xl" style={{ color: 'var(--muted)' }}>{subtopic.summary}</p>
         </div>
 
-        <h2 className="text-2xl font-bold tracking-tight text-white mb-3">
-          {subtopic.title}
-        </h2>
+        <section className="mt-7 p-5 rounded-xl border" style={{ background: 'var(--sage-tint)', borderColor: 'var(--line)' }}>
+          <div className="flex items-center gap-2 mb-2 text-[10px] font-bold uppercase tracking-[.16em]" style={{ color: 'var(--sage)' }}><Map className="w-4 h-4" /> Start in the real world</div>
+          <p className="text-sm leading-relaxed">{subtopic.realLifeAnchor}</p>
+          <p className="mt-3 text-lg italic" style={{ fontFamily: 'var(--font-newsreader), Georgia, serif', color: 'var(--sage)' }}>{subtopic.anchorQuestion}</p>
+        </section>
 
-        <p className="text-sm text-slate-300 leading-relaxed mb-6 bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-          {subtopic.summary}
-        </p>
+        <div className="grid md:grid-cols-2 gap-5 mt-5">
+          <section className="p-5 rounded-xl border" style={{ background: 'var(--bg)', borderColor: 'var(--line)' }}>
+            <div className="flex items-center gap-2 mb-4 text-[10px] font-bold uppercase tracking-[.16em]" style={{ color: 'var(--sage)' }}><CheckCircle className="w-4 h-4" /> Build it step by step</div>
+            <ol className="space-y-3">
+              {subtopic.learningPath.map((step, index) => <li key={step} className="flex gap-3 text-xs leading-relaxed"><span className="grid place-items-center w-6 h-6 shrink-0 rounded-full text-[10px] font-bold" style={{ background: 'var(--sage-tint)', color: 'var(--sage)' }}>{index + 1}</span><span>{step}</span></li>)}
+            </ol>
+          </section>
 
-        {/* Key Formulas Section */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3">
-            <Calculator className="w-4 h-4" /> High-Yield Formula Book
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {subtopic.formulas.map((formula, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-cyan-900/40 font-mono text-cyan-200 text-sm shadow-inner"
-              >
-                <span>{formula}</span>
-                <span className="text-[10px] text-slate-500 font-sans">IB Data Booklet</span>
-              </div>
-            ))}
-          </div>
+          <section className="p-5 rounded-xl border" style={{ background: 'var(--bg)', borderColor: 'var(--line)' }}>
+            <div className="flex items-center gap-2 mb-3 text-[10px] font-bold uppercase tracking-[.16em]" style={{ color: 'var(--sage)' }}><FlaskConical className="w-4 h-4" /> Interactive visual</div>
+            <h3 className="text-xl mb-2" style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}>{subtopic.interactive.title}</h3>
+            <p className="text-xs leading-relaxed mb-3" style={{ color: 'var(--muted)' }}>{subtopic.interactive.description}</p>
+            <div className="flex flex-wrap gap-1.5 mb-3">{subtopic.interactive.controls.map((control) => <span key={control} className="px-2 py-1 rounded-full text-[10px]" style={{ background: 'var(--chip)' }}>{control}</span>)}</div>
+            <p className="text-xs leading-relaxed flex gap-2"><SlidersHorizontal className="w-4 h-4 shrink-0" style={{ color: 'var(--sage)' }} /><span><strong>Try this:</strong> {subtopic.interactive.observation}</span></p>
+          </section>
         </div>
 
-        {/* Core Concepts */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
-            <CheckCircle className="w-4 h-4" /> Essential Examiner Criteria
-          </div>
-          <div className="space-y-2">
-            {subtopic.keyConcepts.map((concept, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-xs text-slate-300"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-                <span>{concept}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <section className="mt-5">
+          <div className="flex items-center gap-2 mb-3 text-[10px] font-bold uppercase tracking-[.16em]" style={{ color: 'var(--sage)' }}><Calculator className="w-4 h-4" /> Equations, after the intuition</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">{subtopic.formulas.map((formula) => <code key={formula} className="p-3 rounded-lg border text-sm" style={{ background: 'var(--bg)', borderColor: 'var(--line)', color: 'var(--sage)' }}>{formula}</code>)}</div>
+        </section>
 
-        {/* BioNinja Exam Tip callout */}
-        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/30 to-orange-950/20 border border-amber-800/40 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-          <div>
-            <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">PhySense Exam Pitfall</h4>
-            <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
-              Always state coordinate conventions explicitly (e.g., choosing upwards as positive will require acceleration due to gravity to be substituted as -9.81 m/s²). Vector quantities must be reported with both magnitude and appropriate direction in Paper 2 responses.
-            </p>
-          </div>
-        </div>
+        {subtopic.mathSpark && <section className="mt-5 p-5 rounded-xl border" style={{ background: 'var(--chip)', borderColor: 'var(--line)' }}><div className="flex items-center gap-2 mb-2 text-[10px] font-bold uppercase tracking-[.16em]" style={{ color: 'var(--sage)' }}><Lightbulb className="w-4 h-4" /> Math Spark</div><p className="text-sm leading-relaxed">{subtopic.mathSpark}</p></section>}
 
-        {/* Action button */}
-        <div className="mt-6 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-colors"
-          >
-            Done Reviewing
-          </button>
-        </div>
-      </div>
+        <section className="mt-5 p-5 rounded-xl border" style={{ borderColor: 'var(--sage)', background: 'var(--panel)' }}>
+          <div className="flex items-center gap-2 mb-2 text-[10px] font-bold uppercase tracking-[.16em]" style={{ color: 'var(--sage)' }}><AlertTriangle className="w-4 h-4" /> Real-world challenge</div>
+          <h3 className="text-xl mb-1" style={{ fontFamily: 'var(--font-newsreader), Georgia, serif' }}>{subtopic.challenge.title}</h3>
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--muted)' }}>{subtopic.challenge.scenario}</p>
+          <p className="text-sm leading-relaxed mt-3"><strong>Your mission:</strong> {subtopic.challenge.prompt}</p>
+          <details className="mt-3 text-xs"><summary className="cursor-pointer font-bold" style={{ color: 'var(--sage)' }}>Need a hint?</summary><p className="mt-2 pl-3 border-l" style={{ borderColor: 'var(--sage)', color: 'var(--muted)' }}>{subtopic.challenge.hint}</p></details>
+        </section>
+
+        <button onClick={onClose} className="mt-6 px-5 py-2.5 rounded-full text-sm font-bold" style={{ background: 'var(--sage)', color: 'var(--sage-ink)' }}>Back to Block 1</button>
+      </article>
     </div>
   );
 }

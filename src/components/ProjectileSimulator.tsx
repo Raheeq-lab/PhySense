@@ -14,7 +14,6 @@ export default function ProjectileSimulator() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number | null>(null);
 
   // Derived physics values
   const rad = (angle * Math.PI) / 180;
@@ -245,22 +244,22 @@ export default function ProjectileSimulator() {
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl text-white">
+    <div className="rounded-2xl p-6 shadow-lg border" style={{ background: 'var(--panel)', borderColor: 'var(--line)', color: 'var(--ink)' }}>
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5 mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 mb-6 border-b" style={{ borderColor: 'var(--line)' }}>
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 ring-1 ring-cyan-500/30">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg border" style={{ background: 'var(--sage-tint)', color: 'var(--sage)', borderColor: 'var(--line)' }}>
               <Sparkles className="w-4 h-4" />
             </span>
-            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              Interactive Kinematics Simulator
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800/60">
+            <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2" style={{ fontFamily: 'var(--font-newsreader), serif', color: 'var(--ink)', letterSpacing: '-0.015em' }}>
+              Kinematics Simulator
+              <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full border" style={{ background: 'var(--sage-tint)', color: 'var(--sage)', borderColor: 'var(--line)' }}>
                 2D Parabolic Motion
               </span>
             </h2>
           </div>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>
             Real-time vector decomposition &amp; suvat kinematic trajectories with live telemetry.
           </p>
         </div>
@@ -269,34 +268,33 @@ export default function ProjectileSimulator() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowVectors(!showVectors)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 border ${
-              showVectors
-                ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]'
-                : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:text-white'
-            }`}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 border"
+            style={showVectors ? { background: 'var(--sage-tint)', color: 'var(--sage)', borderColor: 'var(--sage)' } : { background: 'var(--bg)', color: 'var(--muted)', borderColor: 'var(--line)' }}
           >
             <Compass className="w-3.5 h-3.5" />
-            {showVectors ? 'Vectors Active (Vx, Vy, V)' : 'Hide Vectors'}
+            {showVectors ? 'Vectors On' : 'Vectors Off'}
           </button>
 
           <button
             onClick={isRunning ? () => setIsRunning(false) : handleFire}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all active:scale-95"
+            className="flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm transition-all active:scale-95"
+            style={{ background: 'var(--sage)', color: 'var(--sage-ink)' }}
           >
             {isRunning ? (
               <>
-                <Pause className="w-4 h-4 fill-slate-950" /> Pause
+                <Pause className="w-4 h-4" /> Pause
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-slate-950" /> {timeElapsed > 0 && timeElapsed < totalFlightTime ? 'Resume' : 'Launch Projectile'}
+                <Play className="w-4 h-4" /> {timeElapsed > 0 && timeElapsed < totalFlightTime ? 'Resume' : 'Launch'}
               </>
             )}
           </button>
 
           <button
             onClick={handleReset}
-            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 transition-colors"
+            className="p-2 rounded-xl border transition-colors"
+            style={{ background: 'var(--bg)', borderColor: 'var(--line)', color: 'var(--muted)' }}
             title="Reset Flight"
           >
             <RotateCcw className="w-4 h-4" />
@@ -305,112 +303,74 @@ export default function ProjectileSimulator() {
       </div>
 
       {/* Canvas Viewport */}
-      <div className="relative w-full rounded-xl overflow-hidden border border-slate-800 bg-[#070b14] shadow-inner mb-6">
+      <div className="relative w-full rounded-xl overflow-hidden border shadow-inner mb-6" style={{ borderColor: 'var(--line)', background: '#0a0f07' }}>
         <canvas
           ref={canvasRef}
           width={840}
           height={380}
-          className="w-full h-[320px] sm:h-[380px] object-cover block"
+          className="w-full h-[300px] sm:h-[360px] object-cover block"
         />
 
         {/* Live overlay badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2 pointer-events-none">
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-cyan-300">
-            t = <span className="font-bold text-white">{currentT.toFixed(2)}s</span> / {totalFlightTime.toFixed(2)}s
-          </div>
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-300">
-            x = <span className="font-bold text-white">{currentX.toFixed(1)}m</span>
-          </div>
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-amber-300">
-            y = <span className="font-bold text-white">{currentY.toFixed(1)}m</span>
-          </div>
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-purple-300">
-            |v| = <span className="font-bold text-white">{currentSpeed.toFixed(1)} m/s</span>
-          </div>
+          {[
+            { label: 't', val: `${currentT.toFixed(2)}s / ${totalFlightTime.toFixed(2)}s` },
+            { label: 'x', val: `${currentX.toFixed(1)}m` },
+            { label: 'y', val: `${currentY.toFixed(1)}m` },
+            { label: '|v|', val: `${currentSpeed.toFixed(1)} m/s` },
+          ].map(({ label, val }) => (
+            <div key={label} className="backdrop-blur-md px-3 py-1 rounded-lg text-xs font-mono border" style={{ background: 'rgba(26,31,21,0.85)', borderColor: 'rgba(169,185,138,0.3)', color: '#a9b98a' }}>
+              {label} = <span style={{ color: '#f2ecdf', fontWeight: 700 }}>{val}</span>
+            </div>
+          ))}
         </div>
 
         {/* Vector legend in corner */}
         {showVectors && (
-          <div className="absolute bottom-4 right-4 bg-slate-950/80 backdrop-blur-md border border-slate-800 p-2.5 rounded-lg text-[11px] font-mono space-y-1 pointer-events-none">
+          <div className="absolute bottom-4 right-4 backdrop-blur-md border p-2.5 rounded-lg text-[11px] font-mono space-y-1 pointer-events-none" style={{ background: 'rgba(20,23,15,0.88)', borderColor: 'rgba(169,185,138,0.25)', color: '#a8a392' }}>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-0.5 bg-[#38bdf8] rounded" /> Resultant Vector |v|
+              <span className="w-2.5 h-0.5 bg-[#a9b98a] rounded" /> Resultant |v|
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-0.5 bg-[#10b981] rounded" /> Vx (Horizontal = {vx0.toFixed(1)} m/s)
+              <span className="w-2.5 h-0.5 bg-[#6ab187] rounded" /> Vx = {vx0.toFixed(1)} m/s
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-0.5 bg-[#f59e0b] rounded" /> Vy (Vertical = {currentVy.toFixed(1)} m/s)
+              <span className="w-2.5 h-0.5 bg-[#d4a96a] rounded" /> Vy = {currentVy.toFixed(1)} m/s
             </div>
           </div>
         )}
       </div>
 
       {/* Live Physics Telemetry & Parameter Sliders */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        {/* Metric 1: Max Range */}
-        <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 hover:border-cyan-500/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-            <span>Theoretical Range (R)</span>
-            <Activity className="w-3.5 h-3.5 text-cyan-400" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
+        {[
+          { label: 'Range (R)', val: `${maxRange.toFixed(1)} m`, sub: 'R = u² sin2θ / g', icon: Activity },
+          { label: 'Peak Height', val: `${maxHeight.toFixed(1)} m`, sub: 'H = u² sin²θ / 2g', icon: Gauge },
+          { label: 'Flight Time', val: `${totalFlightTime.toFixed(2)} s`, sub: 'T = 2u sinθ / g', icon: Zap },
+          { label: 'Launch Vector', val: `${velocity} m/s @ ${angle}°`, sub: `Vx=${vx0.toFixed(1)} Vy₀=${vy0.toFixed(1)}`, icon: Compass },
+        ].map(({ label, val, sub, icon: Icon }) => (
+          <div key={label} className="p-4 rounded-xl border transition-all" style={{ background: 'var(--bg)', borderColor: 'var(--line)' }}>
+            <div className="flex items-center justify-between text-xs font-semibold mb-1" style={{ color: 'var(--muted)' }}>
+              <span>{label}</span>
+              <Icon className="w-3.5 h-3.5" style={{ color: 'var(--sage)' }} />
+            </div>
+            <div className="text-xl font-bold font-mono" style={{ color: 'var(--ink)' }}>
+              {val}
+            </div>
+            <div className="text-[11px] mt-1 font-mono" style={{ color: 'var(--sage)' }}>
+              {sub}
+            </div>
           </div>
-          <div className="text-2xl font-bold font-mono text-cyan-300">
-            {maxRange.toFixed(1)} <span className="text-sm font-normal text-slate-400">meters</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-mono">
-            R = (u² sin 2θ) / g
-          </div>
-        </div>
-
-        {/* Metric 2: Max Height */}
-        <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 hover:border-emerald-500/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-            <span>Peak Height (H_max)</span>
-            <Gauge className="w-3.5 h-3.5 text-emerald-400" />
-          </div>
-          <div className="text-2xl font-bold font-mono text-emerald-300">
-            {maxHeight.toFixed(1)} <span className="text-sm font-normal text-slate-400">meters</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-mono">
-            H = (u² sin²θ) / (2g)
-          </div>
-        </div>
-
-        {/* Metric 3: Total Flight Time */}
-        <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 hover:border-amber-500/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-            <span>Time of Flight (T)</span>
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-          </div>
-          <div className="text-2xl font-bold font-mono text-amber-300">
-            {totalFlightTime.toFixed(2)} <span className="text-sm font-normal text-slate-400">seconds</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-mono">
-            T = (2u sinθ) / g
-          </div>
-        </div>
-
-        {/* Metric 4: Launch Kinetic Energy */}
-        <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 hover:border-purple-500/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-            <span>Initial Velocity Vector</span>
-            <Compass className="w-3.5 h-3.5 text-purple-400" />
-          </div>
-          <div className="text-2xl font-bold font-mono text-purple-300">
-            {velocity} <span className="text-sm font-normal text-slate-400">m/s @ {angle}°</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-mono">
-            Vx = {vx0.toFixed(1)} | Vy₀ = {vy0.toFixed(1)}
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Sliders Control Panel */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 bg-slate-950/40 p-4 rounded-xl border border-slate-800/60">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-4 rounded-xl border" style={{ background: 'var(--bg)', borderColor: 'var(--line)' }}>
         {/* Velocity Slider */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
-            <span className="text-slate-300 font-medium">Initial Velocity (u)</span>
-            <span className="font-mono text-cyan-400 font-bold">{velocity} m/s</span>
+            <span className="font-medium" style={{ color: 'var(--ink)' }}>Initial Velocity (u)</span>
+            <span className="font-mono font-bold" style={{ color: 'var(--sage)' }}>{velocity} m/s</span>
           </div>
           <input
             type="range"
@@ -422,15 +382,16 @@ export default function ProjectileSimulator() {
               setTimeElapsed(0);
               setIsRunning(false);
             }}
-            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+            style={{ accentColor: 'var(--sage)' }}
           />
         </div>
 
         {/* Launch Angle Slider */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
-            <span className="text-slate-300 font-medium">Launch Angle (θ)</span>
-            <span className="font-mono text-cyan-400 font-bold">{angle}°</span>
+            <span className="font-medium" style={{ color: 'var(--ink)' }}>Launch Angle (θ)</span>
+            <span className="font-mono font-bold" style={{ color: 'var(--sage)' }}>{angle}°</span>
           </div>
           <input
             type="range"
@@ -442,15 +403,16 @@ export default function ProjectileSimulator() {
               setTimeElapsed(0);
               setIsRunning(false);
             }}
-            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+            style={{ accentColor: 'var(--sage)' }}
           />
         </div>
 
         {/* Gravity Slider (Earth / Moon / Mars presets) */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
-            <span className="text-slate-300 font-medium">Gravitational Field (g)</span>
-            <span className="font-mono text-cyan-400 font-bold">{gravity} m/s²</span>
+            <span className="font-medium" style={{ color: 'var(--ink)' }}>Gravitational Field (g)</span>
+            <span className="font-mono font-bold" style={{ color: 'var(--sage)' }}>{gravity} m/s²</span>
           </div>
           <input
             type="range"
@@ -463,35 +425,30 @@ export default function ProjectileSimulator() {
               setTimeElapsed(0);
               setIsRunning(false);
             }}
-            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+            style={{ accentColor: 'var(--sage)' }}
           />
-          <div className="flex gap-1.5 text-[10px] text-slate-500 font-mono">
-            <button
-              onClick={() => { setGravity(1.62); setTimeElapsed(0); }}
-              className={`px-1.5 py-0.5 rounded border ${gravity === 1.62 ? 'border-cyan-500 text-cyan-400' : 'border-slate-800 hover:text-slate-300'}`}
-            >
-              Moon (1.6)
-            </button>
-            <button
-              onClick={() => { setGravity(3.72); setTimeElapsed(0); }}
-              className={`px-1.5 py-0.5 rounded border ${gravity === 3.72 ? 'border-cyan-500 text-cyan-400' : 'border-slate-800 hover:text-slate-300'}`}
-            >
-              Mars (3.7)
-            </button>
-            <button
-              onClick={() => { setGravity(9.81); setTimeElapsed(0); }}
-              className={`px-1.5 py-0.5 rounded border ${gravity === 9.81 ? 'border-cyan-500 text-cyan-400' : 'border-slate-800 hover:text-slate-300'}`}
-            >
-              Earth (9.8)
-            </button>
+          <div className="flex gap-1.5 text-[10px] font-mono" style={{ color: 'var(--muted)' }}>
+            {[{ label: 'Moon (1.6)', val: 1.62 }, { label: 'Mars (3.7)', val: 3.72 }, { label: 'Earth (9.8)', val: 9.81 }].map(({ label, val }) => (
+              <button
+                key={label}
+                onClick={() => { setGravity(val); setTimeElapsed(0); }}
+                className="px-1.5 py-0.5 rounded border transition-all"
+                style={gravity === val
+                  ? { borderColor: 'var(--sage)', color: 'var(--sage)' }
+                  : { borderColor: 'var(--line)', color: 'var(--muted)' }}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Initial Elevation Height */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
-            <span className="text-slate-300 font-medium">Launch Elevation (h₀)</span>
-            <span className="font-mono text-cyan-400 font-bold">{initialHeight} m</span>
+            <span className="font-medium" style={{ color: 'var(--ink)' }}>Launch Elevation (h₀)</span>
+            <span className="font-mono font-bold" style={{ color: 'var(--sage)' }}>{initialHeight} m</span>
           </div>
           <input
             type="range"
@@ -503,7 +460,8 @@ export default function ProjectileSimulator() {
               setTimeElapsed(0);
               setIsRunning(false);
             }}
-            className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+            style={{ accentColor: 'var(--sage)' }}
           />
         </div>
       </div>

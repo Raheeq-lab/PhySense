@@ -160,7 +160,9 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
     <aside className={styles.sidebar}>
       <div className={styles.brand}>PhySense<small>A field guide to physical law.</small></div>
       <nav>{nav.map(([icon,label,sub,href])=>{const active=home?label==='Home':label==='Block 1';return <Link key={label} href={href} className={active?styles.current:''} aria-current={active?'page':undefined}><Icon name={icon}/><span>{label}{sub&&<small>{sub}</small>}</span></Link>})}</nav>
-      <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/block-1/1-1">Continue lesson <Icon name="arrow-right"/></Link></div>
+      {home
+        ? <Link className={`${styles.featured} ${styles.startHere}`} href="/block-1/1-1" aria-label="Start with Lesson 1.1"><span>New here?</span><h2>Start with Lesson 1.1</h2><p>Kinematics — motion in 1D and 2D.</p><span className={styles.startHereLink}>Begin →</span></Link>
+        : <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/block-1/1-1">Continue lesson <Icon name="arrow-right"/></Link></div>}
     </aside>
     <section ref={mainRef} className={styles.main}>
       <canvas id="gl" ref={canvasRef} className={styles.canvas}/>

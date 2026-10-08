@@ -20,7 +20,7 @@ export default function Navbar({ onOpenFormulas, supabaseConnected = true }: Nav
           <div>
             <div className="flex items-center gap-2">
               <span className="text-lg font-extrabold tracking-tight text-white">
-                BioNinja <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Physics</span>
+                Physics<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">Ninja</span>
               </span>
               <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/80">
                 v1.0

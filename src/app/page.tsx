@@ -48,7 +48,7 @@ export default function Home() {
             {/* Pill Header */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/70 border border-cyan-800/80 text-cyan-300 text-xs font-semibold mb-6 shadow-sm">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>BioNinja Physics • Interactive Learning Environment</span>
+              <span>PhysicsNinja • Interactive Learning Environment</span>
             </div>
 
             {/* Title */}
@@ -62,8 +62,7 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed mb-8">
-              A high-yield, syllabus-aligned reference inspired by the clarity of BioNinja.
-              Navigate complete curriculum trees, inspect high-impact formulas, and experiment directly with real-time dynamic simulation laboratories.
+              A high-yield, syllabus-aligned physics platform. Navigate complete curriculum trees, inspect high-impact formulas, and experiment directly with real-time dynamic simulation laboratories.
             </p>
 
             {/* Quick stats pills */}
@@ -170,8 +169,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Atom className="w-4 h-4 text-cyan-400" />
-            <span className="font-semibold text-slate-300">bioninja-physics</span>
-            <span>• Inspired by the BioNinja learning philosophy</span>
+            <span className="font-semibold text-slate-300">PhysicsNinja</span>
+            <span>• Master Physics with Precision</span>
           </div>
 
           <div className="flex items-center gap-6">

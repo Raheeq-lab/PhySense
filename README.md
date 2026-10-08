@@ -1,6 +1,6 @@
-# BioNinja Physics
+# PhysicsNinja
 
-An interactive, high-yield physics learning environment inspired by the structure and clarity of BioNinja.
+An interactive, high-yield physics learning platform with structured curriculum trees, real-time visual laboratories, and formula references.
 
 ## Features
 

@@ -78,7 +78,7 @@ export default function SyllabusTree({ onSelectSubTopic, selectedSubTopicId }: S
             <h2 className="text-xl font-bold text-white tracking-tight">Structured Physics Syllabus</h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            BioNinja-style hierarchical taxonomy • Standard &amp; Higher Level curriculum
+            Hierarchical syllabus taxonomy • Standard &amp; Higher Level curriculum
           </p>
         </div>
 

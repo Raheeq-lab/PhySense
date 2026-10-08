@@ -82,7 +82,7 @@ export default function TopicDetailModal({ topic, subtopic, onClose }: TopicDeta
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/30 to-orange-950/20 border border-amber-800/40 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">PhysicsNinja Exam Pitfall</h4>
+            <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">PhySense Exam Pitfall</h4>
             <p className="text-xs text-amber-200/90 mt-1 leading-relaxed">
               Always state coordinate conventions explicitly (e.g., choosing upwards as positive will require acceleration due to gravity to be substituted as -9.81 m/s²). Vector quantities must be reported with both magnitude and appropriate direction in Paper 2 responses.
             </p>

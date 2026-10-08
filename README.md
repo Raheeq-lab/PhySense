@@ -1,4 +1,4 @@
-# PhysicsNinja
+# PhySense
 
 An interactive, high-yield physics learning platform with structured curriculum trees, real-time visual laboratories, and formula references.
 

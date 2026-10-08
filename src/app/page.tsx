@@ -48,7 +48,7 @@ export default function Home() {
             {/* Pill Header */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/70 border border-cyan-800/80 text-cyan-300 text-xs font-semibold mb-6 shadow-sm">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>PhysicsNinja • Interactive Learning Environment</span>
+              <span>PhySense • Interactive Physics Intelligence</span>
             </div>
 
             {/* Title */}
@@ -169,8 +169,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Atom className="w-4 h-4 text-cyan-400" />
-            <span className="font-semibold text-slate-300">PhysicsNinja</span>
-            <span>• Master Physics with Precision</span>
+            <span className="font-semibold text-slate-300">PhySense</span>
+            <span>• Master Physics through Visual Intuition</span>
           </div>
 
           <div className="flex items-center gap-6">

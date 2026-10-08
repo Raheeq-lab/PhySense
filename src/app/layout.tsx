@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'PhysicsNinja | Structured Syllabus & Interactive Visual Laboratory',
+  title: 'PhySense | Structured Syllabus & Interactive Visual Laboratory',
   description:
-    'A high-yield interactive physics platform. Explore hierarchical syllabus trees, formula reference guides, and live kinematic simulation laboratories.',
+    'PhySense — A high-yield interactive physics platform. Explore hierarchical syllabus trees, formula reference guides, and live kinematic simulation laboratories.',
 };
 
 export default function RootLayout({

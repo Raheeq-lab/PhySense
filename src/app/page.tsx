@@ -1,4 +1,4 @@
-import { PhysicsHub } from './block-1/page';
+import { PhysicsHub } from './physics-hub';
 
 export default function HomePage() {
   return <PhysicsHub home />;

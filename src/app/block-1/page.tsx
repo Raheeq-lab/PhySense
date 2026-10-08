@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
 
-type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
+type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
 
 function Icon({ name, className }: { name: IconName; className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" aria-hidden="true"><use href={`#icon-${name}`} /></svg>;
@@ -18,6 +18,7 @@ function IconLibrary() {
     <symbol id="icon-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><circle cx="18.5" cy="7.5" r="1.5"/></symbol>
     <symbol id="icon-wave" viewBox="0 0 24 24"><path d="M2 12c3-8 5 8 8 0s5 8 8 0 4 0 4 0"/></symbol>
     <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7z"/></symbol>
+    <symbol id="icon-magnet" viewBox="0 0 24 24"><path d="M5 4v9a7 7 0 0 0 14 0V4h-5v9a2 2 0 0 1-4 0V4zM5 8h5m4 0h5"/></symbol>
     <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
     <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
     <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
@@ -40,13 +41,14 @@ const nav = [
   ['bookmark','Reference','Equations & constants'],
 ] as const;
 
-const lessons = [
-  ['1.1','Kinematics','Motion in 1D & 2D'], ['1.2','Forces','Why motion changes'], ['1.3','Circular','Turning without slowing'],
-  ['1.4','Energy','The currency of the universe'], ['1.5','Momentum','Collisions and recoil'], ['1.6','Math Spark','The calculus underneath'],
+const lessons: [string,string,string,IconName][] = [
+  ['1.1','Kinematics','Motion in 1D & 2D','arrow-right'], ['1.2','Forces','Why motion changes','magnet'], ['1.3','Circular','Turning without slowing','orbit'],
+  ['1.4','Energy','The currency of the universe','bolt'], ['1.5','Momentum','Collisions and recoil','atom'], ['1.6','Math Spark','The calculus underneath','function'],
 ];
 
 export default function BlockOneHub() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const actions = useRef({ zoomIn:()=>{}, zoomOut:()=>{}, turn:(_n:number)=>{}, reset:()=>{} });
@@ -55,8 +57,8 @@ export default function BlockOneHub() {
   const switchTab=(next:number)=>{ if(next===tab) return; setLoading(true); setTab(next); window.setTimeout(()=>setLoading(false),500); };
 
   useEffect(()=>{
-    const canvas=canvasRef.current, hero=heroRef.current, stage=stageRef.current;
-    if(!canvas||!hero||!stage) return;
+    const canvas=canvasRef.current, hero=heroRef.current, main=mainRef.current, stage=stageRef.current;
+    if(!canvas||!hero||!main||!stage) return;
     let disposed=false;
     let cleanup=()=>{};
     import('three').then(async THREE=>{
@@ -80,17 +82,20 @@ export default function BlockOneHub() {
       spin.rotation.set(.12,.75,0);
       const accent=new THREE.Color(getComputedStyle(hero).getPropertyValue('--accent').trim()||'#3a5bdb');
       const ball=new THREE.Mesh(new THREE.SphereGeometry(1,64,64),new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:.48,roughness:.35,metalness:.05})); spin.add(ball);
-      const pts=new Float32Array(1500);
-      for(let i=0;i<500;i++){const a=i*2.39996,r=1.08+(i%19)/115, y=((i%43)/42-.5)*1.9;pts[i*3]=Math.cos(a)*Math.sqrt(Math.max(0,r*r-y*y*.45));pts[i*3+1]=y;pts[i*3+2]=Math.sin(a)*Math.sqrt(Math.max(0,r*r-y*y*.45));}
+      const pts=new Float32Array(780);
+      for(let i=0;i<260;i++){const a=i*2.39996,r=1.08+(i%19)/115, y=((i%43)/42-.5)*1.9;pts[i*3]=Math.cos(a)*Math.sqrt(Math.max(0,r*r-y*y*.45));pts[i*3+1]=y;pts[i*3+2]=Math.sin(a)*Math.sqrt(Math.max(0,r*r-y*y*.45));}
       const haloGeo=new THREE.BufferGeometry(); haloGeo.setAttribute('position',new THREE.BufferAttribute(pts,3));
-      const halo=new THREE.Points(haloGeo,new THREE.PointsMaterial({color:accent,size:.025,transparent:true,opacity:.42,blending:THREE.AdditiveBlending,depthWrite:false})); spin.add(halo);
-      const curve=new THREE.CatmullRomCurve3(Array.from({length:48},(_,i)=>{const a=i/47*Math.PI*1.7;return new THREE.Vector3(Math.cos(a)*2.15,Math.sin(a*.65)*.35,Math.sin(a)*2.15)}));
-      const trail=new THREE.Mesh(new THREE.TubeGeometry(curve,80,.018,8,false),new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:.18})); spin.add(trail);
+      const halo=new THREE.Points(haloGeo,new THREE.PointsMaterial({color:accent,size:.015,transparent:true,opacity:.42,blending:THREE.AdditiveBlending,depthWrite:false})); spin.add(halo);
+      const orbitGroup=new THREE.Group(); orbitGroup.rotation.set(.72,.18,.3); spin.add(orbitGroup);
+      const orbitPositions=new Float32Array(96*3);
+      for(let i=0;i<96;i++){const a=i/96*Math.PI*2;orbitPositions[i*3]=Math.cos(a)*1.6;orbitPositions[i*3+1]=Math.sin(a)*1.6;orbitPositions[i*3+2]=0;}
+      const orbitGeo=new THREE.BufferGeometry(); orbitGeo.setAttribute('position',new THREE.BufferAttribute(orbitPositions,3));
+      const orbit=new THREE.Points(orbitGeo,new THREE.PointsMaterial({color:accent,size:.035,transparent:true,opacity:.68,depthWrite:false})); orbitGroup.add(orbit);
       let W=1,H=1,cx=1,cy=1,px=200,tcx=1,tcy=1,tpx=200,zoom=1,targetZoom=1,queue=0,last=performance.now(),lastInteraction=performance.now(),drag=false,pointerId=-1,lastX=0,lastY=0,vx=0,vy=0,resetting=false;
       const home=new THREE.Quaternion().setFromEuler(new THREE.Euler(.12,.75,0));
       const mark=()=>{lastInteraction=performance.now();setHint(false)};
-      const measure=()=>{const hr=hero.getBoundingClientRect(),sr=stage.getBoundingClientRect();W=Math.max(1,hr.width);H=Math.max(1,hr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-hr.left+sr.width*.5;tcy=focus?H*.5:sr.top-hr.top+sr.height*.44;tpx=Math.min((focus?W:sr.width)*.5,(focus?H:sr.height)*.6)*1.16;};
-      const ro=new ResizeObserver(measure);ro.observe(hero);ro.observe(stage);measure();cx=tcx;cy=tcy;px=tpx;
+      const measure=()=>{const mr=main.getBoundingClientRect(),sr=stage.getBoundingClientRect();W=Math.max(1,mr.width);H=Math.max(1,mr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-mr.left+sr.width*.5;tcy=focus?H*.5:sr.top-mr.top+sr.height*.44;tpx=(focus?H:sr.height)*.09;};
+      const ro=new ResizeObserver(measure);ro.observe(main);ro.observe(stage);measure();cx=tcx;cy=tcy;px=tpx;
       const down=(e:PointerEvent)=>{drag=true;pointerId=e.pointerId;lastX=e.clientX;lastY=e.clientY;stage.setPointerCapture(e.pointerId);stage.classList.add(styles.grabbing);mark()};
       const move=(e:PointerEvent)=>{if(!drag||e.pointerId!==pointerId)return;const dx=e.clientX-lastX,dy=e.clientY-lastY,k=Math.PI/Math.max(260,px*1.6);lastX=e.clientX;lastY=e.clientY;vx=dx*k;vy=dy*k;const qy=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),vx),qx=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),vy);spin.quaternion.premultiply(qy).premultiply(qx)};
       const up=(e:PointerEvent)=>{if(e.pointerId===pointerId){drag=false;stage.classList.remove(styles.grabbing)}};
@@ -99,8 +104,8 @@ export default function BlockOneHub() {
       stage.addEventListener('pointerdown',down);stage.addEventListener('pointermove',move);stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);stage.addEventListener('wheel',wheel,{passive:false});stage.addEventListener('keydown',keydown);
       actions.current={zoomIn:()=>{targetZoom=Math.min(3.4,targetZoom*1.35);setZoomState(targetZoom);mark()},zoomOut:()=>{targetZoom=Math.max(.55,targetZoom/1.35);setZoomState(targetZoom);mark()},turn:(n)=>{queue+=n;mark()},reset:()=>{resetting=true;targetZoom=1;setZoomState(1);mark()}};
       let frame=0;
-      const render=(now:number)=>{const dt=Math.min(.05,(now-last)/1000);last=now;const e7=1-Math.exp(-dt*7);cx+=(tcx-cx)*e7;cy+=(tcy-cy)*e7;px+=(tpx-px)*e7;zoom+=(targetZoom-zoom)*(1-Math.exp(-dt*6));camera.position.z=H/(2*Math.tan(THREE.MathUtils.degToRad(13))*Math.max(1,px)*zoom);camera.setViewOffset(W,H,W/2-cx,H/2-cy,W,H);camera.lookAt(0,0,0);if(Math.abs(queue)>.001){const step=queue*(1-Math.exp(-dt*4.2));queue-=step;spin.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),step))}if(!drag){vx*=Math.exp(-dt*4.5);vy*=Math.exp(-dt*4.5);spin.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),vx)).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),vy))}if(resetting){spin.quaternion.slerp(home,1-Math.exp(-dt*6));if(spin.quaternion.angleTo(home)<.002)resetting=false}if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const idle=Math.min(1,Math.max(0,(now-lastInteraction-1800)/1500));pivot.rotation.y=Math.sin(now*.00055)*.16*idle;pivot.rotation.x=Math.sin(now*.0009)*.03*idle;pivot.position.y=Math.sin(now*.0013)*.028*idle}const duskNow=hero.dataset.light==='dusk';scene.environmentIntensity+=( (duskNow?.28:.95)-scene.environmentIntensity)*(1-Math.exp(-dt*4));key.intensity+=((duskNow?2.6:1.6)-key.intensity)*(1-Math.exp(-dt*4));rim.intensity+=((duskNow?1.9:.5)-rim.intensity)*(1-Math.exp(-dt*4));renderer.render(scene,camera);frame=requestAnimationFrame(render)};frame=requestAnimationFrame(render);
-      cleanup=()=>{cancelAnimationFrame(frame);ro.disconnect();stage.removeEventListener('pointerdown',down);stage.removeEventListener('pointermove',move);stage.removeEventListener('pointerup',up);stage.removeEventListener('pointercancel',up);stage.removeEventListener('wheel',wheel);stage.removeEventListener('keydown',keydown);ball.geometry.dispose();ball.material.dispose();haloGeo.dispose();halo.material.dispose();trail.geometry.dispose();trail.material.dispose();environment.dispose();pmrem.dispose();renderer.dispose()};
+      const render=(now:number)=>{const dt=Math.min(.05,(now-last)/1000);last=now;const e7=1-Math.exp(-dt*7);cx+=(tcx-cx)*e7;cy+=(tcy-cy)*e7;px+=(tpx-px)*e7;zoom+=(targetZoom-zoom)*(1-Math.exp(-dt*6));camera.position.z=H/(2*Math.tan(THREE.MathUtils.degToRad(13))*Math.max(1,px)*zoom);camera.setViewOffset(W,H,W/2-cx,H/2-cy,W,H);camera.lookAt(0,0,0);orbitGroup.rotation.z+=dt*.18;if(Math.abs(queue)>.001){const step=queue*(1-Math.exp(-dt*4.2));queue-=step;spin.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),step))}if(!drag){vx*=Math.exp(-dt*4.5);vy*=Math.exp(-dt*4.5);spin.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),vx)).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),vy))}if(resetting){spin.quaternion.slerp(home,1-Math.exp(-dt*6));if(spin.quaternion.angleTo(home)<.002)resetting=false}if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const idle=Math.min(1,Math.max(0,(now-lastInteraction-1800)/1500));pivot.rotation.y=Math.sin(now*.00055)*.16*idle;pivot.rotation.x=Math.sin(now*.0009)*.03*idle;pivot.position.y=Math.sin(now*.0013)*.028*idle}const duskNow=hero.dataset.light==='dusk';scene.environmentIntensity+=( (duskNow?.28:.95)-scene.environmentIntensity)*(1-Math.exp(-dt*4));key.intensity+=((duskNow?2.6:1.6)-key.intensity)*(1-Math.exp(-dt*4));rim.intensity+=((duskNow?1.9:.5)-rim.intensity)*(1-Math.exp(-dt*4));renderer.render(scene,camera);frame=requestAnimationFrame(render)};frame=requestAnimationFrame(render);
+      cleanup=()=>{cancelAnimationFrame(frame);ro.disconnect();stage.removeEventListener('pointerdown',down);stage.removeEventListener('pointermove',move);stage.removeEventListener('pointerup',up);stage.removeEventListener('pointercancel',up);stage.removeEventListener('wheel',wheel);stage.removeEventListener('keydown',keydown);ball.geometry.dispose();ball.material.dispose();haloGeo.dispose();halo.material.dispose();orbitGeo.dispose();orbit.material.dispose();environment.dispose();pmrem.dispose();renderer.dispose()};
     });
     return()=>{disposed=true;cleanup()};
   },[focus]);
@@ -108,17 +113,18 @@ export default function BlockOneHub() {
   useEffect(()=>{document.body.style.background=dusk?'#0f1116':'#f4f2ec';return()=>{document.body.style.background=''}},[dusk]);
 
   return <div ref={heroRef} className={`${styles.hero} ${focus?styles.focus:''}`} data-light={dusk?'dusk':'day'}>
-    <IconLibrary/><canvas id="gl" ref={canvasRef} className={styles.canvas}/>
+    <IconLibrary/>
     <aside className={styles.sidebar}>
       <div className={styles.brand}>PhySense<small>A field guide to physical law.</small></div>
       <nav>{nav.map(([icon,label,sub])=><button key={label} className={label==='Block 1'?styles.current:''} aria-current={label==='Block 1'?'page':undefined}><Icon name={icon}/><span>{label}{sub&&<small>{sub}</small>}</span></button>)}</nav>
       <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/">Continue lesson <Icon name="arrow-right"/></Link></div>
     </aside>
-    <section className={styles.main}>
+    <section ref={mainRef} className={styles.main}>
+      <canvas id="gl" ref={canvasRef} className={styles.canvas}/>
       <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search"><Icon name="search"/></button><button aria-label="Notifications"><Icon name="bell"/></button><button className={styles.account} aria-label="Account"><Icon name="user"/></button></div></div>
       <div className={styles.tabs} role="tablist" aria-label="Learning blocks">
         <button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button>
-        <button role="tab" aria-selected={tab===1} onClick={()=>switchTab(1)}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button>
+        <button role="tab" aria-selected={tab===1} disabled><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button>
       </div>
       <div ref={stageRef} className={styles.stage} tabIndex={0} onDoubleClick={()=>actions.current.reset()} aria-label="Interactive charged particle. Drag to rotate, scroll or pinch to zoom, and double-click to reset.">
         <div className={`${styles.shadow} ${loading?styles.hidden:''}`}/><div className={`${styles.loader} ${loading?styles.visible:''}`}><i/>Preparing the lesson…</div>
@@ -139,7 +145,7 @@ export default function BlockOneHub() {
         <span className={styles.eyebrow}>Block 1 · Foundation</span><h1>The Intuition &amp; Calculus Spark</h1>
         <div className={styles.tags}><span>Mechanics</span><span>Calculus</span><span>6 lessons</span></div>
         <p>Build physical reality with your hands — motion, forces, spin, energy, collisions — then learn the calculus that describes all of it. Six lessons, no prerequisites beyond middle-school math.</p>
-        <h2 id="lesson-map">What you&apos;ll learn</h2><div className={styles.lessons}>{lessons.map(([n,name,text])=><div key={n}><b>{n}</b><span>{name}</span><small>{text}</small></div>)}</div>
+        <h2 id="lesson-map">What you&apos;ll learn</h2><div className={styles.lessons}>{lessons.map(([n,name,text,icon])=><div key={n}><Icon name={icon}/><b>{n}</b><span>{name}</span><small>{text}</small></div>)}</div>
         <h2>Starting point</h2><div className={styles.starting}><Icon name="arrow-right"/><span>Begin at Lesson 1.1 — Kinematics</span></div>
         <Link className={styles.startButton} href="/"><svg viewBox="0 0 76 58" aria-hidden="true"><path d="M7 48c12-2 18-19 29-25s19-5 33-14"/><path d="M31 42 61 12"/><circle cx="43" cy="29" r="3"/></svg><span><b>Start Block 1</b><small>Six lessons. Take them in order.</small></span><Icon name="chevron-right"/></Link>
       </article>

@@ -1,0 +1,61 @@
+.page {
+  min-height: 100vh;
+  background: #fafaf7;
+  color: #1a1a1a;
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+.container {
+  width: min(100% - 2rem, 760px);
+  margin-inline: auto;
+  padding: 3.5rem 0 2.5rem;
+}
+
+.hero { padding: 2rem 0 3.25rem; border-bottom: 1px solid #e5e7eb; }
+.eyebrow { margin: 0 0 .75rem; color: #2563eb; font-size: .875rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.hero h1 { max-width: 680px; margin: 0; font-family: var(--font-newsreader), Georgia, serif; font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 500; line-height: .98; letter-spacing: -.045em; }
+.subtitle { max-width: 650px; margin: 1.5rem 0 0; color: #4b5563; font-size: clamp(1.25rem, 4vw, 1.5rem); line-height: 1.55; }
+.why { margin: 1.75rem 0 0; color: #6b7280; font-size: 1rem; font-style: italic; line-height: 1.6; }
+
+.intro, .progressSection, .lessonSection { padding: 3rem 0; border-bottom: 1px solid #e5e7eb; }
+.intro > p:not(.note):not(.why) { max-width: 700px; margin: 0 0 1.25rem; }
+.intro strong { font-weight: 700; }
+.note { margin: 2rem 0 0; padding-left: 1rem; border-left: 3px solid #f59e0b; color: #6b7280; font-size: 1rem; line-height: 1.65; }
+
+.progressLabel { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.progressLabel h2 { margin: 0; font-size: 1.125rem; line-height: 1.4; }
+.progressLabel span { color: #6b7280; font-size: 1rem; white-space: nowrap; }
+.progressTrack { height: .75rem; overflow: hidden; border: 1px solid #d1d5db; border-radius: 999px; background: #fff; }
+.progressTrack span { display: block; height: 100%; border-radius: inherit; background: #2563eb; transition: width .35s ease; }
+
+.sectionHeading { margin-bottom: 1.75rem; }
+.sectionHeading h2 { max-width: 600px; margin: 0; font-family: var(--font-newsreader), Georgia, serif; font-size: clamp(2rem, 7vw, 3rem); font-weight: 500; line-height: 1.12; letter-spacing: -.025em; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.card { display: flex; flex-direction: column; min-height: 315px; padding: 1.5rem; border: 1px solid #dfe2e6; border-radius: .75rem; background: #fff; }
+.icon { width: 3rem; height: 3rem; margin-bottom: 1.25rem; color: #2563eb; }
+.icon svg { display: block; width: 100%; height: 100%; }
+.tag { width: fit-content; margin-bottom: .6rem; padding: .18rem .55rem; border-radius: 999px; background: #eff6ff; color: #2563eb; font-size: .8rem; font-weight: 700; letter-spacing: .04em; }
+.card h3 { margin: 0 0 .45rem; font-family: var(--font-newsreader), Georgia, serif; font-size: 1.65rem; font-weight: 500; line-height: 1.2; }
+.card p { margin: 0 0 1.5rem; color: #4b5563; font-size: 1rem; line-height: 1.6; }
+.card a { width: fit-content; margin-top: auto; padding: .75rem 1rem; border-radius: .5rem; background: #2563eb; color: #fff; font-size: 1rem; font-weight: 700; line-height: 1.2; text-decoration: none; transition: background .18s ease, transform .18s ease; }
+.card a:hover { background: #1d4ed8; transform: translateY(-1px); }
+.card a:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+.footer { padding: 2.75rem 0 .5rem; text-align: center; }
+.footer p { max-width: 620px; margin: 0 auto; color: #6b7280; font-size: 1rem; line-height: 1.65; }
+
+@media (min-width: 680px) {
+  .container { padding-top: 5rem; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .container { width: min(100% - 1.5rem, 760px); }
+  .progressLabel { align-items: flex-start; flex-direction: column; gap: .35rem; }
+  .card { min-height: 290px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressTrack span, .card a { transition: none; }
+}

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D } from 'three';
 import styles from './block-1/page.module.css';
 
@@ -102,7 +103,7 @@ function TourOverlay({onClose,onFinish}:{onClose:()=>void;onFinish:()=>void}){
   </div>;
 }
 
-export function PhysicsHub({ home = false }: { home?: boolean }) {
+export function PhysicsHub({ home = false, children }: { home?: boolean; children?: ReactNode }) {
   const router = useRouter();
   const heroRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLElement>(null);
@@ -169,7 +170,7 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
       let W=1,H=1,cx=1,cy=1,px=200,tcx=1,tcy=1,tpx=200,zoom=defaultZoom,targetZoom=defaultZoom,queue=0,last=performance.now(),lastInteraction=performance.now(),drag=false,pointerId=-1,lastX=0,lastY=0,downX=0,downY=0,vx=0,vy=0,resetting=false,moved=false,hovered=false,hasDragged=false;
       const homeOrientation=new THREE.Quaternion().setFromEuler(new THREE.Euler(home ? .15 : .12,home ? .55 : .75,0,home?'YXZ':'XYZ'));
       const mark=()=>{lastInteraction=performance.now();setHint(false)};
-      const measure=()=>{const mr=main.getBoundingClientRect(),sr=stageLayout.getBoundingClientRect();W=Math.max(1,mr.width);H=Math.max(1,mr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-mr.left+sr.width*.5;tcy=focus?H*.5:sr.top-mr.top+sr.height*.5;const stageMin=focus?Math.min(W,H):Math.min(sr.width,sr.height);tpx=home?stageMin*.38/(2*.85*defaultZoom):(focus?H:sr.height)*.09;};
+      const measure=()=>{const mr=main.getBoundingClientRect(),sr=stageLayout.getBoundingClientRect();W=Math.max(1,mr.width);H=Math.max(1,mr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-mr.left+sr.width*.5;tcy=focus?H*.5:sr.top-mr.top+sr.height*.5;const stageMin=focus?Math.min(W,H):Math.min(sr.width,sr.height);tpx=home?stageMin*.34/(2*.85*defaultZoom):(focus?H:sr.height)*.09;};
       const ro=new ResizeObserver(measure);ro.observe(main);ro.observe(stageLayout);measure();cx=tcx;cy=tcy;px=tpx;
       const updateHover=(e:PointerEvent)=>{const mr=main.getBoundingClientRect(),dx=e.clientX-mr.left-cx,dy=e.clientY-mr.top-cy;hovered=home&&Math.hypot(dx,dy)<px*1.1*zoom;stage.classList.toggle(styles.atomHover,hovered)};
       const down=(e:PointerEvent)=>{drag=true;moved=false;pointerId=e.pointerId;lastX=downX=e.clientX;lastY=downY=e.clientY;stage.setPointerCapture(e.pointerId);stage.classList.add(styles.grabbing);if(labelLayer){window.clearTimeout(labelTimer);labelLayer.style.opacity='0'}mark()};
@@ -204,6 +205,7 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
         ? <Link className={`${styles.featured} ${styles.startHere}`} href="/block-1/1-1" aria-label="Start with Lesson 1.1"><span>New here?</span><h2>Start with Lesson 1.1</h2><p>Kinematics — motion in 1D and 2D.</p><span className={styles.startHereLink}>Begin →</span></Link>
         : <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/block-1/1-1">Continue lesson <Icon name="arrow-right"/></Link></div>}
     </aside>
+    <div className={styles.centerColumn}>
     <section ref={mainRef} className={styles.main}>
       <canvas id="gl" ref={canvasRef} className={styles.canvas}/>
       {home&&<div className={styles.atomLabels} role="note" aria-hidden="false">
@@ -235,6 +237,8 @@ export function PhysicsHub({ home = false }: { home?: boolean }) {
       </div>
       {toast&&<div className={styles.toast} role="status">{toast}</div>}
     </section>
+    {home&&children&&<div className={styles.homeAfter}>{children}</div>}
+    </div>
     <section className={styles.info}>
       <div className={styles.tools}><label><Icon name="search"/><input aria-label="Search" placeholder="Search topics, laws, or equations…"/></label><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div>
       <article className={styles.detail} aria-live="polite">{home?<HomeDetail/>:<BlockDetail/>}</article>

@@ -1,7 +1,10 @@
+ 'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
 import styles from './hub.module.css';
 
-type IconName = 'home' | 'atom' | 'wave' | 'orbit' | 'bolt' | 'function' | 'bookmark' | 'arrow-up' | 'chevron-right' | 'arrow-right';
+type IconName = 'home' | 'atom' | 'wave' | 'orbit' | 'bolt' | 'function' | 'bookmark' | 'arrow-up' | 'chevron-right' | 'arrow-right' | 'sun' | 'moon';
 
 function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -15,6 +18,8 @@ function Icon({ name }: { name: IconName }) {
     'arrow-up': <path d="M12 20V4m-6 6 6-6 6 6"/>,
     'chevron-right': <path d="m9 5 7 7-7 7"/>,
     'arrow-right': <path d="M4 12h16m-6-6 6 6-6 6"/>,
+    sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/></>,
+    moon: <path d="M20 16a9 9 0 0 1-12-12 9 9 0 1 0 12 12"/>,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }
@@ -35,8 +40,8 @@ const lessons = [
 function PageNav() {
   return <>
     <span className={styles.sideEyebrow}>On this page</span>
-    <nav className={styles.pageNav} aria-label="Block 1 lessons">
-      <Link className={styles.active} href="#top"><Icon name="arrow-up"/><span>Block 1 overview</span></Link>
+    <nav className={styles.pageNav} aria-label="On this page">
+      <Link className={styles.active} aria-current="true" href="#top" onClick={(event)=>{event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}}><Icon name="arrow-up"/><span>Top of page</span></Link>
       {lessons.map(([number, title, , slug]) => <Link key={number} href={`/block-1/${slug}`}><span className={styles.navNumber}>{number}</span><span>{title}</span></Link>)}
     </nav>
     <div className={styles.divider}/>
@@ -45,10 +50,17 @@ function PageNav() {
 }
 
 export default function BlockOneHub() {
-  return <div className={styles.page} id="top">
+  const [dusk,setDusk]=useState(false);
+  return <div className={`${styles.page} ${dusk?styles.dusk:''}`} id="top">
     <aside className={styles.primarySidebar}>
       <Link href="/" className={styles.brand}>PhySense<small>A field guide to physical law.</small></Link>
-      <nav aria-label="Primary navigation">{primaryNav.map(([icon, label, sub, href]) => <Link key={label} href={href} className={label === 'Block 1' ? styles.current : ''} aria-current={label === 'Block 1' ? 'page' : undefined}><Icon name={icon}/><span>{label}{sub && <small>{sub}</small>}</span></Link>)}</nav>
+      <span className={styles.courseLabel}>Course content</span>
+      <nav aria-label="Course navigation">{primaryNav.map(([icon, label, sub, href]) => <Link key={label} href={href} className={label === 'Block 1' ? styles.current : ''} aria-current={label === 'Block 1' ? 'page' : undefined}><Icon name={icon}/><span>{label}{sub && <small>{sub}</small>}</span></Link>)}</nav>
+      <footer className={styles.sidebarFooter}>
+        <button type="button" aria-label={dusk?'Switch to light appearance':'Switch to dusk appearance'} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/><span>Appearance</span></button>
+        <Link href="/">About PhySense</Link>
+        <small>v0.1 · Block 1</small>
+      </footer>
     </aside>
 
     <div className={styles.shell}>

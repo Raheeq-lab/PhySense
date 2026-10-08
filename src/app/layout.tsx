@@ -1,21 +1,32 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Newsreader, Nunito_Sans, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const newsreader = Newsreader({
+  variable: '--font-newsreader',
   subsets: ['latin'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+});
+
+const nunitoSans = Nunito_Sans({
+  variable: '--font-nunito-sans',
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  display: 'swap',
 });
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'PhySense | Structured Syllabus & Interactive Visual Laboratory',
+  title: 'PhySense | The Intuition & Calculus Spark',
   description:
-    'PhySense — A high-yield interactive physics platform. Explore hierarchical syllabus trees, formula reference guides, and live kinematic simulation laboratories.',
+    'An interactive mechanics lab connecting everyday motion, visual experiments, and calculus-based physics.',
 };
 
 export default function RootLayout({
@@ -26,9 +37,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${newsreader.variable} ${nunitoSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#070b14] text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950">
+      <body
+        className="min-h-full flex flex-col"
+        style={{
+          fontFamily: 'var(--font-nunito-sans), "Segoe UI", system-ui, sans-serif',
+        }}
+      >
         {children}
       </body>
     </html>

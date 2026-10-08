@@ -1,5 +1,1 @@
-import MechanicsStudio from '@/components/MechanicsStudio';
-
-export default function HomePage() {
-  return <MechanicsStudio />;
-}
+export { default } from './block-1/page';

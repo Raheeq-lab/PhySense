@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
 
-type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
+type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'map'|'steps'|'lab'|'equation'|'check'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
 
 function Icon({ name, className }: { name: IconName; className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" aria-hidden="true"><use href={`#icon-${name}`} /></svg>;
@@ -19,6 +20,11 @@ function IconLibrary() {
     <symbol id="icon-wave" viewBox="0 0 24 24"><path d="M2 12c3-8 5 8 8 0s5 8 8 0 4 0 4 0"/></symbol>
     <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7z"/></symbol>
     <symbol id="icon-magnet" viewBox="0 0 24 24"><path d="M5 4v9a7 7 0 0 0 14 0V4h-5v9a2 2 0 0 1-4 0V4zM5 8h5m4 0h5"/></symbol>
+    <symbol id="icon-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15"/></symbol>
+    <symbol id="icon-steps" viewBox="0 0 24 24"><path d="M3 19h6v-5h6V9h6V4"/></symbol>
+    <symbol id="icon-lab" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M8 15h8"/></symbol>
+    <symbol id="icon-equation" viewBox="0 0 24 24"><path d="M4 7h7M4 11h7m4-3h5m-2-2v4M15 17h5M4 17h7"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
     <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
     <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
     <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
@@ -35,10 +41,10 @@ function IconLibrary() {
   </defs></svg>;
 }
 
-const nav = [
-  ['home','Home',''], ['atom','Block 1','The Intuition & Calculus Spark'], ['wave','Block 2','Fields, Waves, and Math Tools'],
-  ['orbit','Block 3','The Intermediate Bridge'], ['bolt','Block 4','The Advanced Pillars'], ['function','Math Spark','Calculus, ODEs, Linear Algebra'],
-  ['bookmark','Reference','Equations & constants'],
+const nav: [IconName,string,string,string][] = [
+  ['home','Home','','/'], ['atom','Block 1','The Intuition & Calculus Spark','/block-1'], ['wave','Block 2','Fields, Waves, and Math Tools','/block-2'],
+  ['orbit','Block 3','The Intermediate Bridge','/block-3'], ['bolt','Block 4','The Advanced Pillars','/block-4'], ['function','Math Spark','Calculus, ODEs, Linear Algebra','/math-spark'],
+  ['bookmark','Reference','Equations & constants','/reference'],
 ] as const;
 
 const lessons: [string,string,string,IconName][] = [
@@ -46,19 +52,22 @@ const lessons: [string,string,string,IconName][] = [
   ['1.4','Energy','The currency of the universe','bolt'], ['1.5','Momentum','Collisions and recoil','atom'], ['1.6','Math Spark','The calculus underneath','function'],
 ];
 
-export default function BlockOneHub() {
+export function PhysicsHub({ home = false }: { home?: boolean }) {
+  const router = useRouter();
   const heroRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const actions = useRef({ zoomIn:()=>{}, zoomOut:()=>{}, turn:(_n:number)=>{}, reset:()=>{} });
-  const [dusk,setDusk]=useState(false), [focus,setFocus]=useState(false), [hint,setHint]=useState(true), [zoomState,setZoomState]=useState(1), [tab,setTab]=useState(0), [loading,setLoading]=useState(false);
+  const [dusk,setDusk]=useState(false), [focus,setFocus]=useState(false), [hint,setHint]=useState(true), [zoomState,setZoomState]=useState(1), [tab,setTab]=useState(0), [loading,setLoading]=useState(false), [toast,setToast]=useState<string|null>(null);
 
   const switchTab=(next:number)=>{ if(next===tab) return; setLoading(true); setTab(next); window.setTimeout(()=>setLoading(false),500); };
+  const notify=(message:string)=>{setToast(message);window.setTimeout(()=>setToast(null),2400)};
 
   useEffect(()=>{
-    const canvas=canvasRef.current, hero=heroRef.current, main=mainRef.current, stage=stageRef.current;
-    if(!canvas||!hero||!main||!stage) return;
+    const canvas=canvasRef.current, hero=heroRef.current, main=mainRef.current, stageLayout=stageRef.current, stage=dragRef.current;
+    if(!canvas||!hero||!main||!stage||!stageLayout) return;
     let disposed=false;
     let cleanup=()=>{};
     import('three').then(async THREE=>{
@@ -94,8 +103,8 @@ export default function BlockOneHub() {
       let W=1,H=1,cx=1,cy=1,px=200,tcx=1,tcy=1,tpx=200,zoom=1,targetZoom=1,queue=0,last=performance.now(),lastInteraction=performance.now(),drag=false,pointerId=-1,lastX=0,lastY=0,vx=0,vy=0,resetting=false;
       const home=new THREE.Quaternion().setFromEuler(new THREE.Euler(.12,.75,0));
       const mark=()=>{lastInteraction=performance.now();setHint(false)};
-      const measure=()=>{const mr=main.getBoundingClientRect(),sr=stage.getBoundingClientRect();W=Math.max(1,mr.width);H=Math.max(1,mr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-mr.left+sr.width*.5;tcy=focus?H*.5:sr.top-mr.top+sr.height*.44;tpx=(focus?H:sr.height)*.09;};
-      const ro=new ResizeObserver(measure);ro.observe(main);ro.observe(stage);measure();cx=tcx;cy=tcy;px=tpx;
+      const measure=()=>{const mr=main.getBoundingClientRect(),sr=stageLayout.getBoundingClientRect();W=Math.max(1,mr.width);H=Math.max(1,mr.height);renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();tcx=focus?W*.5:sr.left-mr.left+sr.width*.5;tcy=focus?H*.5:sr.top-mr.top+sr.height*.44;tpx=(focus?H:sr.height)*.09;};
+      const ro=new ResizeObserver(measure);ro.observe(main);ro.observe(stageLayout);measure();cx=tcx;cy=tcy;px=tpx;
       const down=(e:PointerEvent)=>{drag=true;pointerId=e.pointerId;lastX=e.clientX;lastY=e.clientY;stage.setPointerCapture(e.pointerId);stage.classList.add(styles.grabbing);mark()};
       const move=(e:PointerEvent)=>{if(!drag||e.pointerId!==pointerId)return;const dx=e.clientX-lastX,dy=e.clientY-lastY,k=Math.PI/Math.max(260,px*1.6);lastX=e.clientX;lastY=e.clientY;vx=dx*k;vy=dy*k;const qy=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),vx),qx=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),vy);spin.quaternion.premultiply(qy).premultiply(qx)};
       const up=(e:PointerEvent)=>{if(e.pointerId===pointerId){drag=false;stage.classList.remove(styles.grabbing)}};
@@ -111,22 +120,23 @@ export default function BlockOneHub() {
   },[focus]);
 
   useEffect(()=>{document.body.style.background=dusk?'#0f1116':'#f4f2ec';return()=>{document.body.style.background=''}},[dusk]);
+  useEffect(()=>{const close=(event:KeyboardEvent)=>{if(event.key==='Escape')setFocus(false)};window.addEventListener('keydown',close);return()=>window.removeEventListener('keydown',close)},[]);
 
   return <div ref={heroRef} className={`${styles.hero} ${focus?styles.focus:''}`} data-light={dusk?'dusk':'day'}>
     <IconLibrary/>
     <aside className={styles.sidebar}>
       <div className={styles.brand}>PhySense<small>A field guide to physical law.</small></div>
-      <nav>{nav.map(([icon,label,sub])=><button key={label} className={label==='Block 1'?styles.current:''} aria-current={label==='Block 1'?'page':undefined}><Icon name={icon}/><span>{label}{sub&&<small>{sub}</small>}</span></button>)}</nav>
-      <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/">Continue lesson <Icon name="arrow-right"/></Link></div>
+      <nav>{nav.map(([icon,label,sub,href])=>{const active=home?label==='Home':label==='Block 1';return <Link key={label} href={href} className={active?styles.current:''} aria-current={active?'page':undefined}><Icon name={icon}/><span>{label}{sub&&<small>{sub}</small>}</span></Link>})}</nav>
+      <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/block-1/1-1">Continue lesson <Icon name="arrow-right"/></Link></div>
     </aside>
     <section ref={mainRef} className={styles.main}>
       <canvas id="gl" ref={canvasRef} className={styles.canvas}/>
-      <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search"><Icon name="search"/></button><button aria-label="Notifications"><Icon name="bell"/></button><button className={styles.account} aria-label="Account"><Icon name="user"/></button></div></div>
+      <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search" onClick={()=>notify('Search is coming soon.')}><Icon name="search"/></button><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div></div>
       <div className={styles.tabs} role="tablist" aria-label="Learning blocks">
-        <button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button>
-        <button role="tab" aria-selected={tab===1} disabled><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button>
+        {home ? <><button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="home"/><span>Welcome<small>start here</small></span></button><button role="tab" aria-selected={tab===1} onClick={()=>switchTab(1)}><Icon name="map"/><span>How to use PhySense<small>five simple parts</small></span></button></> : <><button role="tab" aria-selected="true" onClick={()=>router.push('/block-1')}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button><button role="tab" aria-selected="false" aria-disabled="true" data-locked onClick={()=>notify('Block 2 unlocks after Block 1.')}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button></>}
       </div>
-      <div ref={stageRef} className={styles.stage} tabIndex={0} onDoubleClick={()=>actions.current.reset()} aria-label="Interactive charged particle. Drag to rotate, scroll or pinch to zoom, and double-click to reset.">
+      <div ref={dragRef} className={styles.dragSurface} tabIndex={0} onDoubleClick={()=>actions.current.reset()} aria-label="Interactive charged particle. Drag to rotate, scroll or pinch to zoom, and double-click to reset."/>
+      <div ref={stageRef} className={styles.stage}>
         <div className={`${styles.shadow} ${loading?styles.hidden:''}`}/><div className={`${styles.loader} ${loading?styles.visible:''}`}><i/>Preparing the lesson…</div>
         {hint&&<div className={styles.hint}>Drag to turn · scroll to zoom</div>}
         <div className={styles.rail}>
@@ -136,19 +146,20 @@ export default function BlockOneHub() {
           <button aria-label={dusk?'Use day light':'Use dusk light'} aria-pressed={dusk} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/></button>
         </div>
         <div className={styles.turn}><button aria-label="Turn left" onClick={()=>actions.current.turn(-Math.PI/2)}><Icon name="arrow-left"/></button><button onClick={()=>actions.current.turn(Math.PI*2)}>360°</button><button aria-label="Turn right" onClick={()=>actions.current.turn(Math.PI/2)}><Icon name="arrow-right"/></button></div>
-        <p className={styles.caption}>Every law of physics is a promise the universe keeps.</p>
+        <p className={styles.caption}>{home?'Physics is not a list of formulas. It is a way of asking the universe what it is doing.':'Every law of physics is a promise the universe keeps.'}</p>
       </div>
+      {toast&&<div className={styles.toast} role="status">{toast}</div>}
     </section>
     <section className={styles.info}>
-      <div className={styles.tools}><label><Icon name="search"/><input aria-label="Search" placeholder="Search topics, laws, or equations…"/></label><button aria-label="Notifications"><Icon name="bell"/></button><button className={styles.account} aria-label="Account"><Icon name="user"/></button></div>
-      <article className={styles.detail} aria-live="polite">
-        <span className={styles.eyebrow}>Block 1 · Foundation</span><h1>The Intuition &amp; Calculus Spark</h1>
-        <div className={styles.tags}><span>Mechanics</span><span>Calculus</span><span>6 lessons</span></div>
-        <p>Build physical reality with your hands — motion, forces, spin, energy, collisions — then learn the calculus that describes all of it. Six lessons, no prerequisites beyond middle-school math.</p>
-        <h2 id="lesson-map">What you&apos;ll learn</h2><div className={styles.lessons}>{lessons.map(([n,name,text,icon])=><div key={n}><Icon name={icon}/><b>{n}</b><span>{name}</span><small>{text}</small></div>)}</div>
-        <h2>Starting point</h2><div className={styles.starting}><Icon name="arrow-right"/><span>Begin at Lesson 1.1 — Kinematics</span></div>
-        <Link className={styles.startButton} href="/"><svg viewBox="0 0 76 58" aria-hidden="true"><path d="M7 48c12-2 18-19 29-25s19-5 33-14"/><path d="M31 42 61 12"/><circle cx="43" cy="29" r="3"/></svg><span><b>Start Block 1</b><small>Six lessons. Take them in order.</small></span><Icon name="chevron-right"/></Link>
-      </article>
+      <div className={styles.tools}><label><Icon name="search"/><input aria-label="Search" placeholder="Search topics, laws, or equations…"/></label><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div>
+      <article className={styles.detail} aria-live="polite">{home?<HomeDetail/>:<BlockDetail/>}</article>
     </section>
   </div>;
 }
+
+function BlockDetail(){return <><span className={styles.eyebrow}>Block 1 · Foundation</span><h1>The Intuition &amp; Calculus Spark</h1><div className={styles.tags}><span>Mechanics</span><span>Calculus</span><span>6 lessons</span></div><p>Build physical reality with your hands — motion, forces, spin, energy, collisions — then learn the calculus that describes all of it. Six lessons, no prerequisites beyond middle-school math.</p><h2 id="lesson-map">What you&apos;ll learn</h2><div className={styles.lessons}>{lessons.map(([n,name,text,icon])=><div key={n}><Icon name={icon}/><b>{n}</b><span>{name}</span><small>{text}</small></div>)}</div><h2>Starting point</h2><div className={styles.starting}><Icon name="arrow-right"/><span>Begin at Lesson 1.1 — Kinematics</span></div><Link className={styles.startButton} href="/block-1/1-1"><svg viewBox="0 0 76 58" aria-hidden="true"><path d="M7 48c12-2 18-19 29-25s19-5 33-14"/><path d="M31 42 61 12"/><circle cx="43" cy="29" r="3"/></svg><span><b>Start Block 1</b><small>Six lessons. Take them in order.</small></span><Icon name="chevron-right"/></Link></>}
+
+const homeRows:[IconName,string,string][]=[['map','Blocks','Four blocks, from intuition to mastery'],['steps','Phases','Each block splits into small, ordered lessons'],['lab','Labs','Every lesson has something to drag, launch, or watch'],['equation','Equations',"Formulas come last — after you've earned them"],['check','Challenges','One real-world problem per lesson to prove it']];
+function HomeDetail(){return <><span className={styles.eyebrow}>A field guide to physical law</span><h1>Learn physics from the ground up.</h1><div className={styles.tags}><span>No prerequisites</span><span>Interactive</span><span>Free</span></div><p>PhySense takes you from the very first question — &apos;what is motion?&apos; — all the way to the equations that describe light, heat, and the quantum world. Everything here is built around one idea: you should see the physics before you memorise the math.</p><h2>How it works</h2><div className={styles.homeRows}>{homeRows.map(([icon,name,text])=><div key={name}><Icon name={icon}/><b>{name}</b><small>{text}</small></div>)}</div><h2>Where to start</h2><p>If you&apos;ve never studied physics before, begin at Block 1 · Lesson 1.1 — Kinematics. If you already know the basics, jump to Math Spark or pick any block from the sidebar.</p><Link className={styles.startButton} href="/block-1/1-1"><svg viewBox="0 0 76 58" aria-hidden="true"><circle cx="29" cy="29" r="15"/><path d="M29 29h34m-8-8 8 8-8 8"/></svg><span><b>Start with Lesson 1.1</b><small>Kinematics — motion in 1D and 2D.</small></span><Icon name="chevron-right"/></Link></>}
+
+export default function BlockOneHub(){return <PhysicsHub/>}

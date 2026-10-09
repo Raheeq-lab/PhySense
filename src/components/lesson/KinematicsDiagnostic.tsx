@@ -1,0 +1,46 @@
+'use client';
+
+import {useEffect,useMemo,useRef,useState} from 'react';
+import {kinematicsDiagnostic} from '@/data/kinematicsDiagnostic';
+import styles from './KinematicsDiagnostic.module.css';
+
+type Confidence='not-sure'|'somewhat'|'very';
+type Phase='pre'|'post';
+type Response={answer:number|null;reason:number|null;confidence:Confidence|null};
+type StoredAttempt={schemaVersion:'1.0';lessonId:'block-1/1-1';attemptId:string;phase:Phase;completedAt:string;durationMs:number;answerScore:number;reasonScore:number;jointScore:number;responses:Array<Response&{questionId:string;concept:string;misconception:string;difficulty:string;answerCorrect:boolean;reasonCorrect:boolean;}>};
+
+const emptyResponses=()=>kinematicsDiagnostic.map<Response>(()=>({answer:null,reason:null,confidence:null}));
+const confidenceLabels:Record<Confidence,string>={'not-sure':'Not sure','somewhat':'Somewhat sure','very':'Very sure'};
+
+function download(name:string,content:string,type:string){const url=URL.createObjectURL(new Blob([content],{type})),link=document.createElement('a');link.href=url;link.download=name;link.click();URL.revokeObjectURL(url)}
+function csvCell(value:string|number){const text=String(value);return `"${text.replaceAll('"','""')}"`}
+
+export default function KinematicsDiagnostic(){
+  const [phase,setPhase]=useState<Phase>('post'),[current,setCurrent]=useState(0),[responses,setResponses]=useState<Response[]>(emptyResponses),[attempt,setAttempt]=useState<StoredAttempt|null>(null);
+  const startedAt=useRef(0),item=kinematicsDiagnostic[current],response=responses[current];
+  useEffect(()=>{startedAt.current=Date.now()},[]);
+  const completed=responses.filter(value=>value.answer!==null&&value.reason!==null&&value.confidence!==null).length;
+  const update=(field:keyof Response,value:number|Confidence)=>setResponses(all=>all.map((entry,index)=>index===current?{...entry,[field]:value}:entry));
+  const scores=useMemo(()=>attempt?{answer:attempt.answerScore,reason:attempt.reasonScore,joint:attempt.jointScore}:null,[attempt]);
+
+  const submit=()=>{
+    if(completed!==kinematicsDiagnostic.length)return;
+    const marked=responses.map((entry,index)=>{const question=kinematicsDiagnostic[index];return {...entry,questionId:question.id,concept:question.concept,misconception:question.misconception,difficulty:question.difficulty,answerCorrect:entry.answer===question.correctAnswer,reasonCorrect:entry.reason===question.correctReason}});
+    const now=Date.now(),result:StoredAttempt={schemaVersion:'1.0',lessonId:'block-1/1-1',attemptId:globalThis.crypto?.randomUUID?.()??`attempt-${now}`,phase,completedAt:new Date(now).toISOString(),durationMs:startedAt.current?now-startedAt.current:0,answerScore:marked.filter(entry=>entry.answerCorrect).length,reasonScore:marked.filter(entry=>entry.reasonCorrect).length,jointScore:marked.filter(entry=>entry.answerCorrect&&entry.reasonCorrect).length,responses:marked};
+    setAttempt(result);
+    try{const key='physense.lesson1.1.diagnostic.attempts',previous=JSON.parse(localStorage.getItem(key)??'[]') as StoredAttempt[];localStorage.setItem(key,JSON.stringify([...previous.slice(-9),result]))}catch{}
+  };
+
+  const restart=()=>{setResponses(emptyResponses());setAttempt(null);setCurrent(0);startedAt.current=Date.now()};
+  const exportAttempt=()=>attempt&&download(`physense-${attempt.phase}-${attempt.attemptId}.json`,JSON.stringify(attempt,null,2),'application/json');
+  const exportSimulation=()=>{
+    let seed=1101;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296),difficulty={introductory:-.7,developing:0,challenging:.7};
+    const rows:Array<Array<string|number>>=[['learner_id','phase','question_id','concept','targeted_misconception','difficulty','answer_correct','reason_correct','joint_correct','confidence']];
+    for(let learner=1;learner<=100;learner++){const ability=Array.from({length:6},random).reduce((sum,value)=>sum+value,0)-3;for(const testPhase of ['pre','post'] as const){for(const question of kinematicsDiagnostic){const probability=1/(1+Math.exp(-(ability+(testPhase==='post'?.8:0)-difficulty[question.difficulty]))),answerCorrect=random()<probability,reasonCorrect=random()<Math.max(.08,probability-.08),confidence:Confidence=probability>.72?'very':probability>.42?'somewhat':'not-sure';rows.push([`SIM-${String(learner).padStart(3,'0')}`,testPhase,question.id,question.concept,question.misconception,question.difficulty,answerCorrect?1:0,reasonCorrect?1:0,answerCorrect&&reasonCorrect?1:0,confidence])}}}
+    download('physense-kinematics-100-learners-pre-post.csv',rows.map(row=>row.map(csvCell).join(',')).join('\n'),'text/csv');
+  };
+
+  if(attempt&&scores)return <div className={styles.diagnostic}><div className={styles.resultHeader}><span>DIAGNOSTIC RESULT</span><h4>{scores.joint} / 10 fully understood</h4><p>A question counts as fully understood only when both the answer and its reason are correct.</p></div><div className={styles.scoreGrid}><div><b>{scores.answer}/10</b><span>answers correct</span></div><div><b>{scores.reason}/10</b><span>reasons correct</span></div><div><b>{scores.joint}/10</b><span>both correct</span></div></div><div className={styles.review}>{kinematicsDiagnostic.map((question,index)=>{const marked=attempt.responses[index],joint=marked.answerCorrect&&marked.reasonCorrect;return <details key={question.id}><summary><span>{question.id}</span>{question.concept}<b className={joint?styles.correct:styles.revisit}>{joint?'Understood':'Revisit'}</b></summary><div><p><strong>Your answer:</strong> {question.answers[marked.answer??0].label} {marked.answerCorrect?'✓':'✗'}</p><p><strong>Your reason:</strong> {question.reasons[marked.reason??0].label} {marked.reasonCorrect?'✓':'✗'}</p><p><strong>Explanation:</strong> {question.explanation}</p><p><strong>Targeted misconception:</strong> {question.misconception}</p></div></details>})}</div><div className={styles.dataActions}><button type="button" onClick={exportAttempt}>Download this attempt (JSON)</button><button type="button" onClick={exportSimulation}>Download 100-learner simulation (CSV)</button><button type="button" className={styles.secondary} onClick={restart}>Try again</button></div><p className={styles.privacy}>No name or email is collected. Attempts stay in this browser unless you download them.</p></div>;
+
+  return <div className={styles.diagnostic}><div className={styles.intro}><span>TWO-TIER DIAGNOSTIC</span><h4>Choose an answer, then choose why</h4><p>The reason matters as much as the answer. You will see explanations only after submitting all ten questions.</p><label>Attempt type <select value={phase} onChange={event=>setPhase(event.target.value as Phase)}><option value="pre">Before the lesson</option><option value="post">After the lesson</option></select></label></div><div className={styles.progressRow}><span>Question {current+1} of {kinematicsDiagnostic.length}</span><span>{completed} / 10 complete</span></div><div className={styles.progress} aria-label={`${completed} of 10 questions complete`}><i style={{width:`${completed*10}%`}}/></div><article className={styles.questionCard}><div className={styles.tags}><span>{item.id}</span><span>{item.concept}</span><span>{item.difficulty}</span></div><h4>{item.prompt}</h4><fieldset><legend>1. What is your answer?</legend>{item.answers.map((option,index)=><label key={option.label} className={response.answer===index?styles.selected:''}><input type="radio" name={`${item.id}-answer`} checked={response.answer===index} onChange={()=>update('answer',index)}/><span>{String.fromCharCode(65+index)}</span>{option.label}</label>)}</fieldset><fieldset><legend>2. Why?</legend>{item.reasons.map((option,index)=><label key={option.label} className={response.reason===index?styles.selected:''}><input type="radio" name={`${item.id}-reason`} checked={response.reason===index} onChange={()=>update('reason',index)}/><span>{String.fromCharCode(65+index)}</span>{option.label}</label>)}</fieldset><fieldset className={styles.confidence}><legend>3. How sure are you?</legend><div>{(Object.keys(confidenceLabels) as Confidence[]).map(value=><label key={value} className={response.confidence===value?styles.selected:''}><input type="radio" name={`${item.id}-confidence`} checked={response.confidence===value} onChange={()=>update('confidence',value)}/>{confidenceLabels[value]}</label>)}</div></fieldset></article><div className={styles.navigation}><button type="button" disabled={current===0} onClick={()=>setCurrent(value=>value-1)}>← Previous</button>{current<kinematicsDiagnostic.length-1?<button type="button" onClick={()=>setCurrent(value=>value+1)}>Next →</button>:<button type="button" disabled={completed!==kinematicsDiagnostic.length} onClick={submit}>Submit all answers</button>}</div>{current===kinematicsDiagnostic.length-1&&completed!==kinematicsDiagnostic.length&&<p className={styles.incomplete}>Complete all three parts of every question before submitting.</p>}<details className={styles.researchPreview}><summary>For educators: research-ready fields</summary><p>Each saved response includes question ID, concept, targeted misconception, difficulty, answer correctness, reasoning correctness, confidence, pre/post phase, and response duration. After submission, anonymous JSON and a reproducible 100-learner pre/post CSV simulation can be downloaded.</p></details></div>;
+}

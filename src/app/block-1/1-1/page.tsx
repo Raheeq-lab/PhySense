@@ -1,2 +1,29 @@
-import ComingSoonPage from '@/components/ComingSoonPage';
-export default function Page(){return <ComingSoonPage title="Lesson 1.1 · Kinematics"/>}
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+import styles from './page.module.css';
+
+const nav=[['Home','', '/'],['Block 1','The Intuition & Calculus Spark','/block-1'],['Block 2','Fields, Waves, and Math Tools','/block-2'],['Block 3','The Intermediate Bridge','/block-3'],['Block 4','The Advanced Pillars','/block-4'],['Math Spark','Calculus, ODEs, Linear Algebra','/math-spark'],['Reference','Equations & constants','/reference']] as const;
+const miniNav=[['↑ Top of page','#top'],['Picture this','#picture-this'],['Interactive lab','#interactive-lab'],['Build the idea','#build-the-idea'],['Now earn the equations','#equations'],['Math Spark','#math-spark'],['Real-world challenge','#challenge']] as const;
+const equations:[[ReactNode,string],[ReactNode,string],[ReactNode,string],[ReactNode,string],[ReactNode,string],[ReactNode,string]]=[
+  [<>v = Δx / Δt</>,'average velocity'],[<>a = Δv / Δt</>,'acceleration'],[<>v = u + at</>,'velocity after time t'],[<>Δx = ut + ½at²</>,'displacement under constant acceleration'],[<>x = x₀ + v₀ₓt</>,'horizontal projectile position'],[<>y = y₀ + v₀ᵧt − ½gt²</>,'vertical projectile position'],
+];
+function ArrowIcon({chevron=false}:{chevron?:boolean}){return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={chevron?'m9 5 7 7-7 7':'M4 12h16m-6-6 6 6-6 6'}/></svg>}
+function OrbitIcon(){return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/></svg>}
+function Equation({children,label}:{children:ReactNode;label:string}){return <span className={styles.equation} role="math" aria-label={label}>{children}</span>}
+
+export default function LessonPage(){return <div className={styles.page} id="top">
+  <aside className={styles.sidebar} aria-label="Course navigation"><Link className={styles.brand} href="/">PhySense<small>A field guide to physical law.</small></Link><nav>{nav.map(([label,sub,href])=><Link key={label} href={href} className={label==='Block 1'?styles.active:''} aria-current={label==='Block 1'?'page':undefined}><span className={styles.navMark}>{label==='Block 1'?'01':'·'}</span><span>{label}{sub&&<small>{sub}</small>}</span></Link>)}</nav><div className={styles.learning}><span>Now learning</span><OrbitIcon/><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="#picture-this">Continue lesson <ArrowIcon/></Link></div></aside>
+  <main className={styles.main}>
+    <header className={styles.lessonHeader}><span>Block 1 · Lesson 1.1 · Foundation</span><h1>Kinematics: Motion in 1D &amp; 2D</h1><p>How position, velocity, and acceleration relate.</p></header>
+    <section id="picture-this"><h2>Picture this</h2><p>You are riding in a car when the driver presses the brakes. You keep moving forward, but you cover less distance during each passing second.</p><p>Now picture throwing a basketball. It moves forward while gravity pulls it downward, creating one curved path from two simpler motions.</p><em>Why this matters: motion becomes easier to understand when you learn to describe what changes—and what does not.</em></section>
+    <section id="hold-question"><h2>Hold this question</h2><div className={styles.question}>How can velocity be going down while position is still going up?</div><p className={styles.muted}>Don&apos;t answer yet. You&apos;ll answer it in section 5.</p></section>
+    <section id="interactive-lab"><h2>Interactive lab</h2><h3>Motion Storyboard Lab</h3><div className={styles.labPlaceholder}>Interactive lab — coming in next build</div></section>
+    <section id="build-the-idea"><h2>Build the idea</h2><h3>From what you see to what you know</h3><ol className={styles.steps}><li><b>Choose a positive direction and locate the object.</b> Everything starts with a reference point.</li><li><b>Compare average speed with average velocity.</b> Speed only cares how fast. Velocity also cares which way.</li><li><b>Read slopes on motion graphs.</b> On a position–time graph, the slope is velocity.</li><li><b>Build the constant-acceleration equations.</b> When acceleration never changes, motion follows a small set of reliable formulas.</li><li><b>Split a basketball launch into horizontal and vertical motion.</b> The two motions are independent.</li></ol></section>
+    <section id="what-to-notice"><h2>What to notice</h2><h3>The physics hiding in plain sight</h3><ul className={styles.notice}><li>Position tells where. Velocity tells how position changes.</li><li>Acceleration changes velocity — not always speed.</li><li>Horizontal and vertical projectile motion are independent.</li><li>The slope of a position–time graph is velocity.</li></ul></section>
+    <section id="equations"><h2>Now earn the equations</h2><p className={styles.sectionSubtitle}>You&apos;ll see the physics first. The formulas come last.</p><div className={styles.equations}>{equations.map(([formula,meaning],index)=><div key={meaning}><span>{index+1}</span><Equation label={`${meaning} equation`}>{formula}</Equation><p>{meaning}</p></div>)}</div><p className={styles.equationNote}><b>u</b> means &apos;initial velocity&apos;. <b>g</b> is the acceleration due to gravity on Earth: about 9.8 m/s².</p></section>
+    <section id="math-spark"><h2>Math Spark — the calculus underneath</h2><details><summary>Open Math Spark</summary><p>Coming in the Math Spark build.</p></details></section>
+    <section id="challenge"><h2>Real-world challenge</h2><h3>The late yellow light</h3><div className={styles.challengePlaceholder}>10 diagnostic questions — coming in the Challenge build.</div></section>
+    <section className={styles.upNext} aria-label="Up next"><Link href="/block-1/1-2"><ArrowIcon/><span><b>Up next · Lesson 1.2 · Forces</b><small>Why motion changes.</small></span><ArrowIcon chevron/></Link></section>
+  </main>
+  <aside className={styles.miniNav} aria-label="On this page"><span>On this page</span><nav>{miniNav.map(([label,href])=><a href={href} key={href}>{label}</a>)}</nav></aside>
+</div>}

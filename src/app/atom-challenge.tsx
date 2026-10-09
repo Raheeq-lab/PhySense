@@ -53,11 +53,13 @@ const blank=():Answer=>({tier1:null,tier2:null,locked:false});
 
 export default function AtomChallenge(){
   const [answers,setAnswers]=useState<Answer[]>(questions.map(blank));
+  const [suggestion,setSuggestion]=useState('');
   const completed=answers.filter(answer=>answer.locked).length;
   const choose=(question:number,tier:'tier1'|'tier2',option:number)=>setAnswers(current=>current.map((answer,index)=>index===question&&!answer.locked?{...answer,[tier]:option}:answer));
   const check=(question:number)=>setAnswers(current=>current.map((answer,index)=>index===question&&answer.tier1!==null&&answer.tier2!==null?{...answer,locked:true}:answer));
   const restart=(question:number)=>setAnswers(current=>current.map((answer,index)=>index===question?blank():answer));
   const feedback=(question:Question,answer:Answer)=>answer.tier1===question.tier1Correct&&answer.tier2===0?question.both:answer.tier1===question.tier1Correct?question.answerOnly:question.incorrect;
+  const emailSuggestion=()=>{const subject=encodeURIComponent('PhySense learning suggestion'),body=encodeURIComponent(`Here is my suggestion for making PhySense easier to understand:\n\n${suggestion}`);window.location.href=`mailto:raimalik544@gmail.com?subject=${subject}&body=${body}`};
 
   return <section className={styles.challenge} aria-labelledby="atom-challenge-title">
     <div className={styles.inner}>
@@ -70,6 +72,15 @@ export default function AtomChallenge(){
         {!answer.locked&&answer.tier1!==null&&answer.tier2!==null&&<button className={styles.check} type="button" onClick={()=>check(index)}>Check answer</button>}
         {answer.locked&&<><div className={styles.feedback} role="status">{feedback(question,answer)}</div><button className={styles.restart} type="button" onClick={()=>restart(index)}>Restart</button></>}
       </article>})}</div>
+      <form className={styles.suggestion} onSubmit={event=>{event.preventDefault();emailSuggestion()}}>
+        <span>YOUR FEEDBACK</span>
+        <h3>Help us make this easier to understand.</h3>
+        <p>Was anything confusing? Tell us what would make this lesson clearer or more useful.</p>
+        <label htmlFor="physics-suggestion">Your suggestion</label>
+        <textarea id="physics-suggestion" value={suggestion} onChange={event=>setSuggestion(event.target.value)} placeholder="For example: explain electric charge with another everyday example…" required/>
+        <button type="submit">Email your suggestion</button>
+        <small>This opens your email app and addresses your message to raimalik544@gmail.com.</small>
+      </form>
     </div>
   </section>;
 }

@@ -16,5 +16,12 @@ Both tables have Row Level Security enabled and intentionally have no public
 policies. Browser clients cannot access the research data directly. Only the
 server-side PhySense API built in the next step will use the service-role key.
 
+## Step 2 — grant the server role access
+
+Run `supabase/migrations/202610100200_grant_diagnostic_service_access.sql`
+in the SQL Editor after the table migration. This grants database privileges
+to Supabase's trusted `service_role` while explicitly revoking access from the
+public `anon` and signed-in `authenticated` browser roles.
+
 Do not paste `SUPABASE_SERVICE_ROLE_KEY` into the SQL editor, browser console,
 client component, screenshot, email, or Git repository.

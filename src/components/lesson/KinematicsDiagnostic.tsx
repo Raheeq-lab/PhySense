@@ -47,8 +47,8 @@ export default function KinematicsDiagnostic(){
     if(!result.consentAccepted){setSaveStatus('local');setSaveMessage('You did not consent to sharing. This attempt is stored only on this device.');return}
     setSaveStatus('saving');setSaveMessage('Saving your anonymous attempt securely…');
     try{
-      const response=await fetch('/api/diagnostics/attempts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({participantId:result.participantId,clientAttemptId:result.attemptId,phase:result.phase,consentAccepted:true,consentVersion:result.consentVersion,startedAt:result.startedAt,completedAt:result.completedAt,responses:result.responses.map(entry=>({questionId:entry.questionId,answer:entry.answer,reason:entry.reason,confidence:entry.confidence,responseTimeMs:entry.responseTimeMs}))})});
-      const body=await response.json() as {saved?:boolean;error?:string};
+      const response=await fetch('/api/diagnostics/attempts/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({participantId:result.participantId,clientAttemptId:result.attemptId,phase:result.phase,consentAccepted:true,consentVersion:result.consentVersion,startedAt:result.startedAt,completedAt:result.completedAt,responses:result.responses.map(entry=>({questionId:entry.questionId,answer:entry.answer,reason:entry.reason,confidence:entry.confidence,responseTimeMs:entry.responseTimeMs}))})});
+      const body=response.headers.get('content-type')?.includes('application/json')?await response.json() as {saved?:boolean;error?:string}:{saved:false,error:`Server returned ${response.status}. Please try again after the latest deployment is ready.`};
       if(!response.ok||!body.saved)throw new Error(body.error||'The server did not accept the attempt.');
       setSaveStatus('saved');setSaveMessage('Saved securely in Supabase as an anonymous attempt.');
     }catch(error){setSaveStatus('error');setSaveMessage(error instanceof Error?error.message:'Upload failed. Your local copy is still safe.')}

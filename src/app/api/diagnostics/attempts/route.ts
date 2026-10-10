@@ -11,6 +11,7 @@ type IncomingResponse={questionId:string;answer:number;reason:number;confidence:
 function json(body:Record<string,unknown>,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store'}})}
 function configured(value:string|undefined){return Boolean(value&&!value.includes('placeholder')&&!value.includes('your_')&&!value.includes('your-'))}
 function integerIn(value:unknown,min:number,max:number):value is number{return Number.isInteger(value)&&Number(value)>=min&&Number(value)<=max}
+function databaseReference(error:{code?:string;message?:string}){const message=error.message?.toLowerCase()??'';if(message.includes('invalid api key')||message.includes('jwt'))return 'INVALID_SERVER_KEY';if(message.includes('permission denied'))return 'DATABASE_PERMISSION';if(message.includes('does not exist'))return 'DATABASE_SCHEMA';if(message.includes('fetch')||message.includes('network'))return 'DATABASE_CONNECTION';return error.code||'DATABASE_INSERT'}
 
 export async function POST(request:Request){
   const contentLength=Number(request.headers.get('content-length')??0);
@@ -54,13 +55,13 @@ export async function POST(request:Request){
 
   if(attemptError){
     if(attemptError.code==='23505'){const {data:existing}=await admin.from('diagnostic_attempts').select('id').eq('client_attempt_id',body.clientAttemptId).maybeSingle();if(existing)return json({saved:true,alreadySaved:true,attemptId:existing.id,scores})}
-    console.error('Diagnostic attempt insert failed',attemptError.code);
-    return json({saved:false,error:'The attempt could not be stored. Your local copy is still safe.'},500);
+    const reference=databaseReference(attemptError);console.error('Diagnostic attempt insert failed',reference,attemptError.message);
+    return json({saved:false,error:`The attempt could not be stored (${reference}). Your local copy is still safe.`,reference},500);
   }
 
   const responseRows=marked.map(({question,response,answerCorrect,reasonCorrect,jointCorrect})=>({attempt_id:attempt.id,question_id:question.id,selected_answer:response.answer,selected_reason:response.reason,answer_correct:answerCorrect,reason_correct:reasonCorrect,joint_correct:jointCorrect,confidence:response.confidence,concept:question.concept,targeted_misconception:question.misconception,difficulty:question.difficulty,response_time_ms:response.responseTimeMs}));
   const {error:responsesError}=await admin.from('diagnostic_responses').insert(responseRows);
-  if(responsesError){await admin.from('diagnostic_attempts').delete().eq('id',attempt.id);console.error('Diagnostic response insert failed',responsesError.code);return json({saved:false,error:'The responses could not be stored. Your local copy is still safe.'},500)}
+  if(responsesError){await admin.from('diagnostic_attempts').delete().eq('id',attempt.id);const reference=databaseReference(responsesError);console.error('Diagnostic response insert failed',reference,responsesError.message);return json({saved:false,error:`The responses could not be stored (${reference}). Your local copy is still safe.`,reference},500)}
 
   return json({saved:true,attemptId:attempt.id,scores},201);
 }

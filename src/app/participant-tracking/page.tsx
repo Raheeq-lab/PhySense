@@ -14,12 +14,6 @@ const limitations = [
   ['Private browsing', 'A private session normally loses its code when the session ends.'],
 ] as const;
 
-const options = [
-  {name: 'Browser-generated code', status: 'Current prototype', description: 'PhySense creates and remembers a random code on one browser.', strength: 'No name, email, or login is needed.', tradeoff: 'Cannot reliably follow one learner across devices.'},
-  {name: 'Learner-entered study code', status: 'Possible pilot option', description: 'A participant receives a random study code and enters it for each assessment.', strength: 'Works across devices without putting an email in the response table.', tradeoff: 'Codes can be forgotten, copied, or entered incorrectly.'},
-  {name: 'Login linked to a research code', status: 'Future option', description: 'A protected mapping connects an account to a separate research identifier.', strength: 'Most reliable for longitudinal and cross-device follow-up.', tradeoff: 'Creates re-identification risk and needs stronger consent, permissions, and governance.'},
-] as const;
-
 export default function ParticipantTrackingPage() {
   return <div className={styles.page}>
     <header className={styles.topbar}><Link href="/">PhySense</Link><nav><Link href="/data-and-privacy">Data &amp; privacy</Link><Link href="/block-1/1-1">Lesson 1.1</Link></nav></header>
@@ -46,17 +40,6 @@ export default function ParticipantTrackingPage() {
       <section>
         <div className={styles.heading}><span>02</span><div><h2>What the code cannot prove</h2><p>A browser identifier is not the same thing as a verified learner identifier.</p></div></div>
         <div className={styles.limitations}>{limitations.map(([title, text]) => <article key={title}><span>LIMIT</span><h3>{title}</h3><p>{text}</p></article>)}</div>
-      </section>
-
-      <section>
-        <div className={styles.heading}><span>03</span><div><h2>Three designs to consider</h2><p>The final choice should match the study design and ACU&apos;s ethics requirements.</p></div></div>
-        <div className={styles.options}>{options.map((option, index) => <article key={option.name} className={index === 0 ? styles.current : ''}><header><span>{String(index + 1).padStart(2, '0')}</span><em>{option.status}</em></header><h3>{option.name}</h3><p>{option.description}</p><dl><div><dt>Strength</dt><dd>{option.strength}</dd></div><div><dt>Trade-off</dt><dd>{option.tradeoff}</dd></div></dl></article>)}</div>
-      </section>
-
-      <section>
-        <div className={styles.heading}><span>04</span><div><h2>Recommendation for the proof of concept</h2><p>Keep the present design stable while the research requirements are being decided.</p></div></div>
-        <div className={styles.recommendation}><strong>Keep the browser-generated code for now.</strong><p>Do not connect login emails or names to diagnostic responses yet. Use synthetic data for pipeline testing, describe current records as pseudonymous, and ask Wade/ACU whether cross-device longitudinal tracking is actually required.</p></div>
-        <div className={styles.questions}><h3>Decisions needed from Wade / ACU</h3><ol><li>Must the study follow the same learner across different devices?</li><li>Is a learner-entered study code acceptable?</li><li>If login linkage is required, who may access the identity-to-code mapping?</li><li>How and when must that mapping be deleted?</li></ol></div>
       </section>
 
       <footer><Link href="/data-and-privacy">← Back to Data &amp; privacy</Link><Link href="/block-1/1-1">Open Lesson 1.1 →</Link></footer>

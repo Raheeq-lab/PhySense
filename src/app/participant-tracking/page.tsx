@@ -4,7 +4,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Participant Tracking Design | PhySense',
-  description: 'How PhySense can follow learning over time without placing direct identifiers in diagnostic records.',
+  description: 'How the current PhySense prototype connects attempts without placing direct identifiers in diagnostic records.',
 };
 
 const limitations = [
@@ -35,6 +35,7 @@ export default function ParticipantTrackingPage() {
           <article><span>Each submission</span><strong>A separate attempt ID is created</strong><p>The participant code links attempts without placing a name or email in the diagnostic tables.</p></article>
         </div>
         <aside className={styles.definition}><b>Classification: pseudonymous</b><p>The code is not a direct identity, but it is a persistent link between records. Calling it pseudonymous is more accurate than promising complete anonymity.</p></aside>
+        <div className={styles.classLink}><span>Class association</span><h3>The class code and participant code have different jobs</h3><dl><div><dt>Class code</dt><dd>Connects a consenting attempt to one instructor-created class. Every learner joining that class uses the same six-character code.</dd></div><div><dt>Participant code</dt><dd>Connects attempts made in one browser profile. It remains separate from the class code and is not a verified identity.</dd></div><div><dt>Direct identifiers</dt><dd>The current class and diagnostic records do not contain a learner or instructor name or email address.</dd></div></dl></div>
       </section>
 
       <section>

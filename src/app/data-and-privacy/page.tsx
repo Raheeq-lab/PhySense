@@ -46,6 +46,10 @@ export default function DataAndPrivacyPage() {
         <h1>How PhySense handles diagnostic data</h1>
         <p>This page documents the current Lesson 1.1 proof of concept. It is a technical description, not an ethics approval or final research consent form.</p>
         <div className={styles.statusRow}><span>Current system</span><span>Research use pending review</span></div>
+        <div className={styles.documentLinks} aria-label="Research design documents">
+          <Link href="/participant-tracking"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19c.7-4 2.7-6 6-6s5.3 2 6 6M17 8h4m-2-2v4M17 15h4m-4 4h4"/></svg><span><b>Participant tracking</b><small>how learners are linked over time</small></span></Link>
+          <Link href="/diagnostic-map"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM9 5v14M9 10h11M9 15h11"/><path d="m5.8 11.8 1 1 1.5-2M5.8 16.8l1 1 1.5-2"/></svg><span><b>Diagnostic map</b><small>questions, attributes &amp; misconceptions</small></span></Link>
+        </div>
       </header>
 
       <section id="flow">

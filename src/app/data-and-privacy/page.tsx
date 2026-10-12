@@ -57,7 +57,7 @@ export default function DataAndPrivacyPage() {
           <li><b>Supabase</b><span>Stores the pseudonymous attempt and item-level responses. The browser cannot read the research tables directly.</span></li>
           <li><b>Learner result</b><span>Shows scores and explanations and allows the learner to download that attempt as JSON.</span></li>
         </ol>
-        <aside className={styles.note}><b>Important terminology</b><p>The random code is stable on one browser, so it can connect attempts over time. The data is therefore best described as <strong>pseudonymous</strong>, not guaranteed anonymous.</p></aside>
+        <aside className={styles.note}><b>Important terminology</b><p>The random code is stable on one browser, so it can connect attempts over time. The data is therefore best described as <strong>pseudonymous</strong>, not guaranteed anonymous.</p><Link href="/participant-tracking">Read the participant tracking design →</Link></aside>
       </section>
 
       <section id="fields">

@@ -19,14 +19,6 @@ const storedFields = [
   'Prototype consent version',
 ];
 
-const openDecisions = [
-  'ACU approval of Supabase and Vercel for research use',
-  'The final university-approved participant consent process',
-  'A research-data retention and deletion schedule',
-  'Researcher roles and an instructor dashboard',
-  'Migration of research storage to Supabase Sydney',
-];
-
 export default function DataAndPrivacyPage() {
   return <div className={styles.page}>
     <aside className={styles.sidebar}>
@@ -36,17 +28,15 @@ export default function DataAndPrivacyPage() {
         <a href="#flow">Current data flow</a>
         <a href="#fields">Fields collected</a>
         <a href="#access">Access and export</a>
-        <a href="#decisions">Open decisions</a>
       </nav>
       <Link className={styles.back} href="/block-1/1-1">← Lesson 1.1</Link>
     </aside>
 
     <main className={styles.main}>
       <header id="overview" className={styles.hero}>
-        <span className={styles.eyebrow}>Prototype transparency record · reviewed 12 October 2026</span>
+        <span className={styles.eyebrow}>Data &amp; privacy</span>
         <h1>How PhySense handles diagnostic data</h1>
-        <p>This page documents the current Lesson 1.1 proof of concept. It is a technical description, not an ethics approval or final research consent form.</p>
-        <div className={styles.statusRow}><span>Current system</span><span>Research use pending review</span></div>
+        <p>This page explains in plain language what information the Lesson 1.1 diagnostic uses, when it may be shared, and how learners can access their results.</p>
         <div className={styles.documentLinks} aria-label="Research design documents">
           <Link href="/participant-tracking"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19c.7-4 2.7-6 6-6s5.3 2 6 6M17 8h4m-2-2v4M17 15h4m-4 4h4"/></svg><span><b>Participant tracking</b><small>how learners are linked over time</small></span></Link>
           <Link href="/diagnostic-map"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM9 5v14M9 10h11M9 15h11"/><path d="m5.8 11.8 1 1 1.5-2M5.8 16.8l1 1 1.5-2"/></svg><span><b>Diagnostic map</b><small>questions, attributes &amp; misconceptions</small></span></Link>
@@ -84,12 +74,6 @@ export default function DataAndPrivacyPage() {
           <div><dt>Learner export</dt><dd>The learner can download the attempt available on their own device as JSON. The interface does not provide access to another learner&apos;s attempt.</dd></div>
           <div><dt>Deletion and retention</dt><dd>No final research retention period or learner self-service deletion process has been approved yet.</dd></div>
         </dl>
-      </section>
-
-      <section id="decisions">
-        <div className={styles.sectionHeading}><span>04</span><div><h2>Open decisions before a learner study</h2><p>These items remain deliberately unresolved while institutional advice is sought.</p></div></div>
-        <ul className={styles.decisions}>{openDecisions.map(item => <li key={item}>{item}</li>)}</ul>
-        <div className={styles.boundary}><strong>Current boundary</strong><p>The diagnostic may be demonstrated and tested with synthetic data. Real learner data must not be treated as an approved research dataset until the relevant ethics, consent, hosting, access, and retention requirements are confirmed.</p></div>
       </section>
 
       <footer><p>Continue the research documentation with the <Link href="/diagnostic-map">draft diagnostic concept and misconception map</Link>.</p><Link href="/block-1/1-1">Return to Lesson 1.1 →</Link></footer>

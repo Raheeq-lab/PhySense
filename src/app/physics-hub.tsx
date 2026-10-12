@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 import type { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D } from 'three';
 import styles from './block-1/page.module.css';
 
-type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'map'|'steps'|'lab'|'equation'|'check'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
+type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'map'|'steps'|'lab'|'equation'|'check'|'shield'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
 
 function Icon({ name, className }: { name: IconName; className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" aria-hidden="true"><use href={`#icon-${name}`} /></svg>;
@@ -27,6 +27,7 @@ function IconLibrary() {
     <symbol id="icon-lab" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M8 15h8"/></symbol>
     <symbol id="icon-equation" viewBox="0 0 24 24"><path d="M4 7h7M4 11h7m4-3h5m-2-2v4M15 17h5M4 17h7"/></symbol>
     <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.2 8.4-8 10-4.8-1.6-8-5-8-10V6z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></symbol>
     <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
     <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
     <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
@@ -219,7 +220,7 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
       </div>}
       <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search" onClick={()=>notify('Search is coming soon.')}><Icon name="search"/></button><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div></div>
       <div className={styles.tabs} role="tablist" aria-label="Learning blocks">
-        {home ? <><button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="home"/><span>Welcome<small>start here</small></span></button><button ref={tourTriggerRef} role="tab" aria-selected={tourOpen} aria-haspopup="dialog" onClick={()=>{setTab(1);setTourOpen(true)}}><Icon name="map"/><span>How to use PhySense<small>five simple parts</small></span></button></> : <><button role="tab" aria-selected="true" onClick={()=>router.push('/block-1')}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button><button role="tab" aria-selected="false" aria-disabled="true" data-locked onClick={()=>notify('Block 2 unlocks after Block 1.')}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button></>}
+        {home ? <><button role="tab" aria-selected={tab===0} onClick={()=>switchTab(0)}><Icon name="home"/><span>Welcome<small>start here</small></span></button><button ref={tourTriggerRef} role="tab" aria-selected={tourOpen} aria-haspopup="dialog" onClick={()=>{setTab(1);setTourOpen(true)}}><Icon name="map"/><span>How to use PhySense<small>five simple parts</small></span></button><button role="tab" aria-selected="false" onClick={()=>router.push('/data-and-privacy')}><Icon name="shield"/><span>Data &amp; privacy<small>how data is handled</small></span></button></> : <><button role="tab" aria-selected="true" onClick={()=>router.push('/block-1')}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button><button role="tab" aria-selected="false" aria-disabled="true" data-locked onClick={()=>notify('Block 2 unlocks after Block 1.')}><Icon name="wave"/><span>Block 2 · Preview (locked)<small>coming next</small></span></button></>}
       </div>
       <div ref={dragRef} className={styles.dragSurface} tabIndex={0} onDoubleClick={()=>actions.current.reset()} aria-label="Interactive atom. Drag to rotate. Use the zoom buttons or Ctrl + scroll to zoom. Press arrow left and arrow right to rotate."/>
       <div ref={stageRef} className={styles.stage}>

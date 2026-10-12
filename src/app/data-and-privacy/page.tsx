@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 
 const storedFields = [
   'Random participant and attempt IDs',
+  'Optional class association when a class code was used',
   'Lesson and pre/post phase',
   'Selected answer and selected reason',
   'Answer, reason, and joint correctness',
@@ -79,7 +80,7 @@ export default function DataAndPrivacyPage() {
           <div><dt>Website</dt><dd>Deployed on Vercel.</dd></div>
           <div><dt>Diagnostic database</dt><dd>Supabase project “PhySense”, currently in <code>us-west-2</code> (Oregon, USA).</dd></div>
           <div><dt>Browser access</dt><dd>Public and signed-in browser roles are blocked from the diagnostic tables by database permissions and Row Level Security.</dd></div>
-          <div><dt>Administrative access</dt><dd>People with authorised access to the PhySense Supabase project can administer the stored data. A separate instructor dashboard does not yet exist.</dd></div>
+          <div><dt>Administrative access</dt><dd>People with authorised access to the PhySense Supabase project can administer the stored data. The instructor prototype shows only aggregate results for a class through its private management token.</dd></div>
           <div><dt>Learner export</dt><dd>The learner can download the attempt available on their own device as JSON. The interface does not provide access to another learner&apos;s attempt.</dd></div>
           <div><dt>Deletion and retention</dt><dd>No final research retention period or learner self-service deletion process has been approved yet.</dd></div>
         </dl>

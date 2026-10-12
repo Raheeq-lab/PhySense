@@ -51,7 +51,15 @@ export async function POST(request:Request){
   const marked=validated.map(response=>{const question=kinematicsDiagnostic.find(item=>item.id===response.questionId)!;const answerCorrect=response.answer===question.correctAnswer,reasonCorrect=response.reason===question.correctReason;return {question,response,answerCorrect,reasonCorrect,jointCorrect:answerCorrect&&reasonCorrect}});
   const scores={answer:marked.filter(item=>item.answerCorrect).length,reason:marked.filter(item=>item.reasonCorrect).length,joint:marked.filter(item=>item.jointCorrect).length};
   const admin=getSupabaseAdmin();
-  const {data:attempt,error:attemptError}=await admin.from('diagnostic_attempts').insert({client_attempt_id:body.clientAttemptId,participant_id:body.participantId,lesson_id:'block-1/1-1',phase:body.phase,schema_version:'1.0',consent_version:CONSENT_VERSION,started_at:startedAt.toISOString(),completed_at:completedAt.toISOString(),duration_ms:durationMs,answer_score:scores.answer,reason_score:scores.reason,joint_score:scores.joint,is_simulated:false}).select('id').single();
+  let classId:null|string=null;
+  if(body.classCode!==undefined){
+    if(typeof body.classCode!=='string'||!/^[A-HJ-NP-Z2-9]{6}$/.test(body.classCode))return json({saved:false,error:'Invalid class code.'},400);
+    const {data:classroom,error:classError}=await admin.from('diagnostic_classes').select('id').eq('class_code',body.classCode).eq('active',true).maybeSingle();
+    if(classError){const reference=databaseReference(classError);return json({saved:false,error:`The class could not be checked (${reference}).`,reference},500)}
+    if(!classroom)return json({saved:false,error:'That class code is not active.'},400);
+    classId=classroom.id;
+  }
+  const {data:attempt,error:attemptError}=await admin.from('diagnostic_attempts').insert({client_attempt_id:body.clientAttemptId,participant_id:body.participantId,class_id:classId,lesson_id:'block-1/1-1',phase:body.phase,schema_version:'1.0',consent_version:CONSENT_VERSION,started_at:startedAt.toISOString(),completed_at:completedAt.toISOString(),duration_ms:durationMs,answer_score:scores.answer,reason_score:scores.reason,joint_score:scores.joint,is_simulated:false}).select('id').single();
 
   if(attemptError){
     if(attemptError.code==='23505'){const {data:existing}=await admin.from('diagnostic_attempts').select('id').eq('client_attempt_id',body.clientAttemptId).maybeSingle();if(existing)return json({saved:true,alreadySaved:true,attemptId:existing.id,scores})}

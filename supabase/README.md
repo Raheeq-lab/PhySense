@@ -25,3 +25,14 @@ public `anon` and signed-in `authenticated` browser roles.
 
 Do not paste `SUPABASE_SERVICE_ROLE_KEY` into the SQL editor, browser console,
 client component, screenshot, email, or Git repository.
+
+## Step 3 — enable the instructor class prototype
+
+Run `supabase/migrations/202610120100_create_diagnostic_classes.sql` in the
+SQL Editor. This creates `diagnostic_classes` and adds the optional `class_id`
+link to `diagnostic_attempts`. The class table remains unavailable to browser
+roles; all validation and summaries pass through the server API.
+
+Add `INSTRUCTOR_PROTOTYPE_KEY` to the local and Vercel server environments.
+Use a long random value and share it only with people allowed to create
+prototype classes. It is not stored in the browser after a class is created.

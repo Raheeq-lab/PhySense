@@ -4,7 +4,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Data & Privacy | PhySense',
-  description: 'A plain-language record of how the PhySense Lesson 1.1 diagnostic currently handles learner data.',
+  description: 'A plain-language guide to how PhySense handles learner data and class participation.',
 };
 
 const storedFields = [
@@ -25,9 +25,9 @@ export default function DataAndPrivacyPage() {
       <Link className={styles.brand} href="/">PhySense<small>A field guide to physical law.</small></Link>
       <nav aria-label="Page navigation">
         <a href="#overview">Overview</a>
-        <a href="#flow">Current data flow</a>
-        <a href="#fields">Fields collected</a>
-        <a href="#access">Access and export</a>
+        <a href="#choices">Your choices</a>
+        <a href="#classes">Class participation</a>
+        <a href="#records">Information used</a>
       </nav>
       <Link className={styles.back} href="/block-1/1-1">← Lesson 1.1</Link>
     </aside>
@@ -35,48 +35,37 @@ export default function DataAndPrivacyPage() {
     <main className={styles.main}>
       <header id="overview" className={styles.hero}>
         <span className={styles.eyebrow}>Data &amp; privacy</span>
-        <h1>How PhySense handles diagnostic data</h1>
-        <p>This page explains in plain language what information the Lesson 1.1 diagnostic uses, when it may be shared, and how learners can access their results.</p>
-        <div className={styles.documentLinks} aria-label="Research design documents">
-          <Link href="/participant-tracking"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19c.7-4 2.7-6 6-6s5.3 2 6 6M17 8h4m-2-2v4M17 15h4m-4 4h4"/></svg><span><b>Participant tracking</b><small>how learners are linked over time</small></span></Link>
-          <Link href="/diagnostic-map"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM9 5v14M9 10h11M9 15h11"/><path d="m5.8 11.8 1 1 1.5-2M5.8 16.8l1 1 1.5-2"/></svg><span><b>Diagnostic map</b><small>questions, attributes &amp; misconceptions</small></span></Link>
-        </div>
+        <h1>Your information and your choices</h1>
+        <p>PhySense does not ask students for a name or email. This page explains what stays in the browser, what may be shared, and what an instructor can see.</p>
       </header>
 
-      <section id="flow">
-        <div className={styles.sectionHeading}><span>01</span><div><h2>Current data flow</h2><p>What happens from opening the diagnostic to receiving a result.</p></div></div>
+      <section id="choices">
+        <div className={styles.sectionHeading}><span>01</span><div><h2>Your choices</h2><p>You can use the lesson and complete the diagnostic without sending the attempt to a class summary.</p></div></div>
         <ol className={styles.flow}>
-          <li><b>Learner&apos;s browser</b><span>Creates a random participant code and keeps quiz progress in local browser storage.</span></li>
-          <li><b>PhySense on Vercel</b><span>Shows the lesson and validates completed diagnostic submissions through a server endpoint.</span></li>
-          <li><b>Optional sharing choice</b><span>If sharing is not selected, the attempt stays on that device. If selected, the completed attempt is sent to the server.</span></li>
-          <li><b>Supabase</b><span>Stores the pseudonymous attempt and item-level responses. The browser cannot read the research tables directly.</span></li>
-          <li><b>Learner result</b><span>Shows scores and explanations and allows the learner to download that attempt as JSON.</span></li>
+          <li><b>Join a class</b><span>A six-character class code connects this browser to an instructor-created class. The code is shared by the whole class and is not a personal identity.</span></li>
+          <li><b>Complete the diagnostic</b><span>Your progress and result are kept in this browser while you work.</span></li>
+          <li><b>Choose whether to share</b><span>If optional sharing is selected, the completed attempt is added to the class summary. Otherwise, it stays on this device.</span></li>
+          <li><b>View your result</b><span>You can review your score and explanations and download your attempt as a JSON file.</span></li>
         </ol>
-        <aside className={styles.note}><b>Important terminology</b><p>The random code is stable on one browser, so it can connect attempts over time. The data is therefore best described as <strong>pseudonymous</strong>, not guaranteed anonymous.</p><Link href="/participant-tracking">Read the participant tracking design →</Link></aside>
+        <aside className={styles.note}><b>Remember</b><p>Clearing browser data, changing browsers, or using another device may remove or change the locally saved participant code and class connection.</p></aside>
       </section>
 
-      <section id="fields">
-        <div className={styles.sectionHeading}><span>02</span><div><h2>Fields collected</h2><p>The diagnostic database currently stores the following fields after optional sharing.</p></div></div>
-        <ul className={styles.fieldGrid}>{storedFields.map(field => <li key={field}>{field}</li>)}</ul>
+      <section id="classes">
+        <div className={styles.sectionHeading}><span>02</span><div><h2>What an instructor can see</h2><p>The instructor view shows a class summary, not student profiles.</p></div></div>
         <div className={styles.splitCards}>
-          <article><span className={styles.verified}>Verified</span><h3>Not written to the diagnostic tables</h3><p>Name, email address, sex, country, first-in-family status, and other demographic fields are not part of the current diagnostic submission.</p></article>
-          <article><span className={styles.caution}>Operational note</span><h3>Service logs are separate</h3><p>PhySense does not intentionally add an IP address or device profile to diagnostic records. Hosting providers may still create ordinary security and operational logs.</p></article>
+          <article><span className={styles.verified}>Visible</span><h3>Aggregate class results</h3><p>The number of pseudonymous learners, shared attempts, pre/post attempts, and average pre/post scores.</p></article>
+          <article><span className={styles.caution}>Not requested</span><h3>Personal details</h3><p>The student join and diagnostic forms do not ask for a learner&apos;s name, email, sex, country, or other demographic details.</p></article>
         </div>
+        <aside className={styles.note}><b>Instructor privacy</b><p>The private class-management information is saved in the instructor&apos;s browser and should not be shared with learners.</p></aside>
       </section>
 
-      <section id="access">
-        <div className={styles.sectionHeading}><span>03</span><div><h2>Storage, access, and export</h2><p>Where the proof-of-concept data sits and who can reach it today.</p></div></div>
-        <dl className={styles.facts}>
-          <div><dt>Website</dt><dd>Deployed on Vercel.</dd></div>
-          <div><dt>Diagnostic database</dt><dd>Supabase project “PhySense”, currently in <code>us-west-2</code> (Oregon, USA).</dd></div>
-          <div><dt>Browser access</dt><dd>Public and signed-in browser roles are blocked from the diagnostic tables by database permissions and Row Level Security.</dd></div>
-          <div><dt>Administrative access</dt><dd>People with authorised access to the PhySense Supabase project can administer the stored data. The instructor prototype shows only aggregate results for a class through its private management token.</dd></div>
-          <div><dt>Learner export</dt><dd>The learner can download the attempt available on their own device as JSON. The interface does not provide access to another learner&apos;s attempt.</dd></div>
-          <div><dt>Deletion and retention</dt><dd>No final research retention period or learner self-service deletion process has been approved yet.</dd></div>
-        </dl>
+      <section id="records">
+        <div className={styles.sectionHeading}><span>03</span><div><h2>Information used for a shared attempt</h2><p>When optional sharing is selected, PhySense stores the learning information needed to calculate results and class summaries.</p></div></div>
+        <ul className={styles.fieldGrid}>{storedFields.map(field => <li key={field}>{field}</li>)}</ul>
+        <aside className={styles.note}><b>Pseudonymous, not identified by name</b><p>A random participant code can connect attempts made in the same browser. It is not a verified identity, but it means shared attempts should not be described as completely anonymous.</p></aside>
       </section>
 
-      <footer><p>Continue the research documentation with the <Link href="/diagnostic-map">draft diagnostic concept and misconception map</Link>.</p><Link href="/block-1/1-1">Return to Lesson 1.1 →</Link></footer>
+      <footer><p>Students can review this information before deciding whether to share a completed diagnostic attempt.</p><Link href="/block-1/1-1">Return to Lesson 1.1 →</Link></footer>
     </main>
   </div>;
 }

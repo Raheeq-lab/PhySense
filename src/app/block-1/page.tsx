@@ -58,7 +58,7 @@ export default function BlockOneHub() {
       <nav aria-label="Course navigation">{primaryNav.map(([icon, label, sub, href]) => <Link key={label} href={href} className={label === 'Block 1' ? styles.current : ''} aria-current={label === 'Block 1' ? 'page' : undefined}><Icon name={icon}/><span>{label}{sub && <small>{sub}</small>}</span></Link>)}</nav>
       <footer className={styles.sidebarFooter}>
         <button type="button" aria-label={dusk?'Switch to light appearance':'Switch to dusk appearance'} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/><span>Appearance</span></button>
-        <Link href="/">About PhySense</Link>
+        <Link href="/data-and-privacy">Data &amp; privacy</Link>
         <small>v0.1 · Block 1</small>
       </footer>
     </aside>

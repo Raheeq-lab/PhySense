@@ -5,7 +5,7 @@ import SimpleDefinition from '@/components/lesson/SimpleDefinition';
 import KinematicsDiagnostic from '@/components/lesson/KinematicsDiagnostic';
 import styles from './page.module.css';
 
-const nav=[['Home','', '/'],['Block 1','The Intuition & Calculus Spark','/block-1'],['Block 2','Fields, Waves, and Math Tools','/block-2'],['Block 3','The Intermediate Bridge','/block-3'],['Block 4','The Advanced Pillars','/block-4'],['Math Spark','Calculus, ODEs, Linear Algebra','/math-spark'],['Reference','Equations & constants','/reference']] as const;
+const nav=[['Home','', '/'],['Block 1','The Intuition & Calculus Spark','/block-1'],['Block 2','Fields, Waves, and Math Tools','/block-2'],['Block 3','The Intermediate Bridge','/block-3'],['Block 4','The Advanced Pillars','/block-4'],['Math Spark','Calculus, ODEs, Linear Algebra','/math-spark'],['Reference','Equations & constants','/reference'],['Data & privacy','Current diagnostic data flow','/data-and-privacy']] as const;
 const miniNav=[['↑ Top of page','#top'],['Picture this','#picture-this'],['Interactive lab','#interactive-lab'],['Build the idea','#build-the-idea'],['What to notice','#what-to-notice'],['Math Spark','#math-spark'],['Now earn the equations','#equations'],['Question answered','#question-answered'],['Real-world challenge','#challenge']] as const;
 const equations:[[ReactNode,string],[ReactNode,string],[ReactNode,string],[ReactNode,string],[ReactNode,string],[ReactNode,string]]=[
   [<>v = Δx / Δt</>,'average velocity'],[<>a = Δv / Δt</>,'acceleration'],[<>v = u + at</>,'velocity after time t'],[<>Δx = ut + ½at²</>,'displacement under constant acceleration'],[<>x = x₀ + v₀ₓt</>,'horizontal projectile position'],[<>y = y₀ + v₀ᵧt − ½gt²</>,'vertical projectile position'],

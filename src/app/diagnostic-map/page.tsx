@@ -47,7 +47,7 @@ export default function DiagnosticMapPage() {
       </section>
 
       <section>
-        <div className={styles.heading}><span>02</span><div><h2>Draft Q-matrix</h2><p>“1” means the item is proposed to require that attribute. Wade or another subject expert should review every assignment.</p></div></div>
+        <div className={styles.heading}><span>02</span><div><h2>Draft Q-matrix</h2><p>“1” means the item is proposed to require that attribute. A subject expert should review every assignment.</p></div></div>
         <div className={styles.tableWrap}><table><thead><tr><th>Item</th>{attributes.map(([code]) => <th key={code}>{code}</th>)}</tr></thead><tbody>{kinematicsDiagnostic.map(item => {const active = reviewMap[item.id].attributes; return <tr key={item.id}><th>{item.id}</th>{attributes.map(([code]) => <td key={code} data-active={active.includes(code) || undefined}>{active.includes(code) ? '1' : '0'}</td>)}</tr>})}</tbody></table></div>
       </section>
 

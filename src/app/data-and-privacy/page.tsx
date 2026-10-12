@@ -87,7 +87,7 @@ export default function DataAndPrivacyPage() {
         <div className={styles.boundary}><strong>Current boundary</strong><p>The diagnostic may be demonstrated and tested with synthetic data. Real learner data must not be treated as an approved research dataset until the relevant ethics, consent, hosting, access, and retention requirements are confirmed.</p></div>
       </section>
 
-      <footer><p>Questions or corrections can be reviewed with the project supervisor before this record becomes a formal data-management statement.</p><Link href="/block-1/1-1">Return to Lesson 1.1 →</Link></footer>
+      <footer><p>Continue the research documentation with the <Link href="/diagnostic-map">draft diagnostic concept and misconception map</Link>.</p><Link href="/block-1/1-1">Return to Lesson 1.1 →</Link></footer>
     </main>
   </div>;
 }

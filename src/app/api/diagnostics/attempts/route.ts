@@ -1,13 +1,14 @@
 import {getSupabaseAdmin} from '@/lib/supabase';
 import {kinematicsDiagnostic} from '@/data/kinematicsDiagnostic';
 import {forcesDiagnostic} from '@/data/forcesDiagnostic';
+import {circularMotionDiagnostic} from '@/data/circularMotionDiagnostic';
 
 export const runtime='nodejs';
 
 const CONSENT_VERSION='2026-10-10';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const confidenceValues=new Set(['not-sure','somewhat','very']);
-const diagnosticBanks={'block-1/1-1':kinematicsDiagnostic,'block-1/1-2':forcesDiagnostic} as const;
+const diagnosticBanks={'block-1/1-1':kinematicsDiagnostic,'block-1/1-2':forcesDiagnostic,'block-1/1-3':circularMotionDiagnostic} as const;
 type IncomingResponse={questionId:string;answer:number;reason:number;confidence:string;responseTimeMs:number};
 
 function json(body:Record<string,unknown>,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store'}})}

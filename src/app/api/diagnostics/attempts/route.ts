@@ -7,13 +7,14 @@ import {momentumDiagnostic} from '@/data/momentumDiagnostic';
 import {calculusDiagnostic} from '@/data/calculusDiagnostic';
 import {electricFieldsDiagnostic} from '@/data/electricFieldsDiagnostic';
 import {electricPotentialDiagnostic} from '@/data/electricPotentialDiagnostic';
+import {magnetismDiagnostic} from '@/data/magnetismDiagnostic';
 
 export const runtime='nodejs';
 
 const CONSENT_VERSION='2026-10-10';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const confidenceValues=new Set(['not-sure','somewhat','very']);
-const diagnosticBanks={'block-1/1-1':kinematicsDiagnostic,'block-1/1-2':forcesDiagnostic,'block-1/1-3':circularMotionDiagnostic,'block-1/1-4':energyDiagnostic,'block-1/1-5':momentumDiagnostic,'block-1/1-6':calculusDiagnostic,'block-2/2-1':electricFieldsDiagnostic,'block-2/2-2':electricPotentialDiagnostic} as const;
+const diagnosticBanks={'block-1/1-1':kinematicsDiagnostic,'block-1/1-2':forcesDiagnostic,'block-1/1-3':circularMotionDiagnostic,'block-1/1-4':energyDiagnostic,'block-1/1-5':momentumDiagnostic,'block-1/1-6':calculusDiagnostic,'block-2/2-1':electricFieldsDiagnostic,'block-2/2-2':electricPotentialDiagnostic,'block-2/2-3':magnetismDiagnostic} as const;
 type IncomingResponse={questionId:string;answer:number;reason:number;confidence:string;responseTimeMs:number};
 
 function json(body:Record<string,unknown>,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store'}})}

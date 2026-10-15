@@ -1,8 +1,9 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
+import FocusLab from './FocusLab';
 import styles from './OscillationLab.module.css';
 
-export default function OscillationLab(){
+function OscillationContent(){
   const[mass,setMass]=useState(1),[stiffness,setStiffness]=useState(40),[amplitude,setAmplitude]=useState(.8),[damping,setDamping]=useState(.08),[time,setTime]=useState(0),[playing,setPlaying]=useState(false);
   useEffect(()=>{if(!playing)return;let frame=0,last=performance.now();const tick=(now:number)=>{const dt=Math.min((now-last)/1000,.04);last=now;setTime(value=>(value+dt)%20);frame=requestAnimationFrame(tick)};frame=requestAnimationFrame(tick);return()=>cancelAnimationFrame(frame)},[playing]);
   const values=useMemo(()=>{const omega=Math.sqrt(stiffness/mass),envelope=amplitude*Math.exp(-damping*time),x=envelope*Math.cos(omega*time),v=-omega*envelope*Math.sin(omega*time),force=-stiffness*x,initial=.5*stiffness*amplitude*amplitude,mechanical=initial*Math.exp(-2*damping*time),elastic=.5*stiffness*x*x,kinetic=Math.max(0,mechanical-elastic),thermal=Math.max(0,initial-mechanical);return{omega,x,v,force,initial,elastic,kinetic,thermal,period:2*Math.PI/omega}},[mass,stiffness,amplitude,damping,time]);
@@ -16,3 +17,4 @@ export default function OscillationLab(){
     <div className={styles.energy}><div><span>Elastic</span><i style={{height:`${values.elastic*energyScale}%`}}/><b>{values.elastic.toFixed(1)} J</b></div><div><span>Kinetic</span><i style={{height:`${values.kinetic*energyScale}%`}}/><b>{values.kinetic.toFixed(1)} J</b></div><div><span>Thermal</span><i style={{height:`${values.thermal*energyScale}%`}}/><b>{values.thermal.toFixed(1)} J</b></div><p><b>Energy story:</b> spring energy and kinetic energy trade places. Damping gradually transfers mechanical energy to the surroundings as thermal energy.</p></div>
   </div>
 }
+export default function OscillationLab(){return <FocusLab title="Oscillation Lab"><OscillationContent/></FocusLab>}

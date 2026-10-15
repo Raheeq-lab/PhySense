@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {opticsDiagnostic} from '@/data/opticsDiagnostic';export default function OpticsDiagnostic(){return <KinematicsDiagnostic items={opticsDiagnostic} lessonId="block-3/3-4" storageSlug="lesson3.4" simulationFilename="geometric-optics"/>}

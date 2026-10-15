@@ -2,6 +2,7 @@
 
 import {useEffect,useMemo,useRef,useState} from 'react';
 import styles from './CorneringLab.module.css';
+import FocusLab from './FocusLab';
 
 const G=9.8;
 
@@ -13,7 +14,7 @@ export default function CorneringLab(){
   const radians=angle*Math.PI/180,cx=350,cy=230,drawRadius=70+radius/60*105,x=cx+Math.cos(radians)*drawRadius,y=cy+Math.sin(radians)*drawRadius;
   const tangent={x:-Math.sin(radians),y:Math.cos(radians)},inward={x:-Math.cos(radians),y:-Math.sin(radians)},velocityLength=35+speed*2.4,accelLength=35+Math.min(95,values.acceleration*8);
   const rotate=angle+90;
-  return <div className={styles.lab} role="region" aria-label="Interactive circular motion cornering lab">
+  return <FocusLab title="Cornering Lab"><div className={styles.lab} role="region" aria-label="Interactive circular motion cornering lab">
     <div className={styles.prompt}><b>Try this:</b> Double the speed while keeping the radius fixed. The required inward acceleration and force become four times larger.</div>
     <svg className={styles.scene} viewBox="0 0 700 470" role="img" aria-label={`A car moving around a ${radius} metre radius turn at ${speed} metres per second`}>
       <defs><marker id="corner-blue-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path fill="#315fd0" d="M0 0 8 4 0 8z"/></marker><marker id="corner-red-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path fill="#c84f42" d="M0 0 8 4 0 8z"/></marker></defs>
@@ -31,5 +32,5 @@ export default function CorneringLab(){
     <div className={styles.controls}><label><span>Speed <output>{speed} m/s</output></span><input type="range" min="2" max="28" value={speed} onChange={event=>setSpeed(Number(event.target.value))}/></label><label><span>Turn radius <output>{radius} m</output></span><input type="range" min="10" max="70" value={radius} onChange={event=>setRadius(Number(event.target.value))}/></label><label><span>Vehicle mass <output>{mass} kg</output></span><input type="range" min="400" max="1800" step="50" value={mass} onChange={event=>setMass(Number(event.target.value))}/></label><label><span>Tyre–road grip μ <output>{grip.toFixed(2)}</output></span><input type="range" min="0.15" max="1" step="0.05" value={grip} onChange={event=>setGrip(Number(event.target.value))}/></label></div>
     <div className={styles.readouts}><div><span>Inward acceleration</span><b>{values.acceleration.toFixed(2)} m/s²</b></div><div><span>Inward force needed</span><b>{Math.round(values.force).toLocaleString()} N</b></div><div><span>Maximum grip force</span><b>{Math.round(values.maxGrip).toLocaleString()} N</b></div><div><span>Largest safe speed</span><b>{values.maxSpeed.toFixed(1)} m/s</b></div><div><span>Time for one lap</span><b>{values.period.toFixed(1)} s</b></div></div>
     <div className={styles.explanation}><span>WHAT THE ARROWS MEAN</span><h4>Velocity points along the path; acceleration points into the turn</h4><p>The car&apos;s speed can stay constant while its velocity changes, because velocity includes direction. The inward acceleration keeps bending the velocity arrow into a circle. If grip disappears, nothing pulls the car inward, so it continues along the straight tangent shown by the dashed line.</p></div>
-  </div>;
+  </div></FocusLab>;
 }

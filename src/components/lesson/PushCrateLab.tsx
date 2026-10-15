@@ -2,6 +2,7 @@
 
 import {useMemo,useState} from 'react';
 import styles from './PushCrateLab.module.css';
+import FocusLab from './FocusLab';
 
 const G=9.8;
 
@@ -21,7 +22,7 @@ export default function PushCrateLab(){
     return {horizontal,vertical,normal,maxStatic,moving,friction,net,acceleration};
   },[mass,push,angle,muS,muK]);
   const forceScale=1.25, pushLength=Math.min(170,values.horizontal*forceScale),frictionLength=Math.min(170,values.friction*forceScale);
-  return <div className={styles.lab} role="region" aria-label="Interactive force and friction lab">
+  return <FocusLab title="Push the Crate"><div className={styles.lab} role="region" aria-label="Interactive force and friction lab">
     <div className={styles.prompt}><b>Try this:</b> Increase the applied force slowly. Friction first grows to match your push. When your push becomes too large for static friction to balance, the crate starts moving.</div>
     <svg className={styles.scene} viewBox="0 0 700 300" role="img" aria-label={`A ${mass} kilogram crate with ${push} newtons applied; ${values.moving?'the crate accelerates':'the crate remains at rest'}`}>
       <defs><marker id="force-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8z"/></marker></defs>
@@ -40,5 +41,5 @@ export default function PushCrateLab(){
     </div>
     <div className={styles.readouts}><Readout label="Sideways part of your push" value={`${values.horizontal.toFixed(1)} N`}/><Readout label="Most static friction possible" value={`${values.maxStatic.toFixed(1)} N`}/><Readout label="Friction acting now" value={`${values.friction.toFixed(1)} N`}/><Readout label="Force left over" value={`${values.net.toFixed(1)} N`}/><Readout label="Change in velocity each second" value={`${values.acceleration.toFixed(2)} m/s²`} accent/></div>
     <div className={styles.explanation}><span>{values.moving?'THE CRATE IS SLIDING':'THE CRATE IS STILL'}</span><h4>{values.moving?'Your push is now stronger than friction':'Friction is balancing your push'}</h4><p>{values.moving?`Your sideways push is greater than the ${values.maxStatic.toFixed(1)} N static-friction limit. After sliding friction is removed, ${values.net.toFixed(1)} N remains. This leftover force makes the crate speed up.`:`Friction is ${values.friction.toFixed(1)} N because that is exactly enough to balance your sideways push. The forces cancel, so the crate does not accelerate.`}</p></div>
-  </div>;
+  </div></FocusLab>;
 }

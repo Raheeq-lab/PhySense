@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {quantumDiagnostic} from '@/data/quantumDiagnostic';export default function QuantumDiagnostic(){return <KinematicsDiagnostic items={quantumDiagnostic} lessonId="block-3/3-6" storageSlug="lesson3.6" simulationFilename="intro-quantum"/>}

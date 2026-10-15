@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {relativityDiagnostic} from '@/data/relativityDiagnostic';export default function RelativityDiagnostic(){return <KinematicsDiagnostic items={relativityDiagnostic} lessonId="block-3/3-5" storageSlug="lesson3.5" simulationFilename="special-relativity"/>}

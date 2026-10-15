@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {wavesDiagnostic} from '@/data/wavesDiagnostic';export default function WavesDiagnostic(){return <KinematicsDiagnostic items={wavesDiagnostic} lessonId="block-2/2-6" storageSlug="lesson2.6" simulationFilename="waves"/>}

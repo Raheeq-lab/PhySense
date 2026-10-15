@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {thermalDiagnostic} from '@/data/thermalDiagnostic';export default function ThermalDiagnostic(){return <KinematicsDiagnostic items={thermalDiagnostic} lessonId="block-3/3-3" storageSlug="lesson3.3" simulationFilename="thermal-physics"/>}

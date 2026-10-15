@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {electricPotentialDiagnostic} from '@/data/electricPotentialDiagnostic';export default function ElectricPotentialDiagnostic(){return <KinematicsDiagnostic items={electricPotentialDiagnostic} lessonId="block-2/2-2" storageSlug="lesson2.2" simulationFilename="electric-potential"/>}

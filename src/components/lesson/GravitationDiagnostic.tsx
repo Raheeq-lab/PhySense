@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {gravitationDiagnostic} from '@/data/gravitationDiagnostic';export default function GravitationDiagnostic(){return <KinematicsDiagnostic items={gravitationDiagnostic} lessonId="block-3/3-1" storageSlug="lesson3.1" simulationFilename="gravitation-orbits"/>}

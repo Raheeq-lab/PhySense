@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {oscillationsDiagnostic} from '@/data/oscillationsDiagnostic';export default function OscillationsDiagnostic(){return <KinematicsDiagnostic items={oscillationsDiagnostic} lessonId="block-2/2-5" storageSlug="lesson2.5" simulationFilename="oscillations"/>}

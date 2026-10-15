@@ -1,0 +1,1 @@
+'use client';import KinematicsDiagnostic from './KinematicsDiagnostic';import {inductionDiagnostic} from '@/data/inductionDiagnostic';export default function InductionDiagnostic(){return <KinematicsDiagnostic items={inductionDiagnostic} lessonId="block-2/2-4" storageSlug="lesson2.4" simulationFilename="induction"/>}

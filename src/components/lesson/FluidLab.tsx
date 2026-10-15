@@ -1,6 +1,7 @@
 'use client';
 
 import {useState,type CSSProperties} from 'react';
+import FocusLab from './FocusLab';
 import styles from './FluidLab.module.css';
 
 const fluids={
@@ -10,7 +11,7 @@ const fluids={
 } as const;
 type FluidName=keyof typeof fluids;
 
-export default function FluidLab(){
+function FluidLabContent(){
   const [fluid,setFluid]=useState<FluidName>('Water');
   const [objectDensity,setObjectDensity]=useState(720);
   const [depth,setDepth]=useState(3);
@@ -40,3 +41,4 @@ export default function FluidLab(){
     <div className={styles.equation}><b>Static fluid: Δp = ρgΔh and F<sub>B</sub> = ρ<sub>fluid</sub>gV<sub>displaced</sub></b><p>Steady incompressible flow: A₁v₁ = A₂v₂. Along one ideal streamline, p + ½ρv² + ρgh stays constant.</p></div>
   </div>
 }
+export default function FluidLab(){return <FocusLab title="Interactive Fluid Lab"><FluidLabContent/></FocusLab>}

@@ -1,7 +1,7 @@
  'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import {useAppearance} from '@/hooks/useAppearance';
 import styles from './hub.module.css';
 
 type IconName = 'home' | 'atom' | 'wave' | 'orbit' | 'bolt' | 'function' | 'bookmark' | 'arrow-up' | 'chevron-right' | 'arrow-right' | 'sun' | 'moon';
@@ -50,14 +50,14 @@ function PageNav() {
 }
 
 export default function BlockOneHub() {
-  const [dusk,setDusk]=useState(false);
+  const {dusk,toggle:toggleAppearance}=useAppearance();
   return <div className={`${styles.page} ${dusk?styles.dusk:''}`} id="top">
     <aside className={styles.primarySidebar}>
       <Link href="/" className={styles.brand}>PhySense<small>A field guide to physical law.</small></Link>
       <span className={styles.courseLabel}>Course content</span>
       <nav aria-label="Course navigation">{primaryNav.map(([icon, label, sub, href]) => <Link key={label} href={href} className={label === 'Block 1' ? styles.current : ''} aria-current={label === 'Block 1' ? 'page' : undefined}><Icon name={icon}/><span>{label}{sub && <small>{sub}</small>}</span></Link>)}</nav>
       <footer className={styles.sidebarFooter}>
-        <button type="button" aria-label={dusk?'Switch to light appearance':'Switch to dusk appearance'} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/><span>Appearance</span></button>
+        <button type="button" aria-label={dusk?'Switch to light appearance':'Switch to dusk appearance'} onClick={toggleAppearance}><Icon name={dusk?'moon':'sun'}/><span>Appearance</span></button>
         <Link href="/data-and-privacy">Data &amp; privacy</Link>
         <small>v0.1 · Block 1</small>
       </footer>

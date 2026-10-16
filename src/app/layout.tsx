@@ -37,8 +37,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${newsreader.variable} ${nunitoSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head><script dangerouslySetInnerHTML={{__html:"try{document.documentElement.dataset.appearance=localStorage.getItem('physense.appearance')==='dusk'?'dusk':'day'}catch(e){document.documentElement.dataset.appearance='day'}"}}/></head>
       <body
         className="min-h-full flex flex-col"
         style={{

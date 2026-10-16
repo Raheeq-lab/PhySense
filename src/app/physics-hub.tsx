@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D } from 'three';
 import styles from './block-1/page.module.css';
+import {useAppearance} from '@/hooks/useAppearance';
 
 type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'map'|'steps'|'lab'|'equation'|'check'|'shield'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
 
@@ -115,7 +116,8 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
   const tourTriggerRef = useRef<HTMLButtonElement|null>(null);
   const actions = useRef({ zoomIn:()=>{}, zoomOut:()=>{}, turn:(_n:number)=>{}, reset:()=>{} });
   const defaultZoom=1;
-  const [dusk,setDusk]=useState(false), [focus,setFocus]=useState(false), [hint,setHint]=useState(true), [zoomState,setZoomState]=useState(defaultZoom), [tab,setTab]=useState(0), [loading,setLoading]=useState(false), [toast,setToast]=useState<string|null>(null);
+  const {dusk,toggle:toggleAppearance}=useAppearance();
+  const [focus,setFocus]=useState(false), [hint,setHint]=useState(true), [zoomState,setZoomState]=useState(defaultZoom), [tab,setTab]=useState(0), [loading,setLoading]=useState(false), [toast,setToast]=useState<string|null>(null);
   const [atomInfo,setAtomInfo]=useState<{name:keyof typeof atomFacts;left:number;top:number;maxHeight:number}|null>(null);
   const [visitedLabels,setVisitedLabels]=useState<AtomFactName[]>([]),[visitedLoaded,setVisitedLoaded]=useState(false),[labelHint,setLabelHint]=useState(true);
   const [tourOpen,setTourOpen]=useState(false);
@@ -205,7 +207,7 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
       {home
         ? <Link className={`${styles.featured} ${styles.startHere}`} href="/block-1/1-1" aria-label="Start with Lesson 1.1"><span>New here?</span><h2>Start with Lesson 1.1</h2><p>Kinematics — motion in 1D and 2D.</p><span className={styles.startHereLink}>Begin →</span></Link>
         : <div className={styles.featured}><span>Now learning</span><svg viewBox="0 0 92 76" aria-hidden="true"><path d="M9 57c14-1 20-16 31-23 11-8 23-10 42-13"/><circle cx="61" cy="26" r="8"/><path d="M12 58h2m8-7h2m8-8h2m8-8h2"/></svg><h2>Kinematics</h2><p>Position, velocity, and acceleration — the alphabet of motion.</p><Link href="/block-1/1-1">Continue lesson <Icon name="arrow-right"/></Link></div>}
-      {home&&<footer className={styles.homeSidebarFooter}><button type="button" aria-label={dusk?'Switch to light appearance':'Switch to dusk appearance'} aria-pressed={dusk} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/><span>Appearance</span></button><Link href="/data-and-privacy">Data &amp; privacy</Link><small>v0.4 · PhySense</small></footer>}
+      {home&&<footer className={styles.homeSidebarFooter}><button type="button" aria-label={dusk?'Switch to light appearance':'Switch to dusk appearance'} aria-pressed={dusk} onClick={toggleAppearance}><Icon name={dusk?'moon':'sun'}/><span>Appearance</span></button><Link href="/data-and-privacy">Data &amp; privacy</Link><small>v0.4 · PhySense</small></footer>}
     </aside>
     <div className={styles.centerColumn}>
     <section ref={mainRef} className={styles.main}>
@@ -232,7 +234,7 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
           <button aria-label="Zoom in" aria-pressed={zoomState>=1} onClick={()=>actions.current.zoomIn()}><Icon name="magnifier-plus"/></button>
           <button aria-label="Zoom out" aria-pressed={zoomState<1} onClick={()=>actions.current.zoomOut()}><Icon name="magnifier"/></button>
           <button aria-label="Expand scene" aria-pressed={focus} onClick={()=>setFocus(!focus)}><Icon name="expand"/></button>
-          {!home&&<button aria-label={dusk?'Use day light':'Use dusk light'} aria-pressed={dusk} onClick={()=>setDusk(!dusk)}><Icon name={dusk?'moon':'sun'}/></button>}
+          {!home&&<button aria-label={dusk?'Use day light':'Use dusk light'} aria-pressed={dusk} onClick={toggleAppearance}><Icon name={dusk?'moon':'sun'}/></button>}
         </div>
         <div className={styles.turn}><button aria-label="Turn left" onClick={()=>actions.current.turn(-Math.PI/2)}><Icon name="arrow-left"/></button><button onClick={()=>actions.current.turn(Math.PI*2)}>360°</button><button aria-label="Turn right" onClick={()=>actions.current.turn(Math.PI/2)}><Icon name="arrow-right"/></button></div>
         <p className={styles.caption}>{home?'Physics is not a list of formulas. It is a way of asking the universe what it is doing.':'Every law of physics is a promise the universe keeps.'}</p>

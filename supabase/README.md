@@ -26,13 +26,28 @@ public `anon` and signed-in `authenticated` browser roles.
 Do not paste `SUPABASE_SERVICE_ROLE_KEY` into the SQL editor, browser console,
 client component, screenshot, email, or Git repository.
 
-## Step 3 — enable the instructor class prototype
+## Step 3 — enable instructor classes
 
 Run `supabase/migrations/202610120100_create_diagnostic_classes.sql` in the
 SQL Editor. This creates `diagnostic_classes` and adds the optional `class_id`
 link to `diagnostic_attempts`. The class table remains unavailable to browser
 roles; all validation and summaries pass through the server API.
 
-Add `INSTRUCTOR_PROTOTYPE_KEY` to the local and Vercel server environments.
-Use a long random value and share it only with people allowed to create
-prototype classes. It is not stored in the browser after a class is created.
+## Step 4 — enable instructor accounts
+
+Run `supabase/migrations/202610180100_add_instructor_accounts.sql` in the SQL
+Editor. This creates the role-based `profiles` table, adds instructor ownership
+to classes, and installs a safe profile trigger for future Auth users.
+
+Create an instructor under **Authentication → Users**. Then assign the role in
+the SQL Editor, replacing the example email:
+
+```sql
+insert into public.profiles (user_id, role)
+select id, 'instructor' from auth.users where email = 'instructor@example.com'
+on conflict (user_id) do update set role = excluded.role;
+```
+
+There is no public instructor sign-up route. New Auth users default to the
+`learner` role and cannot access instructor pages until an administrator grants
+the instructor role.

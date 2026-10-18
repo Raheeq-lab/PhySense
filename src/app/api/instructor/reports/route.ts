@@ -31,5 +31,7 @@ export async function DELETE(request:Request){
     const {error:deleteError}=await admin.from('diagnostic_attempts').delete().eq('class_id',classId);
     if(deleteError)return json({error:'Class attempts could not be cleared.'},500);
   }
+  const {error:rosterError}=await admin.from('class_roster').update({has_completed:false}).eq('class_id',classId);
+  if(rosterError)return json({error:'Quiz data was cleared, but roster completion could not be reset.'},500);
   return json({cleared:true,deletedAttempts:attemptIds.length});
 }

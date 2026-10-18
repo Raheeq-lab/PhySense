@@ -21,13 +21,13 @@ export async function GET(request:Request){
 
   if(token){
     if(!UUID.test(token))return json({error:'This personal invitation link is not valid.'},400);
-    const {data:roster,error:rosterError}=await admin.from('class_roster').select('class_id').eq('personal_token',token).maybeSingle();
+    const {data:roster,error:rosterError}=await admin.from('class_roster').select('class_id,has_completed').eq('personal_token',token).maybeSingle();
     if(rosterError){const reference=databaseReference(rosterError);return json({error:`The invitation could not be checked (${reference}).`,reference},500)}
     if(!roster)return json({error:'This personal invitation link was not found.'},404);
     const {data,error}=await admin.from('diagnostic_classes').select('id,class_code,title,lesson_id').eq('id',roster.class_id).eq('active',true).maybeSingle();
     if(error){const reference=databaseReference(error);return json({error:`The class could not be checked (${reference}).`,reference},500)}
     if(!data)return json({error:'The class for this invitation is not active.'},404);
-    return json({classroom:{id:data.id,code:data.class_code,title:data.title,lessonId:data.lesson_id,personalToken:token}});
+    return json({classroom:{id:data.id,code:data.class_code,title:data.title,lessonId:data.lesson_id,personalToken:token,hasCompleted:roster.has_completed}});
   }
 
   if(code){

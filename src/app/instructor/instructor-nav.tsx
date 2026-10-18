@@ -3,7 +3,7 @@ import styles from './login.module.css';
 
 const links=[
   ['Home','/'],
-  ['User Guides','/block-1'],
+  ['User Guides','/user-guides'],
   ['Assessments','/diagnostic-map'],
   ['Reports','/instructor/reports'],
   ['Research','/participant-tracking'],

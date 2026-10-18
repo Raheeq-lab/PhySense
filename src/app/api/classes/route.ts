@@ -1,10 +1,10 @@
 import {randomBytes} from 'node:crypto';
 import {getInstructor} from '@/lib/instructor-auth';
+import {lessonIds} from '@/lib/lessons';
 import {getSupabaseAdmin} from '@/lib/supabase';
 
 export const runtime='nodejs';
 
-const LESSON_ID='block-1/1-1';
 const CODE=/^[A-HJ-NP-Z2-9]{6}$/;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -63,12 +63,13 @@ export async function POST(request:Request){
   try{body=await request.json() as Record<string,unknown>}catch{return json({error:'Invalid JSON.'},400)}
   const title=typeof body.title==='string'?body.title.trim().replace(/\s+/g,' '):'';
   if(title.length<3||title.length>80)return json({error:'Class title must be between 3 and 80 characters.'},400);
-  if(body.lessonId!==LESSON_ID)return json({error:'Only Lesson 1.1 is available in this prototype.'},400);
+  const lessonId=typeof body.lessonId==='string'?body.lessonId:'';
+  if(!lessonIds.has(lessonId))return json({error:'Choose a valid PhySense lesson.'},400);
 
   const admin=getSupabaseAdmin();
   for(let attempt=0;attempt<5;attempt++){
     const code=classCode();
-    const {data,error}=await admin.from('diagnostic_classes').insert({class_code:code,title,lesson_id:LESSON_ID,instructor_id:instructor.id}).select('id,class_code,title,lesson_id,created_at').single();
+    const {data,error}=await admin.from('diagnostic_classes').insert({class_code:code,title,lesson_id:lessonId,instructor_id:instructor.id}).select('id,class_code,title,lesson_id,created_at').single();
     if(!error&&data)return json({classroom:{id:data.id,code:data.class_code,title:data.title,lessonId:data.lesson_id,createdAt:data.created_at}},201);
     if(error?.code!=='23505'){const reference=databaseReference(error);return json({error:`The class could not be created (${reference}).`,reference},500)}
   }

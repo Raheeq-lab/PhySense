@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Newsreader, Nunito_Sans, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import './instructor-theme.css';
 
 const newsreader = Newsreader({
   variable: '--font-newsreader',

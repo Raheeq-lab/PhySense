@@ -7,6 +7,7 @@ import gsap from 'gsap';
 import {GeistSans} from 'geist/font/sans';
 import RosterManager from './roster-manager';
 import SignOut from './sign-out';
+import InstructorLoading from './loading';
 import {lessons,type LessonId} from '@/lib/lessons';
 import {useAppearance} from '@/hooks/useAppearance';
 import styles from '../classroom.module.css';
@@ -35,11 +36,13 @@ export default function InstructorPrototype({email,fullName,university}:{email:s
     try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)??'null') as ({classroom?:Classroom}&Partial<Classroom>)|null;remembered=saved?.classroom??(saved?.id?saved as Classroom:undefined)}catch{}
     if(remembered)setClassroom(remembered);
     try{
-      const response=await fetch('/api/classes/',{cache:'no-store'}),body=await response.json() as {classes?:Classroom[];error?:string};
+      const classRequest=fetch('/api/classes/',{cache:'no-store'}).then(async response=>({response,body:await response.json() as {classes?:Classroom[];error?:string}}));
+      const summaryRequest=remembered?fetchSummary(remembered).then(summary=>({summary,error:null})).catch(error=>({summary:null,error})):Promise.resolve({summary:null,error:null});
+      const [{response,body},rememberedSummary]=await Promise.all([classRequest,summaryRequest]);
       if(!response.ok||!body.classes)throw new Error(body.error||'Classes could not be loaded.');
       setSavedClasses(body.classes);
       const value=remembered&&body.classes.find(item=>item.id===remembered.id);
-      if(value){setClassroom(value);try{setSummary(await fetchSummary(value))}catch(error){setStatus(error instanceof Error?error.message:'Could not load the class summary.')}}
+      if(value){setClassroom(value);if(rememberedSummary.summary)setSummary(rememberedSummary.summary);else if(rememberedSummary.error)setStatus(rememberedSummary.error instanceof Error?rememberedSummary.error.message:'Could not load the class summary.')}
       else if(remembered){localStorage.removeItem(STORAGE_KEY);setClassroom(null)}
     }catch(error){setStatus(error instanceof Error?error.message:'Classes could not be loaded.')}
     finally{setClassesLoaded(true)}
@@ -53,7 +56,7 @@ export default function InstructorPrototype({email,fullName,university}:{email:s
   const joinUrl=classroom?`${location.origin}/join?code=${classroom.code}`:'';
   const savedClassList=classroom&&savedClasses.length>0&&<section data-saved-classes><span className={styles.eyebrow}>Manage classes</span><h2>Your active classes</h2><p>Open a class to view its details, or remove it from your active list.</p><div>{savedClasses.map(value=><article key={value.id}><div><strong>{value.title}</strong><span>{value.lessonId} · Code {value.code} · {value.attempts??0} attempt{value.attempts===1?'':'s'}</span></div><button type="button" disabled={busy||classroom.id===value.id} onClick={()=>void openSaved(value)}>{classroom.id===value.id?'Open now':'Open'}</button><button type="button" data-remove-class disabled={busy} onClick={()=>void removeSaved(value)}>Remove</button></article>)}</div></section>;
 
-  if(!classesLoaded)return <main ref={scope} className={`${styles.page} ${GeistSans.variable}`} data-instructor-page><div className={styles.shell}><div className={styles.top}><Link className={styles.brand} href="/">PhySense</Link></div><header className={styles.hero}><span className={styles.eyebrow}>Instructor workspace</span><h1>Opening your class.</h1><p>Restoring your active class and latest summary.</p></header><section className={styles.card}><h2>Preparing class details</h2><p>Your saved class will open here automatically.</p></section></div></main>;
+  if(!classesLoaded)return <InstructorLoading/>;
 
   return <main ref={scope} className={`${styles.page} ${GeistSans.variable}`} data-instructor-page><div className={styles.shell}>
     <div className={styles.top} data-instructor-top><Link className={styles.brand} href="/">PhySense</Link><div data-instructor-actions><Link className={styles.back} data-instructor-reports-link href="/instructor/reports">View class reports</Link><Link className={styles.back} href={`/${classroom?.lessonId??lessonId}`}>Open selected lesson</Link><button type="button" data-appearance-toggle aria-pressed={dusk} onClick={toggleAppearance}>{dusk?'Light mode':'Dusk mode'}</button><SignOut/></div></div>

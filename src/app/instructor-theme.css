@@ -51,6 +51,8 @@ html[data-appearance="dusk"] [data-roster] a { color: #b7c2ff; }
 
 [data-instructor-actions] { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
 [data-instructor-actions] button { padding: 7px 10px; border: 1px solid #bfc7e8; border-radius: 7px; background: #fff; color: #2f4cb8; font: 700 12px var(--font-nunito-sans), sans-serif; cursor: pointer; }
+[data-instructor-actions] [data-instructor-reports-link] { padding: 9px 13px; border: 1px solid #385ada; border-radius: 8px; background: #385ada; color: #fff; box-shadow: 0 7px 18px rgba(56,90,218,.18); text-decoration: none; }
+[data-instructor-actions] [data-instructor-reports-link]:hover { background: #2f4fc8; color: #fff; text-decoration: none; transform: translateY(-1px); }
 
 html[data-appearance="dusk"] [data-instructor-page] {
   --paper: #0f1116;
@@ -65,10 +67,12 @@ html[data-appearance="dusk"] [data-instructor-page] input,
 html[data-appearance="dusk"] [data-instructor-page] select { border-color: #454956; background: #101217; color: #f7f4ea; }
 html[data-appearance="dusk"] [data-dashboard-notice] { background: #20263c; color: #d7ddff; }
 html[data-appearance="dusk"] [data-instructor-actions] button { border-color: #4d5260; background: #17191e; color: #fff; }
+html[data-appearance="dusk"] [data-instructor-actions] [data-instructor-reports-link] { border-color: #8298ff; background: #8298ff; color: #101217; }
 
 @media (max-width: 680px) {
   [data-instructor-top] { align-items: flex-start; flex-direction: column; }
   [data-instructor-actions] { width: 100%; justify-content: flex-start; margin-top: 14px; }
+  [data-instructor-actions] [data-instructor-reports-link] { width: 100%; text-align: center; }
 }
 
 [data-instructor-loading] { max-width: 720px; padding-top: 36px; }

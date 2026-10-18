@@ -1,11 +1,11 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import LoginForm from './login-form';
-import InstructorNav from '../instructor-nav';
 import styles from '../login.module.css';
 
 export const metadata:Metadata={title:'Instructor login | PhySense',description:'Sign in to manage PhySense classes and diagnostic reports.'};
 
-export default function InstructorLoginPage(){return <main className={styles.page}><InstructorNav/><div className={styles.shell}>
+export default function InstructorLoginPage(){return <main className={styles.page}><div className={styles.shell}>
+  <div className={styles.top}><Link href="/">PhySense</Link><Link href="/">← Home</Link></div>
   <section className={styles.card}><span>INSTRUCTOR ACCESS</span><h1>Sign in</h1><p>Use your instructor email and password.</p><LoginForm/><div className={styles.registerPrompt}><span>New to PhySense?</span><Link href="/instructor/register/">Create instructor account</Link></div></section>
 </div></main>}

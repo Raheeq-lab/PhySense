@@ -3,3 +3,4 @@
 @media(max-width:800px){.hero{align-items:flex-start;flex-direction:column}.hero [data-report-downloads]{justify-content:flex-start}.metrics{grid-template-columns:repeat(2,1fr)}.cardHeader{align-items:flex-start;flex-direction:column;gap:10px}.dangerControls{align-items:stretch;flex-direction:column}.dangerControls label{max-width:none}}
 @media(max-width:560px){.shell{padding:16px 12px 48px}.topbar{align-items:flex-start}.brand span{display:none}.headerActions{align-items:flex-end;flex-direction:column}.hero{padding:48px 0 32px}.hero h1{font-size:42px}.metrics{grid-template-columns:1fr}.metrics article{min-height:130px}.card{padding:18px 14px;border-radius:13px}.page th,.page td{padding:13px 12px}}
 @media(prefers-reduced-motion:reduce){.page *{animation:none!important;transition:none!important}.card{opacity:1!important;transform:none!important}}
+.dangerHint{margin:13px 0 0;color:var(--muted);font-size:12px;line-height:1.45}

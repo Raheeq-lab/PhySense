@@ -30,8 +30,9 @@ export default function ClearClassData({classes}:{classes:Classroom[]}){
   };
 
   return <section className={`${styles.card} ${styles.dangerCard}`} aria-labelledby="manage-data-title">
-    <div className={styles.cardHeader}><div><span>Danger zone</span><h2 id="manage-data-title">Manage class data</h2></div><p>Permanently remove quiz attempts and responses. The class and student roster will stay intact.</p></div>
-    {classes.length?<div className={styles.dangerControls}><label><span>Choose a class</span><select value={classId} onChange={event=>{setClassId(event.target.value);setStatus('idle');setMessage('')}}>{classes.map(classroom=><option value={classroom.id} key={classroom.id}>{classroom.title} ({classroom.code})</option>)}</select></label><button type="button" disabled={status==='loading'||!classId} onClick={clearData}>{status==='loading'?'Clearing data…':'Clear Data for this Class'}</button></div>:<p className={styles.emptyMessage}>Create a class before managing report data.</p>}
+    <div className={styles.cardHeader}><div><span>Danger zone</span><h2 id="manage-data-title">Clear quiz data</h2></div><p>Choose an active class and remove its quiz history. The class itself and its student roster will not be deleted.</p></div>
+    {classes.length?<div className={styles.dangerControls}><label><span>Active class</span><select value={classId} onChange={event=>{setClassId(event.target.value);setStatus('idle');setMessage('')}}>{classes.map(classroom=><option value={classroom.id} key={classroom.id}>{classroom.title} — {classroom.code}</option>)}</select></label><button type="button" disabled={status==='loading'||!classId} onClick={clearData}>{status==='loading'?'Clearing data…':'Clear quiz data'}</button></div>:<p className={styles.emptyMessage}>There are no active classes to manage.</p>}
+    <p className={styles.dangerHint}>To remove a class from your account, use the Remove button in the instructor workspace.</p>
     {message&&<p className={status==='error'?styles.errorMessage:styles.successMessage} role={status==='error'?'alert':'status'}>{message}</p>}
   </section>;
 }

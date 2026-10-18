@@ -36,7 +36,7 @@ export default async function InstructorReportsPage(){
   let classes:ClassRow[]=[];
   try{
     const admin=getSupabaseAdmin();
-    const classResult=await admin.from('diagnostic_classes').select('id,title,class_code').eq('instructor_id',instructor.id).order('created_at',{ascending:false});
+    const classResult=await admin.from('diagnostic_classes').select('id,title,class_code').eq('instructor_id',instructor.id).eq('active',true).order('created_at',{ascending:false});
     if(classResult.error)throw classResult.error;
     classes=(classResult.data??[]) as ClassRow[];
     const classIds=classes.map(row=>row.id);

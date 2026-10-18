@@ -33,13 +33,13 @@ export default function InstructorPrototype({email,fullName,university}:{email:s
   useEffect(()=>{queueMicrotask(()=>{void (async()=>{
     let remembered:Classroom|undefined;
     try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)??'null') as ({classroom?:Classroom}&Partial<Classroom>)|null;remembered=saved?.classroom??(saved?.id?saved as Classroom:undefined)}catch{}
-    if(remembered){setClassroom(remembered);setClassesLoaded(true)}
+    if(remembered)setClassroom(remembered);
     try{
       const response=await fetch('/api/classes/',{cache:'no-store'}),body=await response.json() as {classes?:Classroom[];error?:string};
       if(!response.ok||!body.classes)throw new Error(body.error||'Classes could not be loaded.');
       setSavedClasses(body.classes);
       const value=remembered&&body.classes.find(item=>item.id===remembered.id);
-      if(value){setClassroom(value);void fetchSummary(value).then(setSummary).catch(error=>setStatus(error instanceof Error?error.message:'Could not load the class summary.'))}
+      if(value){setClassroom(value);try{setSummary(await fetchSummary(value))}catch(error){setStatus(error instanceof Error?error.message:'Could not load the class summary.')}}
       else if(remembered){localStorage.removeItem(STORAGE_KEY);setClassroom(null)}
     }catch(error){setStatus(error instanceof Error?error.message:'Classes could not be loaded.')}
     finally{setClassesLoaded(true)}
@@ -48,7 +48,7 @@ export default function InstructorPrototype({email,fullName,university}:{email:s
   const createClass=async(event:React.FormEvent)=>{event.preventDefault();setBusy(true);setStatus('');try{const response=await fetch('/api/classes/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,lessonId})});const body=await response.json() as {classroom?:Classroom;error?:string};if(!response.ok||!body.classroom)throw new Error(body.error||'The class could not be created.');localStorage.setItem(STORAGE_KEY,JSON.stringify(body.classroom));setSavedClasses(current=>[body.classroom!,...current]);setClassroom(body.classroom);setSummary({learners:0,attempts:0,preAttempts:0,postAttempts:0,averagePre:null,averagePost:null})}catch(error){setStatus(error instanceof Error?error.message:'The class could not be created.')}finally{setBusy(false)}};
   const copy=async(value:string,type:'code'|'link')=>{try{await navigator.clipboard.writeText(value);setCopied(type);setStatus(type==='code'?'Class code copied.':'Student link copied.');window.setTimeout(()=>setCopied(current=>current===type?null:current),2200)}catch{setStatus('Could not copy automatically. Please copy it manually.')}};
   const reset=()=>{localStorage.removeItem(STORAGE_KEY);setClassroom(null);setSummary(null);setStatus('')};
-  const openSaved=async(value:Classroom)=>{localStorage.setItem(STORAGE_KEY,JSON.stringify(value));setClassroom(value);setSummary(null);setStatus('');await loadSummary(value)};
+  const openSaved=async(value:Classroom)=>{setBusy(true);setStatus('');try{const nextSummary=await fetchSummary(value);localStorage.setItem(STORAGE_KEY,JSON.stringify(value));setClassroom(value);setSummary(nextSummary)}catch(error){setStatus(error instanceof Error?error.message:'Could not load the class summary.')}finally{setBusy(false)}};
   const removeSaved=async(value:Classroom)=>{if(!window.confirm(`Remove “${value.title}” from your active classes? Its existing report data will be preserved.`))return;setBusy(true);setStatus('');try{const response=await fetch('/api/classes/',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:value.id})});const body=await response.json() as {removed?:boolean;error?:string};if(!response.ok||!body.removed)throw new Error(body.error||'The class could not be removed.');setSavedClasses(current=>current.filter(item=>item.id!==value.id));if(classroom?.id===value.id)reset();setStatus('Class removed from your active list. Historical reports were preserved.')}catch(error){setStatus(error instanceof Error?error.message:'The class could not be removed.')}finally{setBusy(false)}};
   const joinUrl=classroom?`${location.origin}/join?code=${classroom.code}`:'';
   const savedClassList=classroom&&savedClasses.length>0&&<section data-saved-classes><span className={styles.eyebrow}>Manage classes</span><h2>Your active classes</h2><p>Open a class to view its details, or remove it from your active list.</p><div>{savedClasses.map(value=><article key={value.id}><div><strong>{value.title}</strong><span>{value.lessonId} · Code {value.code} · {value.attempts??0} attempt{value.attempts===1?'':'s'}</span></div><button type="button" disabled={busy||classroom.id===value.id} onClick={()=>void openSaved(value)}>{classroom.id===value.id?'Open now':'Open'}</button><button type="button" data-remove-class disabled={busy} onClick={()=>void removeSaved(value)}>Remove</button></article>)}</div></section>;

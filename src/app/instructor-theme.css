@@ -81,3 +81,4 @@ html[data-appearance="dusk"] [data-instructor-actions] button { border-color: #4
 [data-instructor-loading] i:nth-child(3) { width: 56%; animation-delay: .24s; }
 @keyframes instructor-loading { from { background-position: 100% 0; } to { background-position: -120% 0; } }
 @media (prefers-reduced-motion: reduce) { [data-instructor-loading] i { animation: none; } }
+[data-report-downloads] { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }

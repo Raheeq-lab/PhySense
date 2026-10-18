@@ -10,8 +10,9 @@ import styles from './reports.module.css';
 
 export const metadata:Metadata={title:'Instructor reports | PhySense',description:'Aggregate diagnostic performance for your PhySense classes.'};
 
-type AttemptRow={id:string;lesson_id:string;answer_score:number;reason_score:number;joint_score:number;duration_ms:number};
-type ResponseRow={attempt_id:string;question_id:string;answer_correct:boolean;reason_correct:boolean;joint_correct:boolean;confidence:'not-sure'|'somewhat'|'very';concept:string;response_time_ms:number};
+type AttemptRow={id:string;roster_id:string|null;lesson_id:string;phase:'pre'|'post';answer_score:number;reason_score:number;joint_score:number;duration_ms:number};
+type ResponseRow={attempt_id:string;question_id:string;selected_answer:number;selected_reason:number;answer_correct:boolean;reason_correct:boolean;joint_correct:boolean;confidence:'not-sure'|'somewhat'|'very';concept:string;response_time_ms:number};
+type RosterRow={id:string;student_email:string};
 type Totals={count:number;answer:number;reason:number;joint:number;duration:number};
 type ResponseTotals={count:number;answer:number;reason:number;joint:number;time:number;attempts:Set<string>};
 
@@ -27,18 +28,22 @@ export default async function InstructorReportsPage(){
   let error:unknown=null;
   let attempts:AttemptRow[]=[];
   let responses:ResponseRow[]=[];
+  let roster:RosterRow[]=[];
   try{
     const admin=getSupabaseAdmin();
     const classResult=await admin.from('diagnostic_classes').select('id').eq('instructor_id',instructor.id);
     if(classResult.error)throw classResult.error;
     const classIds=(classResult.data??[]).map(row=>row.id);
     if(classIds.length){
-      const attemptResult=await admin.from('diagnostic_attempts').select('id,lesson_id,answer_score,reason_score,joint_score,duration_ms').eq('is_simulated',false).in('class_id',classIds);
+      const rosterResult=await admin.from('class_roster').select('id,student_email').in('class_id',classIds);
+      if(rosterResult.error)throw rosterResult.error;
+      roster=(rosterResult.data??[]) as RosterRow[];
+      const attemptResult=await admin.from('diagnostic_attempts').select('id,roster_id,lesson_id,phase,answer_score,reason_score,joint_score,duration_ms').eq('is_simulated',false).in('class_id',classIds);
       if(attemptResult.error)throw attemptResult.error;
       attempts=(attemptResult.data??[]) as AttemptRow[];
       const attemptIds=attempts.map(row=>row.id);
       if(attemptIds.length){
-        const responseResult=await admin.from('diagnostic_responses').select('attempt_id,question_id,answer_correct,reason_correct,joint_correct,confidence,concept,response_time_ms').in('attempt_id',attemptIds);
+        const responseResult=await admin.from('diagnostic_responses').select('attempt_id,question_id,selected_answer,selected_reason,answer_correct,reason_correct,joint_correct,confidence,concept,response_time_ms').in('attempt_id',attemptIds);
         if(responseResult.error)throw responseResult.error;
         responses=(responseResult.data??[]) as ResponseRow[];
       }
@@ -59,9 +64,12 @@ export default async function InstructorReportsPage(){
   const confidenceOrder=['not-sure','somewhat','very'] as const;
   const questionExport=questions.map(([key,value])=>{const [lesson,question]=key.split('\u0000');return {lesson,question,answered:value.count,answerCorrect:percent(value.answer,value.count),reasonCorrect:percent(value.reason,value.count),jointCorrect:percent(value.joint,value.count),averageResponse:`${average(value.time/1000,value.count,1)} s`}});
   const conceptExport=concepts.map(([concept,value])=>({concept,jointCorrect:percent(value.joint,value.count),attempts:value.attempts.size}));
+  const rosterEmail=new Map(roster.map(row=>[row.id,row.student_email]));
+  const attemptById=new Map(attempts.map(row=>[row.id,row]));
+  const rawExport=responses.map(response=>{const attempt=attemptById.get(response.attempt_id);return {studentEmail:attempt?.roster_id?rosterEmail.get(attempt.roster_id)??'':'',lessonId:attempt?.lesson_id??'',phase:attempt?.phase??'',answerScore:attempt?.answer_score??'',reasonScore:attempt?.reason_score??'',jointScore:attempt?.joint_score??'',questionId:response.question_id,selectedAnswer:response.selected_answer,selectedReason:response.selected_reason,answerCorrect:response.answer_correct,reasonCorrect:response.reason_correct,jointCorrect:response.joint_correct,confidence:response.confidence}});
 
   return <main className={styles.page}><div className={styles.shell}>
-    <header><div><Link href="/">PhySense</Link><span className={styles.headerActions}><Link href="/instructor">← Instructor home</Link><SignOut/></span></div><span>PRIVATE INSTRUCTOR DATA · {instructor.email??'SIGNED IN'}</span><h1>Instructor reports</h1><p>Results include only classes created by your signed-in instructor account.</p>{!error&&attempts.length>0&&<ReportsCsvButton questions={questionExport} concepts={conceptExport}/>}</header>
+    <header><div><Link href="/">PhySense</Link><span className={styles.headerActions}><Link href="/instructor">← Instructor home</Link><SignOut/></span></div><span>PRIVATE INSTRUCTOR DATA · {instructor.email??'SIGNED IN'}</span><h1>Instructor reports</h1><p>Results include only classes created by your signed-in instructor account.</p>{!error&&attempts.length>0&&<ReportsCsvButton questions={questionExport} concepts={conceptExport} raw={rawExport}/>}</header>
     {error?<p className={styles.notice} role="alert">Reports could not be loaded. Confirm that the instructor-account database migration has been applied.</p>:attempts.length===0?<p className={styles.notice}>No shared attempts for your classes yet.</p>:<>
       <section><h2>Lesson summary</h2><p>Scores are averages out of 10. Duration is shown in minutes.</p><div className={styles.tableWrap}><table><thead><tr><th>Lesson</th><th>Total attempts</th><th>Answer score</th><th>Reason score</th><th>Joint score</th><th>Duration</th></tr></thead><tbody>{lessons.map(([lesson,value])=><tr key={lesson}><th>{lesson}</th><td>{value.count}</td><td>{average(value.answer,value.count)}</td><td>{average(value.reason,value.count)}</td><td>{average(value.joint,value.count)}</td><td>{average(value.duration/60000,value.count,2)} min</td></tr>)}</tbody></table></div></section>
       <section><h2>Hardest questions</h2><p>Sorted by the lowest fully-correct percentage first.</p><div className={styles.tableWrap}><table><thead><tr><th>Lesson</th><th>Question</th><th>Answered</th><th>Answer correct</th><th>Reason correct</th><th>Joint correct</th><th>Avg. response</th></tr></thead><tbody>{questions.map(([key,value])=>{const [lesson,question]=key.split('\u0000');return <tr key={key}><td>{lesson}</td><th>{question}</th><td>{value.count}</td><td>{percent(value.answer,value.count)}</td><td>{percent(value.reason,value.count)}</td><td>{percent(value.joint,value.count)}</td><td>{average(value.time/1000,value.count,1)} s</td></tr>})}</tbody></table></div></section>

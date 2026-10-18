@@ -54,7 +54,7 @@ export default function DataAndPrivacyPage() {
         <div className={styles.sectionHeading}><span>02</span><div><h2>What an instructor can see</h2><p>The instructor view shows a class summary, not student profiles.</p></div></div>
         <div className={styles.splitCards}>
           <article><span className={styles.verified}>Visible</span><h3>Aggregate class results</h3><p>The number of pseudonymous learners, shared attempts, pre/post attempts, and average pre/post scores.</p></article>
-          <article><span className={styles.caution}>Kept separate</span><h3>Roster email</h3><p>The student join and diagnostic forms do not request personal details. If an instructor uploads a roster email, it stays in the protected roster table and is not copied into diagnostic response records.</p></article>
+          <article><span className={styles.caution}>Protected roster</span><h3>Roster email</h3><p>The student forms do not request personal details. An instructor-uploaded email stays in the protected roster table; consented attempts made through its personal invitation can be associated with that roster entry and included in the owning instructor&apos;s raw export.</p></article>
         </div>
         <aside className={styles.note}><b>Instructor privacy</b><p>Instructor account details, including name, email, and institution, are stored in the protected account profile. Private class-management information should not be shared with learners.</p></aside>
       </section>

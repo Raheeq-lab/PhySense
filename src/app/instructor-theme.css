@@ -10,6 +10,7 @@ html:not([data-appearance="dusk"]) [data-class-ready] [data-class-code] strong {
 html:not([data-appearance="dusk"]) [data-class-ready] [data-class-code] button { background: #385ada; color: #fff; }
 html:not([data-appearance="dusk"]) [data-class-ready] [data-class-actions] a,
 html:not([data-appearance="dusk"]) [data-class-ready] [data-class-actions] button { border-color: #bfc7e8; background: #fff; color: #2f4cb8; }
+html:not([data-appearance="dusk"]) [data-class-ready] button[data-copied="true"] { border-color: #2d7a4a; background: #2d7a4a; color: #fff; }
 html:not([data-appearance="dusk"]) [data-class-ready] [data-class-stats] > div { border-color: #ddd8ca; background: #fff; }
 html:not([data-appearance="dusk"]) [data-class-ready] [data-class-stats] b { color: #16181d; }
 html:not([data-appearance="dusk"]) [data-class-ready] [data-class-stats] span,
@@ -33,6 +34,7 @@ html[data-appearance="dusk"] [data-class-ready] [data-class-code] { border-color
 html[data-appearance="dusk"] [data-class-ready] [data-class-code] button { background: #eef0f8; color: #17191e; }
 html[data-appearance="dusk"] [data-class-ready] [data-class-actions] a,
 html[data-appearance="dusk"] [data-class-ready] [data-class-actions] button { border-color: #4d5260; color: #fff; }
+html[data-appearance="dusk"] [data-class-ready] button[data-copied="true"] { border-color: #72d19a; background: #72d19a; color: #101217; }
 html[data-appearance="dusk"] [data-class-ready] [data-class-stats] > div { border-color: #3b3e47; background: transparent; }
 html[data-appearance="dusk"] [data-class-ready] [data-class-stats] span { color: #aeb1ba; }
 html[data-appearance="dusk"] [data-class-ready] [data-class-privacy] { color: #9da0aa; }

@@ -1,0 +1,22 @@
+[data-home-tools]{position:relative;align-items:center}
+[data-home-tools]>form{position:relative;min-width:0;flex:1}
+[data-home-tools]>form>label{height:32px;display:flex;align-items:center;gap:7px;padding:0 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+[data-home-tools]>form svg{width:15px;height:15px;flex:0 0 auto}
+[data-home-tools]>form input{min-width:0;width:100%;height:100%;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:11.5px}
+[data-home-tools]>form input::placeholder{color:var(--muted)}
+[data-search-results]{position:absolute;top:calc(100% + 7px);left:0;right:0;z-index:30;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:0 14px 34px rgba(var(--shadow),.16)}
+[data-search-results] a{display:flex;flex-direction:column;gap:2px;padding:10px 12px;color:var(--ink);text-decoration:none}
+[data-search-results] a+a{border-top:1px solid var(--line)}
+[data-search-results] a:hover,[data-search-results] a:focus-visible{background:var(--accent-tint);outline:0}
+[data-search-results] strong{font-size:12px;line-height:1.25}
+[data-search-results] small{color:var(--muted);font-size:10.5px}
+[data-search-results] p{margin:0;padding:13px;color:var(--muted);font-size:12px}
+[data-account-shell]{position:relative;flex:0 0 auto}
+[data-account-shell]>button{width:32px;height:32px;display:grid;place-items:center;padding:0;border-radius:50%;cursor:pointer}
+[data-account-menu]{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:220px;display:grid;overflow:hidden;padding:7px;border:1px solid var(--line);border-radius:11px;background:var(--panel);box-shadow:0 14px 34px rgba(var(--shadow),.18)}
+[data-account-menu]>span{padding:7px 9px 1px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+[data-account-menu]>strong{overflow:hidden;padding:2px 9px 8px;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+[data-account-menu]>a,[data-account-menu]>button{width:100%;display:block;padding:9px;border:0;border-radius:7px;background:transparent;color:var(--ink);font:inherit;font-size:12px;text-align:left;text-decoration:none;cursor:pointer}
+[data-account-menu]>a:hover,[data-account-menu]>button:hover,[data-account-menu]>a:focus-visible,[data-account-menu]>button:focus-visible{background:var(--accent-tint);outline:0}
+[data-account-menu]>button{margin-top:3px;border-top:1px solid var(--line);border-radius:0 0 7px 7px;color:var(--muted)}
+@media(max-width:760px){[data-home-tools]{padding-top:2px}[data-account-menu]{position:fixed;top:54px;right:14px}[data-search-results]{position:fixed;top:54px;left:14px;right:14px}}

@@ -7,6 +7,8 @@ import type { ReactNode } from 'react';
 import type { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D } from 'three';
 import styles from './block-1/page.module.css';
 import {useAppearance} from '@/hooks/useAppearance';
+import {lessons as lessonCatalog} from '@/lib/lessons';
+import {createClient as createSupabaseClient} from '@/lib/supabase/client';
 
 type IconName = 'home'|'bookmark'|'atom'|'orbit'|'wave'|'bolt'|'magnet'|'map'|'steps'|'lab'|'equation'|'check'|'shield'|'arrow-right'|'arrow-left'|'chevron-right'|'chevron-left'|'search'|'bell'|'user'|'sun'|'moon'|'magnifier-plus'|'magnifier'|'expand'|'function';
 
@@ -55,6 +57,31 @@ const lessons: [string,string,string,IconName][] = [
   ['1.1','Kinematics','Motion in 1D & 2D','arrow-right'], ['1.2','Forces','Why motion changes','magnet'], ['1.3','Circular','Turning without slowing','orbit'],
   ['1.4','Energy','The currency of the universe','bolt'], ['1.5','Momentum','Collisions and recoil','atom'], ['1.6','Math Spark','The calculus underneath','function'],
 ];
+
+const searchExtras=[
+  {title:'User Guides',meta:'Educator quick start',href:'/user-guides',keywords:'professor teacher instructor help tutorial'},
+  {title:'Assessments',meta:'Diagnostic map',href:'/diagnostic-map',keywords:'quiz test diagnostic'},
+  {title:'Instructor Reports',meta:'Class results',href:'/instructor/reports',keywords:'scores csv analytics educator'},
+  {title:'Math Spark',meta:'Physics mathematics',href:'/math-spark',keywords:'calculus equations derivatives integrals'},
+  {title:'Equation Reference',meta:'Equations and constants',href:'/reference',keywords:'formula laws constants'},
+];
+const lessonKeywords:Record<string,string>={
+  'block-1/1-1':'position velocity acceleration displacement motion SUVAT',
+  'block-1/1-2':'newton force mass gravity friction F=ma',
+  'block-1/1-3':'centripetal angular rotation', 'block-1/1-4':'work power kinetic potential conservation',
+  'block-1/1-5':'impulse collision recoil conservation', 'block-2/2-1':'coulomb charge electrostatic',
+  'block-2/2-2':'voltage capacitance electric energy', 'block-2/2-3':'magnetic lorentz field',
+  'block-2/2-4':'faraday lenz emf transformer', 'block-2/2-5':'simple harmonic pendulum spring',
+  'block-2/2-6':'frequency wavelength sound interference diffraction', 'block-3/3-1':'gravity orbit kepler satellite',
+  'block-3/3-2':'density buoyancy archimedes bernoulli', 'block-3/3-3':'temperature heat thermodynamics entropy',
+  'block-3/3-4':'light lens mirror refraction reflection', 'block-3/3-5':'einstein spacetime time dilation',
+  'block-3/3-6':'photon atom uncertainty wave particle', 'block-4/4-1':'lagrangian hamiltonian action',
+  'block-4/4-2':'maxwell electromagnetic field', 'block-4/4-3':'entropy ensemble distribution',
+  'block-4/4-4':'curved spacetime gravity einstein', 'block-4/4-5':'schrodinger wavefunction operators',
+  'block-4/4-6':'nucleus particle standard model radioactivity',
+};
+
+type SearchResult={title:string;meta:string;href:string;keywords:string};
 
 const atomFacts = {
   protons: {title:'Protons',definition:'Positively charged particles inside the nucleus.',fact:'The number of protons is what decides which element an atom is. One proton is hydrogen. Two is helium. Seventy-nine is gold.'},
@@ -114,6 +141,8 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const atomLabelOpener = useRef<HTMLButtonElement|null>(null);
   const tourTriggerRef = useRef<HTMLButtonElement|null>(null);
+  const desktopSearchRef=useRef<HTMLInputElement|null>(null);
+  const accountShellRef=useRef<HTMLDivElement|null>(null);
   const actions = useRef({ zoomIn:()=>{}, zoomOut:()=>{}, turn:(_n:number)=>{}, reset:()=>{} });
   const defaultZoom=1;
   const {dusk,toggle:toggleAppearance}=useAppearance();
@@ -121,9 +150,18 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
   const [atomInfo,setAtomInfo]=useState<{name:keyof typeof atomFacts;left:number;top:number;maxHeight:number}|null>(null);
   const [visitedLabels,setVisitedLabels]=useState<AtomFactName[]>([]),[visitedLoaded,setVisitedLoaded]=useState(false),[labelHint,setLabelHint]=useState(true);
   const [tourOpen,setTourOpen]=useState(false);
+  const [searchQuery,setSearchQuery]=useState(''),[searchOpen,setSearchOpen]=useState(false);
+  const [accountOpen,setAccountOpen]=useState(false),[instructorEmail,setInstructorEmail]=useState<string|null>(null);
+
+  const searchResults:SearchResult[]=[
+    ...lessonCatalog.map(lesson=>({title:`Lesson ${lesson.number} · ${lesson.title}`,meta:lesson.block,href:`/${lesson.id}`,keywords:lessonKeywords[lesson.id]??''})),
+    ...searchExtras,
+  ].filter(item=>{const query=searchQuery.trim().toLowerCase();return query.length>0&&`${item.title} ${item.meta} ${item.keywords}`.toLowerCase().includes(query)}).slice(0,7);
 
   const switchTab=(next:number)=>{ if(next===tab) return; setLoading(true); setTab(next); window.setTimeout(()=>setLoading(false),500); };
   const notify=(message:string)=>{setToast(message);window.setTimeout(()=>setToast(null),2400)};
+  const runSearch=()=>{if(searchResults[0]){setSearchOpen(false);router.push(searchResults[0].href)}else if(searchQuery.trim())notify('No matching lesson or topic found.')};
+  const signOut=async()=>{const {error}=await createSupabaseClient().auth.signOut();if(error){notify(error.message);return}setInstructorEmail(null);setAccountOpen(false);notify('You are signed out.');router.refresh()};
   const closeAtomInfo=()=>{setAtomInfo(null);window.requestAnimationFrame(()=>atomLabelOpener.current?.focus())};
   const openAtomInfo=(name:AtomFactName,button:HTMLButtonElement)=>{const main=mainRef.current,stage=stageRef.current;if(!main||!stage)return;setLabelHint(false);setVisitedLabels(current=>{if(current.includes(name))return current;const next=[...current,name];try{localStorage.setItem('physense.atom.visited',JSON.stringify(next))}catch{}return next});atomLabelOpener.current=button.classList.contains(styles.mobileChargeLink)?main.querySelector<HTMLButtonElement>('[data-label="nucleus"]'):button;const buttonRect=button.getBoundingClientRect(),mainRect=main.getBoundingClientRect(),stageRect=stage.getBoundingClientRect(),cardWidth=name==='charge'?312:272,spaceAbove=Math.max(0,buttonRect.top-stageRect.top),spaceBelow=Math.max(0,stageRect.bottom-buttonRect.bottom),openAbove=spaceAbove>spaceBelow,maxHeight=Math.max(1,Math.min(window.innerHeight*.6,480,(openAbove?spaceAbove:spaceBelow)-24));const left=Math.min(Math.max(12,buttonRect.left-mainRect.left+30),Math.max(12,main.clientWidth-cardWidth)),top=openAbove?buttonRect.top-mainRect.top-maxHeight-12:buttonRect.bottom-mainRect.top+12;setAtomInfo({name,left,top:Math.max(stageRect.top-mainRect.top+12,top),maxHeight})};
 
@@ -199,6 +237,12 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
   useEffect(()=>{if(!home||!visitedLoaded||visitedLabels.length)return;const timer=window.setTimeout(()=>setLabelHint(true),15000);return()=>window.clearTimeout(timer)},[home,visitedLoaded,visitedLabels.length]);
   useEffect(()=>{if(!atomInfo)return;window.requestAnimationFrame(()=>document.querySelector<HTMLButtonElement>(`.${styles.atomInfoClose}`)?.focus());const close=(event:KeyboardEvent)=>{if(event.key==='Escape')closeAtomInfo()};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close)},[atomInfo]);
 
+  useEffect(()=>{const supabase=createSupabaseClient();void supabase.auth.getUser().then(({data})=>setInstructorEmail(data.user?.email??null));const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>setInstructorEmail(session?.user.email??null));return()=>subscription.unsubscribe()},[]);
+  useEffect(()=>{if(!accountOpen)return;const close=(event:PointerEvent)=>{if(!accountShellRef.current?.contains(event.target as Node))setAccountOpen(false)};const escape=(event:KeyboardEvent)=>{if(event.key==='Escape')setAccountOpen(false)};document.addEventListener('pointerdown',close);document.addEventListener('keydown',escape);return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',escape)}},[accountOpen]);
+
+  const accountMenu=accountOpen?<div data-account-menu role="menu">{instructorEmail?<><span>Signed in as</span><strong>{instructorEmail}</strong><Link href="/instructor" role="menuitem" onClick={()=>setAccountOpen(false)}>Instructor dashboard</Link><Link href="/instructor/reports" role="menuitem" onClick={()=>setAccountOpen(false)}>Reports</Link><button type="button" role="menuitem" onClick={signOut}>Sign out</button></>:<><span>Instructor access</span><Link href="/instructor/login" role="menuitem" onClick={()=>setAccountOpen(false)}>Sign in</Link><Link href="/instructor/register" role="menuitem" onClick={()=>setAccountOpen(false)}>Create account</Link></>}</div>:null;
+  const resultsPanel=searchOpen&&searchQuery.trim()?<div data-search-results>{searchResults.length?searchResults.map(result=><Link key={result.href} href={result.href} onClick={()=>setSearchOpen(false)}><strong>{result.title}</strong><small>{result.meta}</small></Link>):<p>No matching lesson or topic found.</p>}</div>:null;
+
   return <div ref={heroRef} className={`${styles.hero} ${focus?styles.focus:''}`} data-light={dusk?'dusk':'day'} data-variant={home?'home':'block'}>
     <IconLibrary/>
     <aside className={styles.sidebar}>
@@ -221,7 +265,7 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
         </section>}
         <span className={styles.srOnly} aria-live="polite">{atomInfo?`${atomFacts[atomInfo.name].title} info opened.`:''}</span>
       </div>}
-      <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search" onClick={()=>notify('Search is coming soon.')}><Icon name="search"/></button><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div></div>
+      <div className={styles.mobileTop}><b>PhySense</b><div><button aria-label="Search" onClick={()=>{setSearchOpen(true);window.setTimeout(()=>desktopSearchRef.current?.focus(),0)}}><Icon name="search"/></button><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" aria-expanded={accountOpen} onClick={()=>setAccountOpen(open=>!open)}><Icon name="user"/></button></div></div>
       <div className={`${styles.tabs} ${home?styles.homeTabs:''}`} role={home?undefined:'tablist'} aria-label={home?'PhySense navigation':'Learning blocks'}>
         {home ? <><button type="button" aria-current="page" onClick={()=>switchTab(0)}><Icon name="home"/><span>Welcome<small>start here</small></span></button><button type="button" onClick={()=>router.push('/join')}><Icon name="user"/><span>Join as a student<small>enter a class code</small></span></button><button type="button" onClick={()=>router.push('/instructor/login')}><Icon name="lab"/><span>Instructor access<small>sign in or register</small></span></button><Link href="/user-guides"><Icon name="bookmark"/><span>User Guides<small>educator quick start</small></span></Link><Link href="/diagnostic-map"><Icon name="check"/><span>Assessments<small>explore diagnostics</small></span></Link><Link href="/instructor/reports"><Icon name="steps"/><span>Reports<small>review class results</small></span></Link><Link href="/participant-tracking"><Icon name="atom"/><span>Research<small>how tracking works</small></span></Link><Link href="/data-and-privacy"><Icon name="shield"/><span>About<small>data and privacy</small></span></Link><Link href="/news"><Icon name="bell"/><span>News<small>latest updates</small></span></Link></> : <><button role="tab" aria-selected="true" onClick={()=>router.push('/block-1')}><Icon name="atom"/><span>Block 1 · Foundations<small>6 lessons</small></span></button><button role="tab" aria-selected="false" onClick={()=>router.push('/block-2')}><Icon name="wave"/><span>Block 2 · Fields &amp; Waves<small>6 lessons</small></span></button></>}
       </div>
@@ -244,7 +288,7 @@ export function PhysicsHub({ home = false, children }: { home?: boolean; childre
     {home&&children&&<div className={styles.homeAfter}>{children}</div>}
     </div>
     <section className={styles.info}>
-      <div className={styles.tools}><label><Icon name="search"/><input aria-label="Search" placeholder="Search topics, laws, or equations…"/></label><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><button className={styles.account} aria-label="Account" onClick={()=>notify('Account tools are coming soon.')}><Icon name="user"/></button></div>
+      <div className={styles.tools} data-home-tools><form role="search" onSubmit={event=>{event.preventDefault();runSearch()}}><label><Icon name="search"/><input ref={desktopSearchRef} aria-label="Search topics, laws, or equations" placeholder="Search topics, laws, or equations…" value={searchQuery} onChange={event=>{setSearchQuery(event.target.value);setSearchOpen(true)}} onFocus={()=>setSearchOpen(true)} autoComplete="off"/></label>{resultsPanel}</form><button aria-label="Notifications" onClick={()=>notify('No new notifications.')}><Icon name="bell"/></button><div ref={accountShellRef} data-account-shell><button className={styles.account} aria-label={instructorEmail?'Instructor account':'Account'} aria-haspopup="menu" aria-expanded={accountOpen} onClick={()=>setAccountOpen(open=>!open)}><Icon name="user"/></button>{accountMenu}</div></div>
       <article className={styles.detail} aria-live="polite">{home?<HomeDetail/>:<BlockDetail/>}</article>
     </section>
     {home&&tourOpen&&<TourOverlay onClose={()=>{setTourOpen(false);setTab(0);window.requestAnimationFrame(()=>tourTriggerRef.current?.focus())}} onFinish={()=>{setTourOpen(false);router.push('/block-1')}}/>}

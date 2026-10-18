@@ -78,7 +78,17 @@ export async function POST(request:Request){
   const scores={answer:marked.filter(item=>item.answerCorrect).length,reason:marked.filter(item=>item.reasonCorrect).length,joint:marked.filter(item=>item.jointCorrect).length};
   const admin=getSupabaseAdmin();
   let classId:null|string=null;
-  if(body.classCode!==undefined){
+  let rosterToken:null|string=null;
+  if(body.personalToken!==undefined){
+    if(typeof body.personalToken!=='string'||!UUID.test(body.personalToken))return json({saved:false,error:'Invalid personal invitation token.'},400);
+    const {data:roster,error:rosterError}=await admin.from('class_roster').select('class_id').eq('personal_token',body.personalToken).maybeSingle();
+    if(rosterError){const reference=databaseReference(rosterError);return json({saved:false,error:`The invitation could not be checked (${reference}).`,reference},500)}
+    if(!roster)return json({saved:false,error:'This personal invitation was not found.'},400);
+    const {data:classroom,error:classError}=await admin.from('diagnostic_classes').select('id').eq('id',roster.class_id).eq('lesson_id',lessonId).eq('active',true).maybeSingle();
+    if(classError){const reference=databaseReference(classError);return json({saved:false,error:`The class could not be checked (${reference}).`,reference},500)}
+    if(!classroom)return json({saved:false,error:'The class for this invitation is not active.'},400);
+    classId=classroom.id;rosterToken=body.personalToken;
+  }else if(body.classCode!==undefined){
     if(typeof body.classCode!=='string'||!/^[A-HJ-NP-Z2-9]{6}$/.test(body.classCode))return json({saved:false,error:'Invalid class code.'},400);
     const {data:classroom,error:classError}=await admin.from('diagnostic_classes').select('id').eq('class_code',body.classCode).eq('lesson_id',lessonId).eq('active',true).maybeSingle();
     if(classError){const reference=databaseReference(classError);return json({saved:false,error:`The class could not be checked (${reference}).`,reference},500)}
@@ -88,7 +98,7 @@ export async function POST(request:Request){
   const {data:attempt,error:attemptError}=await admin.from('diagnostic_attempts').insert({client_attempt_id:body.clientAttemptId,participant_id:body.participantId,class_id:classId,lesson_id:lessonId,phase:body.phase,schema_version:'1.0',consent_version:CONSENT_VERSION,started_at:startedAt.toISOString(),completed_at:completedAt.toISOString(),duration_ms:durationMs,answer_score:scores.answer,reason_score:scores.reason,joint_score:scores.joint,is_simulated:false}).select('id').single();
 
   if(attemptError){
-    if(attemptError.code==='23505'){const {data:existing}=await admin.from('diagnostic_attempts').select('id').eq('client_attempt_id',body.clientAttemptId).maybeSingle();if(existing)return json({saved:true,alreadySaved:true,attemptId:existing.id,scores})}
+    if(attemptError.code==='23505'){const {data:existing}=await admin.from('diagnostic_attempts').select('id').eq('client_attempt_id',body.clientAttemptId).maybeSingle();if(existing){if(rosterToken){const {error:completionError}=await admin.from('class_roster').update({has_completed:true}).eq('personal_token',rosterToken).eq('class_id',classId!);if(completionError)return json({saved:false,error:'The attempt was saved, but roster completion could not be updated. Please retry.'},500)}return json({saved:true,alreadySaved:true,attemptId:existing.id,scores})}}
     const reference=databaseReference(attemptError);console.error('Diagnostic attempt insert failed',reference,attemptError.message);
     return json({saved:false,error:`The attempt could not be stored (${reference}). Your local copy is still safe.`,reference},500);
   }
@@ -96,6 +106,8 @@ export async function POST(request:Request){
   const responseRows=marked.map(({question,response,answerCorrect,reasonCorrect,jointCorrect})=>({attempt_id:attempt.id,question_id:question.id,selected_answer:response.answer,selected_reason:response.reason,answer_correct:answerCorrect,reason_correct:reasonCorrect,joint_correct:jointCorrect,confidence:response.confidence,concept:question.concept,targeted_misconception:question.misconception,difficulty:question.difficulty,response_time_ms:response.responseTimeMs}));
   const {error:responsesError}=await admin.from('diagnostic_responses').insert(responseRows);
   if(responsesError){await admin.from('diagnostic_attempts').delete().eq('id',attempt.id);const reference=databaseReference(responsesError);console.error('Diagnostic response insert failed',reference,responsesError.message);return json({saved:false,error:`The responses could not be stored (${reference}). Your local copy is still safe.`,reference},500)}
+
+  if(rosterToken){const {error:completionError}=await admin.from('class_roster').update({has_completed:true}).eq('personal_token',rosterToken).eq('class_id',classId!);if(completionError)return json({saved:false,error:'The attempt was saved, but roster completion could not be updated. Please retry.'},500)}
 
   return json({saved:true,attemptId:attempt.id,scores},201);
 }

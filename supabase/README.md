@@ -48,6 +48,14 @@ select id, 'instructor' from auth.users where email = 'instructor@example.com'
 on conflict (user_id) do update set role = excluded.role;
 ```
 
-There is no public instructor sign-up route. New Auth users default to the
-`learner` role and cannot access instructor pages until an administrator grants
-the instructor role.
+The public `/instructor/register` route uses trusted server code to promote a
+newly registered account to the `instructor` role. Other Auth users retain the
+trigger's default `learner` role.
+
+## Step 5 — enable student rosters
+
+Run `supabase/migrations/202610180200_create_class_roster.sql` in the SQL
+Editor. This creates the protected `class_roster` table used for student email
+uploads, personal invitation tokens, and completion status. Browser roles have
+no direct table access; roster reads and writes pass through authenticated
+server endpoints that verify class ownership.

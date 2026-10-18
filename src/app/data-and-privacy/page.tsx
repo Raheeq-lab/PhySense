@@ -36,7 +36,7 @@ export default function DataAndPrivacyPage() {
       <header id="overview" className={styles.hero}>
         <span className={styles.eyebrow}>Data &amp; privacy</span>
         <h1>Your information and your choices</h1>
-        <p>PhySense does not ask students for a name or email. This page explains what stays in the browser, what may be shared, and what an instructor can see.</p>
+        <p>PhySense diagnostics do not ask students for a name or email. An instructor may separately upload roster emails to create personal invitation links. This page explains what stays in the browser, what may be shared, and what an instructor can see.</p>
       </header>
 
       <section id="choices">
@@ -54,7 +54,7 @@ export default function DataAndPrivacyPage() {
         <div className={styles.sectionHeading}><span>02</span><div><h2>What an instructor can see</h2><p>The instructor view shows a class summary, not student profiles.</p></div></div>
         <div className={styles.splitCards}>
           <article><span className={styles.verified}>Visible</span><h3>Aggregate class results</h3><p>The number of pseudonymous learners, shared attempts, pre/post attempts, and average pre/post scores.</p></article>
-          <article><span className={styles.caution}>Not requested</span><h3>Personal details</h3><p>The student join and diagnostic forms do not ask for a learner&apos;s name, email, sex, country, or other demographic details.</p></article>
+          <article><span className={styles.caution}>Kept separate</span><h3>Roster email</h3><p>The student join and diagnostic forms do not request personal details. If an instructor uploads a roster email, it stays in the protected roster table and is not copied into diagnostic response records.</p></article>
         </div>
         <aside className={styles.note}><b>Instructor privacy</b><p>The private class-management information is saved in the instructor&apos;s browser and should not be shared with learners.</p></aside>
       </section>

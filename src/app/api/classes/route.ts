@@ -16,8 +16,19 @@ function databaseReference(error:{code?:string;message?:string}){const message=e
 
 export async function GET(request:Request){
   if(!configured(process.env.NEXT_PUBLIC_SUPABASE_URL)||!configured(process.env.SUPABASE_SERVICE_ROLE_KEY))return json({error:'Class storage is not configured.'},503);
-  const url=new URL(request.url),code=url.searchParams.get('code')?.trim().toUpperCase(),id=url.searchParams.get('id');
+  const url=new URL(request.url),code=url.searchParams.get('code')?.trim().toUpperCase(),token=url.searchParams.get('token')?.trim(),id=url.searchParams.get('id');
   const admin=getSupabaseAdmin();
+
+  if(token){
+    if(!UUID.test(token))return json({error:'This personal invitation link is not valid.'},400);
+    const {data:roster,error:rosterError}=await admin.from('class_roster').select('class_id').eq('personal_token',token).maybeSingle();
+    if(rosterError){const reference=databaseReference(rosterError);return json({error:`The invitation could not be checked (${reference}).`,reference},500)}
+    if(!roster)return json({error:'This personal invitation link was not found.'},404);
+    const {data,error}=await admin.from('diagnostic_classes').select('id,class_code,title,lesson_id').eq('id',roster.class_id).eq('active',true).maybeSingle();
+    if(error){const reference=databaseReference(error);return json({error:`The class could not be checked (${reference}).`,reference},500)}
+    if(!data)return json({error:'The class for this invitation is not active.'},404);
+    return json({classroom:{id:data.id,code:data.class_code,title:data.title,lessonId:data.lesson_id,personalToken:token}});
+  }
 
   if(code){
     if(!CODE.test(code))return json({error:'Enter a valid six-character class code.'},400);

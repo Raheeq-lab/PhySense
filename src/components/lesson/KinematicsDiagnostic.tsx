@@ -9,8 +9,8 @@ type Phase='pre'|'post';
 type SaveStatus='idle'|'saving'|'saved'|'local'|'error';
 type Response={answer:number|null;reason:number|null;confidence:Confidence|null};
 type StoredResponse=Response&{questionId:string;concept:string;misconception:string;difficulty:string;answerCorrect:boolean;reasonCorrect:boolean;responseTimeMs:number};
-type Classroom={id:string;code:string;title:string;lessonId:string};
-type StoredAttempt={schemaVersion:'1.0';lessonId:string;attemptId:string;participantId:string;classCode?:string;phase:Phase;consentAccepted:boolean;consentVersion:'2026-10-10';startedAt:string;completedAt:string;durationMs:number;answerScore:number;reasonScore:number;jointScore:number;responses:StoredResponse[]};
+type Classroom={id:string;code:string;title:string;lessonId:string;personalToken?:string};
+type StoredAttempt={schemaVersion:'1.0';lessonId:string;attemptId:string;participantId:string;classCode?:string;personalToken?:string;phase:Phase;consentAccepted:boolean;consentVersion:'2026-10-10';startedAt:string;completedAt:string;durationMs:number;answerScore:number;reasonScore:number;jointScore:number;responses:StoredResponse[]};
 type PersistedSession={version:1;phase:Phase;current:number;responses:Response[];consentAccepted:boolean;startedAt:number;responseTimes:number[];attempt:StoredAttempt|null;saveStatus:SaveStatus;saveMessage:string};
 
 const CONSENT_VERSION='2026-10-10' as const;
@@ -56,7 +56,7 @@ export default function KinematicsDiagnostic({items=kinematicsDiagnostic,lessonI
     if(!result.consentAccepted){setSaveStatus('local');setSaveMessage('You did not consent to sharing. This attempt is stored only on this device.');return}
     setSaveStatus('saving');setSaveMessage('Saving your anonymous attempt securely…');
     try{
-      const response=await fetch('/api/diagnostics/attempts/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lessonId:result.lessonId,participantId:result.participantId,clientAttemptId:result.attemptId,classCode:result.classCode,phase:result.phase,consentAccepted:true,consentVersion:result.consentVersion,startedAt:result.startedAt,completedAt:result.completedAt,responses:result.responses.map(entry=>({questionId:entry.questionId,answer:entry.answer,reason:entry.reason,confidence:entry.confidence,responseTimeMs:entry.responseTimeMs}))})});
+      const response=await fetch('/api/diagnostics/attempts/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lessonId:result.lessonId,participantId:result.participantId,clientAttemptId:result.attemptId,classCode:result.classCode,personalToken:result.personalToken,phase:result.phase,consentAccepted:true,consentVersion:result.consentVersion,startedAt:result.startedAt,completedAt:result.completedAt,responses:result.responses.map(entry=>({questionId:entry.questionId,answer:entry.answer,reason:entry.reason,confidence:entry.confidence,responseTimeMs:entry.responseTimeMs}))})});
       const body=response.headers.get('content-type')?.includes('application/json')?await response.json() as {saved?:boolean;error?:string}:{saved:false,error:`Server returned ${response.status}. Please try again after the latest deployment is ready.`};
       if(!response.ok||!body.saved)throw new Error(body.error||'The server did not accept the attempt.');
       setSaveStatus('saved');setSaveMessage('Saved securely in Supabase as an anonymous attempt.');
@@ -67,7 +67,7 @@ export default function KinematicsDiagnostic({items=kinematicsDiagnostic,lessonI
     if(completed!==items.length)return;
     const now=Date.now();recordQuestionTime(now);
     const marked=responses.map<StoredResponse>((entry,index)=>{const question=items[index];return {...entry,questionId:question.id,concept:question.concept,misconception:question.misconception,difficulty:question.difficulty,answerCorrect:entry.answer===question.correctAnswer,reasonCorrect:entry.reason===question.correctReason,responseTimeMs:Math.round(responseTimes.current[index])}});
-    const result:StoredAttempt={schemaVersion:'1.0',lessonId,attemptId:crypto.randomUUID(),participantId:participantId.current||crypto.randomUUID(),classCode:classroom.current?.code,phase,consentAccepted,consentVersion:CONSENT_VERSION,startedAt:new Date(startedAt.current||now).toISOString(),completedAt:new Date(now).toISOString(),durationMs:startedAt.current?now-startedAt.current:0,answerScore:marked.filter(entry=>entry.answerCorrect).length,reasonScore:marked.filter(entry=>entry.reasonCorrect).length,jointScore:marked.filter(entry=>entry.answerCorrect&&entry.reasonCorrect).length,responses:marked};
+    const result:StoredAttempt={schemaVersion:'1.0',lessonId,attemptId:crypto.randomUUID(),participantId:participantId.current||crypto.randomUUID(),classCode:classroom.current?.code,personalToken:classroom.current?.personalToken,phase,consentAccepted,consentVersion:CONSENT_VERSION,startedAt:new Date(startedAt.current||now).toISOString(),completedAt:new Date(now).toISOString(),durationMs:startedAt.current?now-startedAt.current:0,answerScore:marked.filter(entry=>entry.answerCorrect).length,reasonScore:marked.filter(entry=>entry.reasonCorrect).length,jointScore:marked.filter(entry=>entry.answerCorrect&&entry.reasonCorrect).length,responses:marked};
     setAttempt(result);
     try{const previous=JSON.parse(localStorage.getItem(ATTEMPTS_KEY)??'[]') as StoredAttempt[];localStorage.setItem(ATTEMPTS_KEY,JSON.stringify([...previous.slice(-9),result]))}catch{}
     void uploadAttempt(result);

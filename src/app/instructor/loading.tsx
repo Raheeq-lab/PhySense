@@ -10,8 +10,6 @@ export default function InstructorLoading(){
   const scope=useRef<HTMLElement>(null);
   useGSAP(()=>{
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    gsap.from('[data-loading-reveal]',{opacity:0,y:14,duration:.5,stagger:.06,ease:'power3.out'});
-    gsap.from('[data-loading-card]',{opacity:0,y:20,scale:.985,duration:.6,stagger:.07,delay:.1,ease:'power3.out'});
     gsap.to('[data-loading-shimmer]',{backgroundPosition:'-200% 0',duration:1.5,repeat:-1,ease:'none'});
   },{scope});
 

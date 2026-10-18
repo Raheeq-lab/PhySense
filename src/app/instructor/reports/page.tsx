@@ -41,10 +41,12 @@ export default async function InstructorReportsPage(){
     classes=(classResult.data??[]) as ClassRow[];
     const classIds=classes.map(row=>row.id);
     if(classIds.length){
-      const rosterResult=await admin.from('class_roster').select('id,student_email').in('class_id',classIds);
+      const [rosterResult,attemptResult]=await Promise.all([
+        admin.from('class_roster').select('id,student_email').in('class_id',classIds),
+        admin.from('diagnostic_attempts').select('id,roster_id,lesson_id,phase,answer_score,reason_score,joint_score,duration_ms').eq('is_simulated',false).in('class_id',classIds),
+      ]);
       if(rosterResult.error)throw rosterResult.error;
       roster=(rosterResult.data??[]) as RosterRow[];
-      const attemptResult=await admin.from('diagnostic_attempts').select('id,roster_id,lesson_id,phase,answer_score,reason_score,joint_score,duration_ms').eq('is_simulated',false).in('class_id',classIds);
       if(attemptResult.error)throw attemptResult.error;
       attempts=(attemptResult.data??[]) as AttemptRow[];
       const attemptIds=attempts.map(row=>row.id);

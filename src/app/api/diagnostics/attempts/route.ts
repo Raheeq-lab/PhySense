@@ -84,7 +84,7 @@ export async function POST(request:Request){
     const {data:roster,error:rosterError}=await admin.from('class_roster').select('class_id').eq('personal_token',body.personalToken).maybeSingle();
     if(rosterError){const reference=databaseReference(rosterError);return json({saved:false,error:`The invitation could not be checked (${reference}).`,reference},500)}
     if(!roster)return json({saved:false,error:'This personal invitation was not found.'},400);
-    const {data:classroom,error:classError}=await admin.from('diagnostic_classes').select('id').eq('id',roster.class_id).eq('lesson_id',lessonId).eq('active',true).maybeSingle();
+    const {data:classroom,error:classError}=await admin.from('diagnostic_classes').select('id').eq('id',roster.class_id).eq('active',true).maybeSingle();
     if(classError){const reference=databaseReference(classError);return json({saved:false,error:`The class could not be checked (${reference}).`,reference},500)}
     if(!classroom)return json({saved:false,error:'The class for this invitation is not active.'},400);
     classId=classroom.id;rosterToken=body.personalToken;

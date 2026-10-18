@@ -38,9 +38,17 @@ export async function GET(request:Request){
     return json({classroom:{id:data.id,code:data.class_code,title:data.title,lessonId:data.lesson_id}});
   }
 
-  if(!id||!UUID.test(id))return json({error:'A valid class ID or class code is required.'},400);
   const instructor=await getInstructor();
   if(!instructor)return json({error:'Instructor authentication is required.'},401);
+  if(!id){
+    const {data:classes,error:classesError}=await admin.from('diagnostic_classes').select('id,class_code,title,lesson_id,active,created_at').eq('instructor_id',instructor.id).eq('active',true).order('created_at',{ascending:false});
+    if(classesError){const reference=databaseReference(classesError);return json({error:`Classes could not be loaded (${reference}).`,reference},500)}
+    const classIds=(classes??[]).map(row=>row.id);
+    const attemptsByClass=new Map<string,number>();
+    if(classIds.length){const {data:attempts,error:attemptError}=await admin.from('diagnostic_attempts').select('class_id').in('class_id',classIds).eq('is_simulated',false);if(attemptError){const reference=databaseReference(attemptError);return json({error:`Class totals could not be loaded (${reference}).`,reference},500)}for(const row of attempts??[]){if(row.class_id)attemptsByClass.set(row.class_id,(attemptsByClass.get(row.class_id)??0)+1)}}
+    return json({classes:(classes??[]).map(row=>({id:row.id,code:row.class_code,title:row.title,lessonId:row.lesson_id,active:row.active,createdAt:row.created_at,attempts:attemptsByClass.get(row.id)??0}))});
+  }
+  if(!UUID.test(id))return json({error:'A valid class ID is required.'},400);
   const {data:classroom,error:classError}=await admin.from('diagnostic_classes').select('id,class_code,title,lesson_id,active,created_at').eq('id',id).eq('instructor_id',instructor.id).maybeSingle();
   if(classError){const reference=databaseReference(classError);return json({error:`The class could not be loaded (${reference}).`,reference},500)}
   if(!classroom)return json({error:'This class does not belong to your instructor account.'},403);
@@ -50,6 +58,22 @@ export async function GET(request:Request){
   const rows=attempts??[],pre=rows.filter(row=>row.phase==='pre'),post=rows.filter(row=>row.phase==='post');
   const average=(items:typeof rows)=>items.length?Number((items.reduce((sum,row)=>sum+row.joint_score,0)/items.length).toFixed(1)):null;
   return json({classroom:{id:classroom.id,code:classroom.class_code,title:classroom.title,lessonId:classroom.lesson_id,active:classroom.active,createdAt:classroom.created_at},summary:{learners:new Set(rows.map(row=>row.participant_id)).size,attempts:rows.length,preAttempts:pre.length,postAttempts:post.length,averagePre:average(pre),averagePost:average(post)}});
+}
+
+export async function DELETE(request:Request){
+  const origin=request.headers.get('origin');
+  if(origin&&origin!==new URL(request.url).origin)return json({error:'Cross-site requests are not allowed.'},403);
+  const instructor=await getInstructor();
+  if(!instructor)return json({error:'Instructor authentication is required.'},401);
+  let body:Record<string,unknown>;
+  try{body=await request.json() as Record<string,unknown>}catch{return json({error:'Invalid request.'},400)}
+  const id=typeof body.id==='string'?body.id:'';
+  if(!UUID.test(id))return json({error:'A valid class ID is required.'},400);
+  const admin=getSupabaseAdmin();
+  const {data,error}=await admin.from('diagnostic_classes').update({active:false}).eq('id',id).eq('instructor_id',instructor.id).select('id').maybeSingle();
+  if(error){const reference=databaseReference(error);return json({error:`The class could not be removed (${reference}).`,reference},500)}
+  if(!data)return json({error:'This class was not found.'},404);
+  return json({removed:true});
 }
 
 export async function POST(request:Request){

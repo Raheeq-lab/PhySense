@@ -70,3 +70,14 @@ html[data-appearance="dusk"] [data-instructor-actions] button { border-color: #4
   [data-instructor-top] { align-items: flex-start; flex-direction: column; }
   [data-instructor-actions] { width: 100%; justify-content: flex-start; margin-top: 14px; }
 }
+
+[data-instructor-loading] { max-width: 720px; padding-top: 36px; }
+[data-instructor-loading] h1 { margin: 14px 0 10px; font: 500 clamp(38px, 7vw, 64px)/1.05 var(--font-newsreader), serif; letter-spacing: -.03em; }
+[data-instructor-loading] p { max-width: 520px; color: var(--muted); line-height: 1.6; }
+[data-instructor-loading] > div { display: grid; gap: 11px; margin-top: 34px; }
+[data-instructor-loading] i { display: block; height: 16px; border-radius: 999px; background: linear-gradient(90deg,var(--line),var(--card),var(--line)); background-size: 220% 100%; animation: instructor-loading 1.35s ease-in-out infinite; }
+[data-instructor-loading] i:nth-child(1) { width: 100%; }
+[data-instructor-loading] i:nth-child(2) { width: 78%; animation-delay: .12s; }
+[data-instructor-loading] i:nth-child(3) { width: 56%; animation-delay: .24s; }
+@keyframes instructor-loading { from { background-position: 100% 0; } to { background-position: -120% 0; } }
+@media (prefers-reduced-motion: reduce) { [data-instructor-loading] i { animation: none; } }

@@ -24,5 +24,5 @@ export default function ReportsCsvButton({questions,concepts,raw}:{questions:Que
     ['Student Email','Lesson ID','Phase','Total Answer Score','Total Reason Score','Total Joint Score','Question ID','Selected Answer Index','Selected Reason Index','Answer Correct','Reason Correct','Joint Correct','Confidence'],
     ...raw.map(row=>[row.studentEmail,row.lessonId,row.phase,row.answerScore,row.reasonScore,row.jointScore,row.questionId,row.selectedAnswer,row.selectedReason,row.answerCorrect,row.reasonCorrect,row.jointCorrect,row.confidence]),
   ]);
-  return <div data-report-downloads><button type="button" onClick={download}>Download Summary (CSV)</button><button type="button" onClick={downloadRaw}>Download Raw Data (CSV)</button></div>;
+  return <div data-report-downloads><button type="button" onClick={download}>Export summary <span>↗</span></button><button type="button" onClick={downloadRaw}>Raw data <span>↓</span></button></div>;
 }

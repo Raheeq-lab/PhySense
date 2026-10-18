@@ -48,3 +48,25 @@ html[data-appearance="dusk"] [data-roster] th,
 html[data-appearance="dusk"] [data-roster] td { border-color: #30333b; }
 html[data-appearance="dusk"] [data-roster] th { color: #aeb1ba; }
 html[data-appearance="dusk"] [data-roster] a { color: #b7c2ff; }
+
+[data-instructor-actions] { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+[data-instructor-actions] button { padding: 7px 10px; border: 1px solid #bfc7e8; border-radius: 7px; background: #fff; color: #2f4cb8; font: 700 12px var(--font-nunito-sans), sans-serif; cursor: pointer; }
+
+html[data-appearance="dusk"] [data-instructor-page] {
+  --paper: #0f1116;
+  --card: #17191e;
+  --line: #343945;
+  --ink: #f7f4ea;
+  --muted: #b7bac3;
+  --blue: #8298ff;
+  color-scheme: dark;
+}
+html[data-appearance="dusk"] [data-instructor-page] input,
+html[data-appearance="dusk"] [data-instructor-page] select { border-color: #454956; background: #101217; color: #f7f4ea; }
+html[data-appearance="dusk"] [data-dashboard-notice] { background: #20263c; color: #d7ddff; }
+html[data-appearance="dusk"] [data-instructor-actions] button { border-color: #4d5260; background: #17191e; color: #fff; }
+
+@media (max-width: 680px) {
+  [data-instructor-top] { align-items: flex-start; flex-direction: column; }
+  [data-instructor-actions] { width: 100%; justify-content: flex-start; margin-top: 14px; }
+}

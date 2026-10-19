@@ -1,49 +1,26 @@
-import type { Metadata } from 'next';
+import type {Metadata} from 'next';
 import Link from 'next/link';
+import {GeistSans} from 'geist/font/sans';
+import {ArrowRight, Fingerprint, Users, Mail, Layers} from 'lucide-react';
+import TrackingExplorer from './tracking-explorer';
 import styles from './page.module.css';
 
-export const metadata: Metadata = {
-  title: 'Participant Tracking Design | PhySense',
-  description: 'How the current PhySense prototype connects attempts without placing direct identifiers in diagnostic records.',
-};
+export const metadata:Metadata={title:'Research & participant tracking | PhySense',description:'Understand how PhySense connects diagnostic attempts, protects roster information, and handles the limits of browser-based tracking.'};
 
-const limitations = [
-  ['Another device', 'The same learner receives a different code on another browser or device.'],
-  ['Shared device', 'Different learners using the same browser profile may share one code.'],
-  ['Cleared storage', 'Clearing site data removes the code and the next visit creates a new one.'],
-  ['Private browsing', 'A private session normally loses its code when the session ends.'],
-] as const;
-
-export default function ParticipantTrackingPage() {
-  return <div className={styles.page}>
-    <header className={styles.topbar}><Link href="/">PhySense</Link><nav><Link href="/data-and-privacy">Data &amp; privacy</Link><Link href="/block-1/1-1">Lesson 1.1</Link></nav></header>
-    <main>
-      <header className={styles.hero}>
-        <span>Design note · reviewed 12 October 2026</span>
-        <h1>Following learning over time without naming the learner</h1>
-        <p>This note answers a specific question: can PhySense connect a learner&apos;s pre-test and post-test while keeping direct identifiers out of the diagnostic records?</p>
-        <div><b>Short answer</b><p>Partly. The current prototype can connect attempts made in the same browser profile, but it cannot reliably identify the same learner across devices.</p></div>
-      </header>
-
-      <section>
-        <div className={styles.heading}><span>01</span><div><h2>What the prototype does now</h2><p>No change is proposed here; this is the implemented behaviour.</p></div></div>
-        <div className={styles.sequence}>
-          <article><span>First visit</span><strong>A random UUID is created</strong><p>The browser generates a participant code using <code>crypto.randomUUID()</code>.</p></article>
-          <i aria-hidden="true">→</i>
-          <article><span>Same browser</span><strong>The code is remembered locally</strong><p>It is saved under <code>physense.anonymous.participant</code> in local storage.</p></article>
-          <i aria-hidden="true">→</i>
-          <article><span>Each submission</span><strong>A separate attempt ID is created</strong><p>The participant code links attempts without placing a name or email in the diagnostic tables.</p></article>
-        </div>
-        <aside className={styles.definition}><b>Classification: pseudonymous</b><p>The code is not a direct identity, but it is a persistent link between records. Calling it pseudonymous is more accurate than promising complete anonymity.</p></aside>
-        <div className={styles.classLink}><span>Class association</span><h3>Class, invitation, and participant codes have different jobs</h3><dl><div><dt>Class code</dt><dd>Connects a consenting attempt to one instructor-created class.</dd></div><div><dt>Personal invitation</dt><dd>Connects one protected roster entry to a class, records completion, and lets the owning instructor associate a consented attempt with the roster email.</dd></div><div><dt>Participant code</dt><dd>Connects attempts made in one browser profile. It is not a verified identity.</dd></div><div><dt>Diagnostic records</dt><dd>Response rows do not copy a learner name or email, but a personal-invitation attempt carries a protected reference to its roster entry.</dd></div></dl></div>
-      </section>
-
-      <section>
-        <div className={styles.heading}><span>02</span><div><h2>What the code cannot prove</h2><p>A browser identifier is not the same thing as a verified learner identifier.</p></div></div>
-        <div className={styles.limitations}>{limitations.map(([title, text]) => <article key={title}><span>LIMIT</span><h3>{title}</h3><p>{text}</p></article>)}</div>
-      </section>
-
-      <footer><Link href="/data-and-privacy">← Back to Data &amp; privacy</Link><Link href="/block-1/1-1">Open Lesson 1.1 →</Link></footer>
-    </main>
-  </div>;
+export default function ParticipantTrackingPage(){
+  return <main className={`${styles.page} ${GeistSans.className}`}><div className={styles.shell}>
+    <header className={styles.nav}><Link className={styles.brand} href="/">PhySense<span>Research</span></Link><nav aria-label="Research navigation"><Link href="/diagnostic-map">Assessments</Link><Link href="/data-and-privacy">Data & privacy <ArrowRight size={15} aria-hidden="true"/></Link></nav></header>
+    <section className={styles.hero} aria-labelledby="research-title"><div><p className={styles.eyebrow}>Understanding the data</p><h1 id="research-title">Follow the learning.<br/>Know the limits.</h1><p className={styles.lead}>PhySense can connect diagnostic attempts made in the same browser. Here’s what that tells us—and what it doesn’t.</p><div className={styles.actions}><a className={styles.primary} href="#explore">Explore how it works <ArrowRight size={17} aria-hidden="true"/></a><Link className={styles.secondary} href="/diagnostic-map">View assessments</Link></div></div>
+    <aside className={styles.summary}><span className={styles.icon}><Fingerprint size={26} aria-hidden="true"/></span><h2>A code, not a verified identity.</h2><p>A random participant code links attempts without copying a learner’s name or email into diagnostic records.</p><div><strong>Pseudonymous, not fully anonymous</strong><p>The code persists across visits. Personal invitations can also connect consented attempts to a protected roster entry.</p></div></aside></section>
+    <section className={styles.flow} aria-label="How attempts are connected">{[['First use','A participant code is created.','The browser generates a random code when the diagnostic first loads.'],['Later visits','The browser remembers it.','The same browser profile reuses the locally stored code.'],['Each attempt','A new attempt, a shared link.','Each submission gets its own attempt ID and carries the participant code.']].map(([label,title,text])=><article key={label}><span>{label}</span><h2>{title}</h2><p>{text}</p></article>)}</section>
+    <TrackingExplorer/>
+    <section className={styles.codes} aria-labelledby="codes-title"><div className={styles.heading}><p className={styles.eyebrow}>Different codes, different jobs</p><h2 id="codes-title">What connects to what?</h2><p>Class membership, invitations, and browser history each have a separate role.</p></div><div className={styles.codeGrid}>{[{icon:Users,title:'Class code',text:'Connects a consenting attempt to an instructor-created class.'},{icon:Mail,title:'Personal invitation',text:'Connects a protected roster entry to a class. The owning instructor can associate consented attempts with that roster email.'},{icon:Fingerprint,title:'Participant code',text:'Connects attempts made in one browser profile. It does not prove who used the browser.'},{icon:Layers,title:'Attempt ID',text:'Identifies one completed diagnostic, separate from the participant code that connects multiple attempts.'}].map(({icon:Icon,title,text})=><article key={title}><Icon size={22} aria-hidden="true"/><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+    <section className={styles.detailsSection} aria-labelledby="details-title"><div className={styles.heading}><p className={styles.eyebrow}>For a closer look</p><h2 id="details-title">The details behind the design.</h2><p>Current implementation, rather than a guarantee of reliable learner identification.</p></div><div className={styles.disclosures}>
+      <details><summary>How is the participant code stored?<span aria-hidden="true">+</span></summary><div><p>The browser creates a UUID with <code>crypto.randomUUID()</code> and stores it in local storage under <code>physense.anonymous.participant</code>. The same browser profile reuses that value until its site data is cleared.</p></div></details>
+      <details><summary>Can pre- and post-lesson attempts be matched?<span aria-hidden="true">+</span></summary><div><p>They can be connected through the same participant code when made in the same browser profile. A change of device can split one learner’s history, while a shared browser can mix different learners’ attempts. Treat the code as a browser link, not proof of identity.</p></div></details>
+      <details><summary>Do diagnostic records contain names or emails?<span aria-hidden="true">+</span></summary><div><p>Diagnostic response rows do not copy learner names or emails. However, a consented attempt submitted through a personal invitation can carry a protected reference to its roster entry, allowing the owning instructor to associate it with a roster email.</p><Link href="/data-and-privacy">Read the data and privacy guide <ArrowRight size={15} aria-hidden="true"/></Link></div></details>
+    </div></section>
+    <aside className={styles.takeaway}><Fingerprint size={28} aria-hidden="true"/><div><h2>Read the patterns with context.</h2><p>Connected attempts can help explore learning over time. Browser history alone cannot establish that every record belongs to the same person.</p></div><Link href="/diagnostic-map">Explore assessments <ArrowRight size={16} aria-hidden="true"/></Link></aside>
+    <footer className={styles.footer}><Link href="/">PhySense</Link><span>Clear methods. Thoughtful interpretation.</span><Link href="/data-and-privacy">Data & privacy</Link></footer>
+  </div></main>;
 }

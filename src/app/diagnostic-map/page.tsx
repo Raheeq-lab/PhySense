@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {kinematicsDiagnostic} from '@/data/kinematicsDiagnostic';
 import styles from './page.module.css';
+import {GeistSans} from 'geist/font/sans';
+import {ArrowRight, BookOpen, Lightbulb, Gauge} from 'lucide-react';
+import AssessmentExplorer from './assessment-explorer';
 
 export const metadata: Metadata = {
-  title: 'Diagnostic Map | PhySense',
-  description: 'Draft concept, misconception, Q-matrix, interaction, and reassessment map for the PhySense Lesson 1.1 diagnostic.',
+  title: 'Assessments | PhySense',
+  description: 'Explore the kinematics diagnostic, understand the assessment format, and review the concepts behind each question.',
 };
 
 const attributes = [
@@ -31,50 +34,16 @@ const reviewMap: Record<string, {attributes: string[]; interaction: string; reas
 };
 
 export default function DiagnosticMapPage() {
-  return <div className={styles.page}>
-    <header className={styles.topbar}><Link href="/">PhySense</Link><nav><Link href="/data-and-privacy">Data &amp; privacy</Link><Link href="/block-1/1-1">Lesson 1.1</Link></nav></header>
-    <main>
-      <header className={styles.hero}>
-        <span>Lesson 1.1 · Expert-review document</span>
-        <h1>Diagnostic concept &amp; misconception map</h1>
-        <p>This document connects each two-tier item to a proposed cognitive attribute, a targeted lesson interaction, and a possible transfer item.</p>
-        <div><strong>Draft for expert review — not validated</strong><p>These mappings are hypotheses for content review and pipeline testing. They do not establish item validity, model fit, or educational effectiveness.</p></div>
-      </header>
-
-      <section>
-        <div className={styles.heading}><span>01</span><div><h2>Proposed attribute set</h2><p>The six columns used in the draft binary Q-matrix.</p></div></div>
-        <div className={styles.attributes}>{attributes.map(([code, label]) => <article key={code}><b>{code}</b><span>{label}</span></article>)}</div>
-      </section>
-
-      <section>
-        <div className={styles.heading}><span>02</span><div><h2>Draft Q-matrix</h2><p>“1” means the item is proposed to require that attribute. A subject expert should review every assignment.</p></div></div>
-        <div className={styles.tableWrap}><table><thead><tr><th>Item</th>{attributes.map(([code]) => <th key={code}>{code}</th>)}</tr></thead><tbody>{kinematicsDiagnostic.map(item => {const active = reviewMap[item.id].attributes; return <tr key={item.id}><th>{item.id}</th>{attributes.map(([code]) => <td key={code} data-active={active.includes(code) || undefined}>{active.includes(code) ? '1' : '0'}</td>)}</tr>})}</tbody></table></div>
-      </section>
-
-      <section>
-        <div className={styles.heading}><span>03</span><div><h2>Item review cards</h2><p>The question wording comes directly from the live diagnostic. Attribute and transfer mappings remain proposals.</p></div></div>
-        <div className={styles.cards}>{kinematicsDiagnostic.map(item => {const mapping = reviewMap[item.id]; return <article key={item.id}>
-          <header><span>{item.id}</span><em data-difficulty={item.difficulty}>{item.difficulty}</em></header>
-          <h3>{item.concept}</h3>
-          <p className={styles.prompt}>{item.prompt}</p>
-          <dl>
-            <div><dt>Correct answer</dt><dd>{item.answers[item.correctAnswer].label}</dd></div>
-            <div><dt>Correct reasoning</dt><dd>{item.reasons[item.correctReason].label}</dd></div>
-            <div><dt>Targeted misconception</dt><dd>{item.misconception}</dd></div>
-            <div><dt>Why the keyed response is correct</dt><dd>{item.explanation}</dd></div>
-            <div><dt>Proposed Q-matrix attribute</dt><dd className={styles.attributeTags}>{mapping.attributes.map(code => <span key={code}>{code}</span>)}</dd></div>
-            <div><dt>Targeted lesson interaction</dt><dd>{mapping.interaction}</dd></div>
-            <div><dt>Proposed reassessment</dt><dd>{mapping.reassessment}</dd></div>
-          </dl>
-        </article>})}</div>
-      </section>
-
-      <section>
-        <div className={styles.heading}><span>04</span><div><h2>Expert-review questions</h2><p>Points to resolve before treating this map as a defensible measurement model.</p></div></div>
-        <ol className={styles.reviewQuestions}><li>Does each item test the stated concept rather than reading or calculation skill?</li><li>Do the distractors represent plausible learner misconceptions?</li><li>Is the keyed reasoning unambiguously better than the alternatives?</li><li>Are the Q-matrix attributes distinct, observable, and assigned correctly?</li><li>Does each targeted interaction address the diagnosed misconception?</li><li>Would the proposed reassessment show transfer rather than memorisation?</li><li>Should validated inventory items replace or supplement any draft item?</li></ol>
-      </section>
-
-      <footer><Link href="/data-and-privacy">← Data &amp; privacy</Link><Link href="/block-1/1-1">Open the live diagnostic →</Link></footer>
-    </main>
-  </div>;
+  return <main className={`${styles.page} ${GeistSans.className}`}><div className={styles.shell}>
+    <header className={styles.topbar}><Link className={styles.brand} href="/">PhySense<span>Assessments</span></Link><nav aria-label="Assessment navigation"><Link href="/user-guides">User guide</Link><Link href="/instructor">Instructor workspace <ArrowRight size={15} aria-hidden="true"/></Link></nav></header>
+    <section className={styles.hero} aria-labelledby="assessment-title"><div><p className={styles.eyebrow}>Lesson 1.1 · Kinematics</p><h1 id="assessment-title">Go beyond<br/>the right answer.</h1><p className={styles.lead}>A short diagnostic that explores what you know about motion—and the thinking behind it.</p><div className={styles.actions}><Link className={styles.primary} href="/block-1/1-1#assessment">Open the assessment <ArrowRight size={17} aria-hidden="true"/></Link><a className={styles.secondary} href="#questions">Explore the questions</a></div></div><aside className={styles.overview}><span className={styles.overviewIcon}><BookOpen size={25} aria-hidden="true"/></span><h2>A clearer picture of understanding.</h2><p>Ten questions connect everyday motion with the ideas behind it.</p><div><span>Position & velocity</span><span>Graphs & acceleration</span><span>Projectiles & stopping</span></div><small>Explore this preview, or open the lesson to take the diagnostic.</small></aside></section>
+    <section className={styles.how} aria-label="How the assessment works">{[{icon:BookOpen,title:'Choose your answer',text:'Read the situation and pick the best response.'},{icon:Lightbulb,title:'Explain your thinking',text:'Select the reason that matches your understanding.'},{icon:Gauge,title:'Rate your confidence',text:'Tell us how sure you feel. Then move on.'}].map(({icon:Icon,title,text})=><article key={title}><Icon size={21} aria-hidden="true"/><div><h2>{title}</h2><p>{text}</p></div></article>)}</section>
+    <AssessmentExplorer items={kinematicsDiagnostic} reviewMap={reviewMap}/>
+    <section className={styles.educator} aria-labelledby="educator-title"><div><p className={styles.eyebrow}>For educators</p><h2 id="educator-title">A closer look,<br/>when you need it.</h2><p>The concept mappings below are draft proposals for expert review. They are not validated measures of learning.</p></div><div className={styles.disclosures}>
+      <details><summary>Concept map & Q-matrix<span aria-hidden="true">+</span></summary><div className={styles.detailBody}><p>Each marked cell proposes a concept needed to answer that question. These assignments need subject-expert review.</p><dl className={styles.attributes}>{attributes.map(([code,label])=><div key={code}><dt>{code}</dt><dd>{label}</dd></div>)}</dl><div className={styles.tableWrap} role="region" aria-label="Draft question to concept matrix" tabIndex={0}><table><caption>Proposed concepts by question</caption><thead><tr><th scope="col">Question</th>{attributes.map(([code])=><th scope="col" key={code}>{code}</th>)}</tr></thead><tbody>{kinematicsDiagnostic.map(item=><tr key={item.id}><th scope="row">{item.id}</th>{attributes.map(([code])=><td key={code} data-active={reviewMap[item.id].attributes.includes(code)||undefined}>{reviewMap[item.id].attributes.includes(code)?'1':'0'}</td>)}</tr>)}</tbody></table></div></div></details>
+      <details><summary>Expert review checklist<span aria-hidden="true">+</span></summary><div className={styles.detailBody}><ul><li>Does each question test the intended concept?</li><li>Do distractors represent plausible misconceptions?</li><li>Are the correct answer and reasoning unambiguous?</li><li>Are the mapped concepts distinct and assigned correctly?</li><li>Does the suggested lesson activity address the misconception?</li><li>Would reassessment show transfer rather than memorisation?</li><li>Should validated items replace or supplement these drafts?</li></ul></div></details>
+      <details><summary>Scoring & student privacy<span aria-hidden="true">+</span></summary><div className={styles.detailBody}><p>An item counts as fully understood when both the answer and reasoning are correct. Confidence is recorded separately.</p><p>Sharing is optional. Without consent, results stay on the learner’s device. Consented attempts from personal invitations can be linked to instructor-managed roster emails.</p><Link href="/data-and-privacy">Read about data and privacy <ArrowRight size={15} aria-hidden="true"/></Link></div></details>
+    </div></section>
+    <footer className={styles.footer}><Link href="/">PhySense</Link><span>Curiosity first. Understanding next.</span><Link href="/block-1/1-1#assessment">Open the assessment <ArrowRight size={15} aria-hidden="true"/></Link></footer>
+  </div></main>;
 }

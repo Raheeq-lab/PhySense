@@ -16,3 +16,4 @@ footer{display:flex;justify-content:space-between;align-items:center;margin-top:
 @media(max-width:600px){.topbar>button{margin-right:10px;font-size:0;padding:9px}.content{padding:28px 14px 60px}.intro h1{font-size:3.05rem}.intro aside{padding:20px}.lab{padding:14px;border-radius:16px}.lab-head{padding-right:0}.reset{position:static;margin:12px 0 0}.controls,.results{grid-template-columns:1fr}.cards article,.challenge{padding:20px}.spark{grid-template-columns:1fr}.spark>svg{display:none}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 :root[data-appearance="dusk"] body{background:#0f1116;color-scheme:dark}
+:root[data-appearance="dusk"] body{background:#101311}

@@ -8,3 +8,10 @@
 .card button{background:#244e3b}
 .registerPrompt{border-top-color:#e1e6e1}
 .registerPrompt>a{border-color:#244e3b;color:#244e3b}
+:global(html[data-appearance="dusk"]) .page{background:#101311;color:#edf1ed;color-scheme:dark}
+:global(html[data-appearance="dusk"]) .siteNav,:global(html[data-appearance="dusk"]) .card{background:#191d1a;border-color:#303631}
+:global(html[data-appearance="dusk"]) .navBrand,:global(html[data-appearance="dusk"]) .card>span,:global(html[data-appearance="dusk"]) .top a,:global(html[data-appearance="dusk"]) .registerPrompt>a{color:#9bc3aa}
+:global(html[data-appearance="dusk"]) .navAccount,:global(html[data-appearance="dusk"]) .card button{background:#9bc3aa;color:#101311}
+:global(html[data-appearance="dusk"]) .registerPrompt>a{border-color:#4b5d50}
+:global(html[data-appearance="dusk"]) .siteNav nav a:hover,:global(html[data-appearance="dusk"]) .registerPrompt>a:hover{background:#203128;color:#edf1ed}
+:global(html[data-appearance="dusk"]) .card input{background:#141815;color:#edf1ed;border-color:#4b5d50}

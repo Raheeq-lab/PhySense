@@ -4,3 +4,4 @@
 @media(max-width:1100px) and (min-width:761px){.homePage{grid-template-columns:minmax(0,1fr) clamp(280px,36vw,340px)}}
 @media(max-width:760px){.homePage{display:block}}
 .homePage{background:#f4f6f3}
+:global(html[data-appearance="dusk"]) .homePage,.homePage:has([data-light="dusk"]){background:#101311}

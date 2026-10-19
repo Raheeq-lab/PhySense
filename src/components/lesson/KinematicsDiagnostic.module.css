@@ -2,3 +2,7 @@
 @media(max-width:600px){.questionCard{padding:15px}.confidence>div,.scoreGrid{grid-template-columns:1fr}.review summary{grid-template-columns:50px 1fr}.review summary>b{grid-column:2}.dataActions{display:grid}.dataActions button{width:100%}.saveStatus{grid-template-columns:1fr}.saveStatus span,.saveStatus button{grid-column:1;grid-row:auto}.saveStatus button{margin-top:6px}.consent small{margin-left:0}}
 .intro>label{display:inline-flex}.resetDraft{float:right;margin-top:14px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--muted);font:600 12px var(--font-nunito-sans),sans-serif;cursor:pointer}.resetDraft:hover{border-color:var(--accent);color:var(--accent)}.consent{clear:both}
 @media(max-width:600px){.resetDraft{float:none;display:block;margin-top:10px}}
+:global(html[data-appearance="dusk"]) .navigation button,:global(html[data-appearance="dusk"]) .dataActions button,:global(html[data-appearance="dusk"]) .saveStatus button{background:#9bc3aa;color:#101311;border-color:#9bc3aa}
+:global(html[data-appearance="dusk"]) .navigation button:first-child,:global(html[data-appearance="dusk"]) .dataActions button.secondary{background:#191d1a;color:#edf1ed;border-color:#4b5d50}
+:global(html[data-appearance="dusk"]) .saveStatus[data-status="saved"]{background:#203128;border-color:#4b6653;color:#edf1ed}
+:global(html[data-appearance="dusk"]) .saveStatus[data-status="error"]{background:#332a1d;border-color:#80643c;color:#f2e2c6}

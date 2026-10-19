@@ -1,71 +1,31 @@
-import type { Metadata } from 'next';
+import type {Metadata} from 'next';
 import Link from 'next/link';
+import {GeistSans} from 'geist/font/sans';
+import {ArrowRight, BookOpen, Lightbulb, ShieldCheck, Monitor, Users, Mail, Fingerprint} from 'lucide-react';
+import AboutMotion from './about-motion';
 import styles from './page.module.css';
 
-export const metadata: Metadata = {
-  title: 'Data & Privacy | PhySense',
-  description: 'A plain-language guide to how PhySense handles learner data and class participation.',
-};
+export const metadata:Metadata={title:'About & privacy | PhySense',description:'Get to know PhySense, understand your sharing choices, and see how learner and instructor information is handled.'};
+const storedFields=['Random participant and attempt IDs','Optional class association','Lesson and pre/post phase','Selected answer and selected reason','Answer, reason, and joint correctness','Confidence and response time','Concept, misconception, and difficulty tags','Start/completion times and summary scores','Consent version'];
 
-const storedFields = [
-  'Random participant and attempt IDs',
-  'Optional class association when a class code was used',
-  'Lesson and pre/post phase',
-  'Selected answer and selected reason',
-  'Answer, reason, and joint correctness',
-  'Confidence and response time',
-  'Concept, misconception, and difficulty tags',
-  'Start/completion times and summary scores',
-  'Prototype consent version',
-];
-
-export default function DataAndPrivacyPage() {
-  return <div className={styles.page}>
-    <aside className={styles.sidebar}>
-      <Link className={styles.brand} href="/">PhySense<small>A field guide to physical law.</small></Link>
-      <nav aria-label="Page navigation">
-        <a href="#overview">Overview</a>
-        <a href="#choices">Your choices</a>
-        <a href="#classes">Class participation</a>
-        <a href="#records">Information used</a>
-      </nav>
-      <Link className={styles.back} href="/block-1/1-1">← Lesson 1.1</Link>
-    </aside>
-
-    <main className={styles.main}>
-      <header id="overview" className={styles.hero}>
-        <span className={styles.eyebrow}>Data &amp; privacy</span>
-        <h1>Your information and your choices</h1>
-        <p>PhySense diagnostics do not ask students for a name or email. An instructor may separately upload roster emails to create personal invitation links. This page explains what stays in the browser, what may be shared, and what an instructor can see.</p>
-      </header>
-
-      <section id="choices">
-        <div className={styles.sectionHeading}><span>01</span><div><h2>Your choices</h2><p>You can use the lesson and complete the diagnostic without sending the attempt to a class summary.</p></div></div>
-        <ol className={styles.flow}>
-          <li><b>Join a class</b><span>A six-character class code connects this browser to an instructor-created class. The code is shared by the whole class and is not a personal identity.</span></li>
-          <li><b>Complete the diagnostic</b><span>Your progress and result are kept in this browser while you work.</span></li>
-          <li><b>Choose whether to share</b><span>If optional sharing is selected, the completed attempt is added to the class summary. Otherwise, it stays on this device.</span></li>
-          <li><b>View your result</b><span>You can review your score and explanations and download your attempt as a JSON file.</span></li>
-        </ol>
-        <aside className={styles.note}><b>Remember</b><p>Clearing browser data, changing browsers, or using another device may remove or change the locally saved participant code and class connection.</p></aside>
-      </section>
-
-      <section id="classes">
-        <div className={styles.sectionHeading}><span>02</span><div><h2>What an instructor can see</h2><p>The instructor view shows a class summary, not student profiles.</p></div></div>
-        <div className={styles.splitCards}>
-          <article><span className={styles.verified}>Visible</span><h3>Aggregate class results</h3><p>The number of pseudonymous learners, shared attempts, pre/post attempts, and average pre/post scores.</p></article>
-          <article><span className={styles.caution}>Protected roster</span><h3>Roster email</h3><p>The student forms do not request personal details. An instructor-uploaded email stays in the protected roster table; consented attempts made through its personal invitation can be associated with that roster entry and included in the owning instructor&apos;s raw export.</p></article>
-        </div>
-        <aside className={styles.note}><b>Instructor privacy</b><p>Instructor account details, including name, email, and institution, are stored in the protected account profile. Private class-management information should not be shared with learners.</p></aside>
-      </section>
-
-      <section id="records">
-        <div className={styles.sectionHeading}><span>03</span><div><h2>Information used for a shared attempt</h2><p>When optional sharing is selected, PhySense stores the learning information needed to calculate results and class summaries.</p></div></div>
-        <ul className={styles.fieldGrid}>{storedFields.map(field => <li key={field}>{field}</li>)}</ul>
-        <aside className={styles.note}><b>Pseudonymous, not identified by name</b><p>A random participant code can connect attempts made in the same browser. It is not a verified identity, but it means shared attempts should not be described as completely anonymous.</p></aside>
-      </section>
-
-      <footer><p>Students can review this information before deciding whether to share a completed diagnostic attempt.</p><Link href="/block-1/1-1">Return to Lesson 1.1 →</Link></footer>
-    </main>
-  </div>;
+export default function DataAndPrivacyPage(){
+  return <main className={`${styles.page} ${GeistSans.className}`}><AboutMotion><div className={styles.shell}>
+    <header className={styles.nav}><Link className={styles.brand} href="/">PhySense<span>About</span></Link><nav aria-label="About navigation"><Link href="/participant-tracking">Research</Link><Link href="/user-guides">User guide <ArrowRight size={15} aria-hidden="true"/></Link></nav></header>
+    <section className={styles.hero} aria-labelledby="about-title"><div><p className={styles.eyebrow}>Physics, with understanding</p><h1 id="about-title">Explore the idea.<br/>Understand the why.</h1><p className={styles.lead}>PhySense brings physics lessons, interactive explorations, and diagnostic questions together—helping learners connect an answer with the reasoning behind it.</p><div className={styles.actions}><Link className={styles.primary} href="/block-1">Explore the lessons <ArrowRight size={17} aria-hidden="true"/></Link><a className={styles.secondary} href="#choices">Your data choices</a></div></div><aside className={styles.introCard}><span className={styles.icon}><Lightbulb size={26} aria-hidden="true"/></span><h2>Learning is more than a score.</h2><p>Choose an answer, explain your thinking, and reflect on your confidence. Instructors can use shared class results to see which ideas need another look.</p><Link href="/diagnostic-map">See how assessments work <ArrowRight size={15} aria-hidden="true"/></Link></aside></section>
+    <section className={styles.principles} aria-label="What PhySense offers">{[{icon:BookOpen,title:'Explore physics',text:'Connect concepts with interactive lessons and everyday situations.'},{icon:Lightbulb,title:'Make thinking visible',text:'Diagnostics consider answers, reasoning, and confidence.'},{icon:ShieldCheck,title:'Choose what to share',text:'Complete the diagnostic with or without optional sharing.'}].map(({icon:Icon,title,text})=><article key={title}><Icon size={22} aria-hidden="true"/><h2>{title}</h2><p>{text}</p></article>)}</section>
+    <section id="choices" className={styles.choices} aria-labelledby="choices-title" data-about-reveal><div className={styles.heading}><p className={styles.eyebrow}>Your information, your choice</p><h2 id="choices-title">Learn either way.</h2><p>You can study the lesson and complete the diagnostic without sharing an attempt. Make your choice using the sharing checkbox in the quiz.</p></div><div className={styles.choiceGrid}>
+      <article><Monitor size={25} aria-hidden="true"/><h3>Keep it on this device</h3><p>Leave optional sharing unchecked.</p><ul><li>Your progress and result stay in this browser.</li><li>You can review your score and explanations.</li><li>You can download your attempt as a JSON file.</li><li>The attempt is not sent to the class summary.</li></ul></article>
+      <article><Users size={25} aria-hidden="true"/><h3>Share your completed attempt</h3><p>Select optional sharing before submitting.</p><ul><li>Your diagnostic responses are sent to PhySense.</li><li>If linked to a class, the attempt contributes to its results.</li><li>Answers, reasoning, confidence, and timing are included.</li><li>A personal invitation can link it to your roster entry.</li></ul></article>
+    </div><p className={styles.caption}>Clearing site data can remove locally saved progress. A different browser or device may use a different participant code and class connection.</p></section>
+    <section id="classes" className={styles.access} aria-labelledby="access-title" data-about-reveal><div className={styles.heading}><p className={styles.eyebrow}>Inside the instructor workspace</p><h2 id="access-title">What your instructor can see.</h2><p>Student diagnostic forms do not ask for a name or email. Rosters and personal invitations are managed separately.</p></div><div className={styles.accessCards}><article><Users size={21} aria-hidden="true"/><div><h3>Class results</h3><p>Counts of pseudonymous learners and shared attempts, pre/post scores, and reports showing question difficulty, concept mastery, and confidence.</p></div></article><article><Mail size={21} aria-hidden="true"/><div><h3>Protected roster information</h3><p>An instructor may upload student emails to create personal invitations. Consented attempts through those links can be associated with roster emails in the owning instructor’s raw export.</p></div></article></div></section>
+    <aside className={styles.identity}><Fingerprint size={28} aria-hidden="true"/><div><h2>Pseudonymous, not completely anonymous.</h2><p>A random participant code connects attempts in the same browser. It is not a verified identity, but it creates a link between records.</p></div><Link href="/participant-tracking">How tracking works <ArrowRight size={16} aria-hidden="true"/></Link></aside>
+    <section id="records" className={styles.detailsSection} aria-labelledby="details-title" data-about-reveal><div className={styles.heading}><p className={styles.eyebrow}>A little more detail</p><h2 id="details-title">Know what’s recorded.</h2><p>Open the details you need before choosing whether to share.</p></div><div className={styles.disclosures}>
+      <details><summary>What is stored with a shared attempt?<span aria-hidden="true">+</span></summary><div><ul className={styles.fieldList}>{storedFields.map(field=><li key={field}>{field}</li>)}</ul><p>Attempts made through personal invitations can also carry a protected reference to the instructor-managed roster entry.</p></div></details>
+      <details><summary>How does a class code work?<span aria-hidden="true">+</span></summary><div><p>A six-character class code connects this browser to an instructor-created class. Everyone in the class can use the same code; it is not a personal identity. The class association is used when you consent to sharing an attempt.</p></div></details>
+      <details><summary>What happens to instructor account details?<span aria-hidden="true">+</span></summary><div><p>Instructor name, email, and institution are stored in the protected account profile. Private class-management information should not be shared with learners.</p></div></details>
+      <details><summary>Can I return to my result later?<span aria-hidden="true">+</span></summary><div><p>Your progress and result are saved in the browser and restored after a refresh. Clearing site data may remove that local copy. Use the download option on the result screen to save your attempt as a JSON file.</p></div></details>
+    </div></section>
+    <section className={styles.cta}><div><h2>Start with curiosity.</h2><p>Explore a lesson, or follow the educator guide to set up your class.</p></div><div className={styles.actions}><Link href="/block-1">Explore lessons <ArrowRight size={16} aria-hidden="true"/></Link><Link href="/user-guides">Educator guide</Link></div></section>
+    <footer className={styles.footer}><Link href="/">PhySense</Link><span>Clear ideas. Informed choices.</span><Link href="/participant-tracking">Research & tracking</Link></footer>
+  </div></AboutMotion></main>;
 }

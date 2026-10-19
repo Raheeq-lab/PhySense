@@ -1,20 +1,39 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
+import {GeistSans} from 'geist/font/sans';
+import {ArrowRight, BookOpen, Users, ChartNoAxesCombined, ShieldCheck} from 'lucide-react';
+import GuideMotion from './guide-motion';
 import styles from './page.module.css';
 
-export const metadata:Metadata={title:'Educator user guide | PhySense',description:'A simple guide for professors and teachers using PhySense.'};
+export const metadata: Metadata = {title:'Educator user guide | PhySense',description:'Create a class, invite learners, and understand your diagnostic reports with the PhySense educator guide.'};
 
-const steps=[
-  ['1','Create an instructor account','Register with your name, institution, email, and password. After signing in, your private instructor workspace opens.'],
-  ['2','Create a class','Enter a class title and create a class code for the available physics lesson. Each class belongs only to your account.'],
-  ['3','Invite your students','Paste student emails or upload a CSV roster. PhySense creates one personal invitation link for each student.'],
-  ['4','Teach and assess','Students open their invitation, study the lesson, and complete the diagnostic assessment with consent.'],
-  ['5','Review the results','Open Reports to see class-level hardest questions, concept mastery, and downloadable CSV data.'],
-] as const;
+const steps = [
+  {id:'account',label:'Your account',title:'Make yourself at home.',text:'Create an instructor account with your name, institution, email, and password. Sign in to open your instructor workspace.',tip:'Already registered? Use the account that owns your classes.',href:'/instructor/login',action:'Instructor sign in'},
+  {id:'class',label:'Create a class',title:'One class. One shared starting point.',text:'Give your class a recognisable title, choose a physics topic, and select “Create class code”. Your workspace shows the code and a student link ready to share.',tip:'Teaching another topic? Use “Create another class” to set up a separate pathway.',href:'/instructor',action:'Open your workspace'},
+  {id:'invite',label:'Invite students',title:'Invite learners your way.',text:'Copy the student link and share it with your class. You can also share the six-character class code for students to enter on the join page.',tip:'For personal invitations, paste one student email per line or upload a CSV with emails in its first column. Select “Generate Invitations”, then share each learner’s personal link.',href:'/join',action:'View student entry'},
+  {id:'teach',label:'Teach & assess',title:'Let understanding take shape.',text:'Learners open the selected lesson, explore the material, and complete the diagnostic. Consenting attempts are shared with your class.',tip:'Use pre- and post-lesson diagnostics to explore how understanding changes. Students choose whether to share their responses.',href:'/block-1',action:'Explore the lessons'},
+  {id:'reports',label:'Review results',title:'Turn responses into your next lesson.',text:'Open Reports to review the Lesson Summary, Hardest Questions, Concept Mastery, and Confidence vs Correctness. Use these views to choose what to revisit with your class.',tip:'Download CSV data to explore the results further. Your reports include only classes owned by your signed-in account.',href:'/instructor/reports',action:'Open reports'},
+];
+const overview = [
+  {icon:Users,title:'Bring your class together',text:'A topic, a code, and a shared starting point.'},
+  {icon:BookOpen,title:'Make room for discovery',text:'Interactive lessons and diagnostic questions.'},
+  {icon:ChartNoAxesCombined,title:'See what clicks',text:'Class insights to inform what comes next.'},
+];
+const questions = [
+  ['Class link or personal invitation?','A class link invites the whole group without asking for a name or email. Personal invitations are generated from your roster; consented attempts submitted through them can be associated with roster emails in your raw export.'],
+  ['Why are my reports empty?','Check that learners used the link for the intended class and completed a diagnostic with sharing consent. In your workspace, select “Refresh results” to check for new attempts.'],
+  ['What happens when I clear class data?','In Reports, select a class in “Manage class data” and confirm “Clear Data for this Class”. This permanently removes that class’s diagnostic attempts and responses. The class and student roster stay intact.'],
+  ['Who can access roster emails?','Roster emails are stored separately from assessment responses. Only the signed-in instructor account that owns a class can load its roster.'],
+];
 
-export default function UserGuidesPage(){return <main className={styles.page}><div className={styles.shell}>
-  <header className={styles.top}><Link href="/">PhySense</Link><Link href="/">← Home</Link></header>
-  <section className={styles.hero}><span>USER GUIDE FOR EDUCATORS</span><h1>How professors and teachers use PhySense</h1><p>A quick guide from creating your account to reviewing student understanding.</p><div className={styles.actions}><Link href="/instructor/register">Create instructor account</Link><Link href="/instructor/login">Instructor sign in</Link></div></section>
-  <section className={styles.steps} aria-label="Educator workflow">{steps.map(([number,title,description])=><article key={number}><b>{number}</b><div><h2>{title}</h2><p>{description}</p></div></article>)}</section>
-  <aside className={styles.note}><strong>Student privacy</strong><p>Diagnostic responses are pseudonymous. Roster emails are kept separately from assessment responses, and instructors only see data for classes they created.</p><Link href="/data-and-privacy">Read about data and privacy →</Link></aside>
-</div></main>}
+export default function UserGuidesPage() {
+  return <main className={`${styles.page} ${GeistSans.className}`}><GuideMotion><div className={styles.shell}>
+    <header className={styles.nav}><Link className={styles.brand} href="/">PhySense<span>User guide</span></Link><nav aria-label="Guide navigation"><Link href="/">Home</Link><Link className={styles.navAction} href="/instructor">Instructor workspace <ArrowRight size={16} aria-hidden="true"/></Link></nav></header>
+    <section className={styles.hero} aria-labelledby="guide-title"><div><p className={styles.eyebrow}>For educators</p><h1 id="guide-title">From first class<br/>to clearer insight.</h1><p className={styles.lead}>Your companion to teaching with PhySense. Set up a class, bring your learners in, and see where understanding grows.</p><div className={styles.actions}><a className={styles.primary} href="#walkthrough">Follow the guide <ArrowRight size={18} aria-hidden="true"/></a><Link className={styles.secondary} href="/instructor/register">Create an account</Link></div></div><aside className={styles.preview} aria-label="The teaching journey"><div className={styles.previewTop}><BookOpen size={20} aria-hidden="true"/> A clear path for your class</div>{overview.map(({icon:Icon,title,text},i)=><div className={styles.previewRow} key={title}><span className={styles.previewIcon}><Icon size={20} aria-hidden="true"/></span><div><strong>{title}</strong><p>{text}</p></div><span className={styles.previewNumber}>0{i+1}</span></div>)}<div className={styles.previewFoot}><ShieldCheck size={16} aria-hidden="true"/> Learners choose what they share.</div></aside></section>
+    <section className={styles.overview} aria-label="Before you begin">{[{icon:Users,title:'Your instructor account',text:'Own and manage your classes in one workspace.'},{icon:BookOpen,title:'Your choice of physics topic',text:'Create a separate pathway for each class and lesson.'},{icon:ShieldCheck,title:'Privacy built into the flow',text:'Learners choose whether to share diagnostic responses.'}].map(({icon:Icon,title,text})=><article key={title}><Icon size={22} aria-hidden="true"/><h2>{title}</h2><p>{text}</p></article>)}</section>
+    <section id="walkthrough" className={styles.walkthrough} aria-labelledby="walkthrough-title"><aside data-guide-index className={styles.index}><p className={styles.eyebrow}>Getting started</p><h2 id="walkthrough-title">A little setup.<br/>A lot to discover.</h2><p>Follow these five steps, or jump to the part you need.</p><nav aria-label="On this page">{steps.map((step,i)=><a key={step.id} href={`#${step.id}`}><span>0{i+1}</span>{step.label}<ArrowRight size={14} aria-hidden="true"/></a>)}</nav></aside><div className={styles.steps}>{steps.map((step,i)=><article id={step.id} key={step.id} className={styles.step} data-guide-step><div className={styles.stepLabel}><span>0{i+1}</span>{step.label}</div><h3>{step.title}</h3><p>{step.text}</p><div className={styles.tip}><BookOpen size={18} aria-hidden="true"/><p>{step.tip}</p></div><Link className={styles.textLink} href={step.href}>{step.action}<ArrowRight size={16} aria-hidden="true"/></Link></article>)}</div></section>
+    <section className={styles.questions} aria-labelledby="questions-title"><div><p className={styles.eyebrow}>A little more clarity</p><h2 id="questions-title">Good to know.</h2><p>The details that help you teach with confidence.</p><Link className={styles.textLink} href="/data-and-privacy">Data and privacy <ArrowRight size={16} aria-hidden="true"/></Link></div><div className={styles.answers}>{questions.map(([title,text])=><details key={title}><summary>{title}</summary><p>{text}</p></details>)}</div></section>
+    <section className={styles.cta}><div><p>Ready when you are</p><h2>Your next class starts here.</h2><span>Open your workspace and put the guide into practice.</span></div><Link href="/instructor">Go to instructor workspace <ArrowRight size={18} aria-hidden="true"/></Link></section>
+    <footer className={styles.footer}><Link href="/">PhySense</Link><span>Teach with curiosity. Learn with clarity.</span><Link href="/data-and-privacy">Data & privacy</Link></footer>
+  </div></GuideMotion></main>;
+}

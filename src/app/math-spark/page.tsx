@@ -1,2 +1,5 @@
-import ComingSoonPage from '@/components/ComingSoonPage';
-export default function Page(){return <ComingSoonPage title="Math Spark"/>}
+import { MathSpark } from './math-spark';
+
+export default function Page() {
+  return <MathSpark />;
+}

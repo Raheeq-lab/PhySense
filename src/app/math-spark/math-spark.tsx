@@ -1,29 +1,42 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 import Link from 'next/link';
-import { useState } from 'react';
-import styles from './math-spark.module.css';
-
-const topics = [
-  { id: 'algebra', symbol: 'x', title: 'Algebra foundations', description: 'Equations, variables, graphs, and the patterns behind them.', level: 'Best place to start', first: 'Solving one-step equations', example: '3x + 5 = 20' },
-  { id: 'geometry', symbol: '△', title: 'Geometry & measurement', description: 'Shapes, angles, area, volume, and spatial reasoning.', level: 'Visual learner friendly', first: 'Angles and triangles', example: 'a² + b² = c²' },
-  { id: 'functions', symbol: 'f', title: 'Functions & graphs', description: 'How inputs change into outputs and how to read their graphs.', level: 'Builds toward calculus', first: 'Inputs, outputs, and notation', example: 'f(x) = 2x + 1' },
-  { id: 'calculus', symbol: '∫', title: 'Calculus', description: 'Change, motion, slopes, and accumulation explained visually.', level: 'Useful for physics', first: 'The idea of a changing slope', example: 'dy/dx' },
-  { id: 'probability', symbol: '%', title: 'Probability & statistics', description: 'Chance, data, averages, and making evidence-based decisions.', level: 'Useful in daily life', first: 'Describing a set of data', example: 'P(A) = 1/6' },
-  { id: 'vectors', symbol: '→', title: 'Vectors', description: 'Direction and size—the shared language of math and physics.', level: 'Math meets physics', first: 'Magnitude and direction', example: 'v = ⟨3, 4⟩' },
-] as const;
+import { useRef, useState } from 'react';
+import { MATH_BLOCKS } from '@/data/mathSyllabus';
+import styles from './math-curriculum.module.css';
 
 export function MathSpark() {
-  const [selectedId, setSelectedId] = useState<string>('algebra');
-  const [started, setStarted] = useState(false);
-  const selected = topics.find(topic => topic.id === selectedId) ?? topics[0];
+  const root = useRef<HTMLElement>(null);
+  const [activeBlock, setActiveBlock] = useState(0);
+  const block = MATH_BLOCKS[activeBlock];
 
-  return <main className={styles.page}>
-    <nav className={styles.nav} aria-label="Math navigation"><Link href="/" className={styles.brand}>PhySense <span>STEM</span></Link><Link href="/">Back to home</Link></nav>
-    <section className={styles.hero}><div><p>Math Spark</p><h1>Find the math that moves you forward.</h1><span>Choose a suggested topic. We will show your first lesson before you continue.</span></div><div className={styles.formulaArt} aria-hidden="true"><i>y</i><b>=</b><i>mx</i><b>+</b><i>b</i></div></section>
-    <section className={styles.finder} aria-labelledby="topic-heading"><header><div><span>First, choose a direction</span><h2 id="topic-heading">Suggested math topics</h2></div><p>Not sure? Algebra foundations is our recommendation because it supports every STEM pathway.</p></header><div className={styles.topicGrid}>{topics.map(topic => <button key={topic.id} type="button" className={selectedId === topic.id ? styles.selected : ''} aria-pressed={selectedId === topic.id} onClick={() => { setSelectedId(topic.id); setStarted(false); }}><span className={styles.symbol}>{topic.symbol}</span><span><small>{topic.level}</small><b>{topic.title}</b><em>{topic.description}</em></span><span className={styles.check} aria-hidden="true">✓</span></button>)}</div></section>
-    <section className={styles.nextStep} aria-live="polite"><div><span>Your suggested first lesson</span><h2>{selected.first}</h2><p>{selected.description}</p></div><div className={styles.preview}><small>We will unpack</small><code>{selected.example}</code></div>{selectedId === 'algebra' ? <Link className={styles.ctaLink} href="/math-spark/algebra">Start Algebra Foundations <span>→</span></Link> : !started ? <button type="button" onClick={() => setStarted(true)}>Next: preview lesson <span>→</span></button> : <div className={styles.lessonPreview}><span>Ready to learn</span><p>Start with a short visual explanation, try one guided example, then check your understanding.</p><button type="button" onClick={() => setStarted(false)}>Open guided lesson soon</button></div>}</section>
-    <section className={styles.bridge}><p>Math and physics are better together.</p><h2>Use Math Spark to build the tools, then see them come alive in Physics.</h2><Link href="/block-1/1-1">Explore the Physics pathway →</Link></section>
-    <footer><Link href="/">PhySense STEM</Link><span>Learn by seeing, trying, and connecting ideas.</span></footer>
+  useGSAP(() => {
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.from('[data-intro]', { opacity: 0, y: 24, stagger: .1, duration: .7, ease: 'power3.out' });
+      gsap.from('[data-block]', { opacity: 0, y: 30, stagger: .08, duration: .65, delay: .2, ease: 'power3.out' });
+    });
+    return () => media.revert();
+  }, { scope: root });
+
+  return <main ref={root} className={styles.page}>
+    <nav className={styles.nav}><Link href="/" className={styles.brand}>PhySense <span>STEM</span></Link><div><Link href="/">Physics home</Link><span>Math pathway</span></div></nav>
+    <header className={styles.hero}><p data-intro>Math Spark</p><h1 data-intro>Learn the math behind the physics.</h1><span data-intro>Four connected blocks. Six short lessons in each. Every idea points to the Physics lesson where it comes alive.</span><a data-intro href="#curriculum">Explore the pathway <b>↓</b></a></header>
+
+    <section id="curriculum" className={styles.curriculum}>
+      <header><div><p>Your Math pathway</p><h2>Choose a block.</h2></div><p>Start with Algebra Foundations if you are new. Move in order, or jump to the Math tool needed by your Physics lesson.</p></header>
+      <div className={styles.blockTabs} role="tablist" aria-label="Math blocks">{MATH_BLOCKS.map((item, index) => <button data-block key={item.number} type="button" role="tab" aria-selected={activeBlock === index} onClick={() => setActiveBlock(index)}><span>{item.symbol}</span><small>Math Block {item.number}</small><b>{item.title}</b><em>{item.description}</em></button>)}</div>
+
+      <article className={styles.lessonPanel} key={block.number}>
+        <div className={styles.blockIntro}><span>{block.symbol}</span><div><small>Math Block {block.number}</small><h2>{block.title}</h2><p>{block.description}</p></div></div>
+        <ol className={styles.lessons}>{block.lessons.map((lesson, index) => <li key={lesson.code} className={lesson.href ? styles.available : ''}><span>{lesson.code}</span><div><b>{lesson.title}</b><p>{lesson.summary}</p><Link href={lesson.physicsHref}>Connects to Physics: {lesson.physics} <i>↗</i></Link></div>{lesson.href ? <Link className={styles.lessonAction} href={lesson.href}>{index === 0 ? 'Start lesson' : 'Open'} <span>→</span></Link> : <span className={styles.planned}>Planned</span>}</li>)}</ol>
+      </article>
+    </section>
+
+    <section className={styles.connection}><div><p>One connected STEM pathway</p><h2>Math gives you the tool. Physics gives it meaning.</h2></div><div className={styles.connectionFlow}><span>Learn<br/><b>the idea</b></span><i>→</i><span>Try<br/><b>the math</b></span><i>→</i><span>Use it<br/><b>in Physics</b></span></div></section>
+    <section className={styles.start}><div><p>Recommended starting point</p><h2>Begin with unknowns and balanced equations.</h2></div><Link href="/math-spark/algebra">Start Math Lesson M1.1 <span>→</span></Link></section>
+    <footer><Link href="/">PhySense STEM</Link><span>Physics and Math, built as one connected journey.</span></footer>
   </main>;
 }

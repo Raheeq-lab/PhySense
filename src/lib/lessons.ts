@@ -23,6 +23,7 @@ export const lessons=[
   {id:'block-4/4-4',number:'4.4',title:'General Relativity',block:'Block 4'},
   {id:'block-4/4-5',number:'4.5',title:'Quantum Mechanics',block:'Block 4'},
   {id:'block-4/4-6',number:'4.6',title:'Nuclear & Particle Physics',block:'Block 4'},
+  {id:'math-spark/algebra',number:'M1.1',title:'Unknowns & Equations',block:'Math Block 1'},
 ] as const;
 
 export type LessonId=(typeof lessons)[number]['id'];

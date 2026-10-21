@@ -5,6 +5,8 @@ import gsap from 'gsap';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import styles from './algebra-foundations.module.css';
+import KinematicsDiagnostic from '@/components/lesson/KinematicsDiagnostic';
+import { algebraFoundationsDiagnostic } from '@/data/algebraFoundationsDiagnostic';
 
 const answers = [3, 4, 5];
 
@@ -32,6 +34,7 @@ export function AlgebraFoundations() {
     </section>
     <section className={styles.rule} data-reveal><span>Keep this one rule</span><blockquote>Change one side? Change the other side in exactly the same way.</blockquote></section>
     <section className={styles.challenge}><div data-reveal><p>Your turn</p><h2>What makes this true?</h2><div className={styles.challengeEquation}><span>x</span><b>+ 2 = 7</b></div></div><div className={styles.answerPanel} data-reveal><span>Choose a value for x</span><div>{answers.map(value => <button type="button" key={value} aria-pressed={answer === value} onClick={() => setAnswer(value)}>{value}</button>)}</div>{answer !== null && <p className={correct ? styles.correct : styles.incorrect} role="status">{correct ? 'Exactly. 5 + 2 equals 7.' : `${answer} + 2 does not equal 7. Try once more.`}</p>}</div></section>
+    <section className={styles.diagnosticSection}><header><p>Check what you learned</p><h2>Algebra understanding quiz</h2><span>Ten short questions measure both your answer and your reasoning. You choose whether anonymous results are shared; otherwise they stay on this device.</span></header><KinematicsDiagnostic items={algebraFoundationsDiagnostic} lessonId="math-spark/algebra" storageSlug="math.m1.1" simulationFilename="algebra-foundations" /></section>
     <section className={styles.finish}><div><p>{correct ? 'Foundation complete' : 'One small step left'}</p><h2>{correct ? 'You can keep an equation balanced.' : 'Solve the challenge to finish.'}</h2></div>{correct ? <Link href="/math-spark">Choose another Math topic <span>→</span></Link> : <a href="#try-it">Review the balance idea</a>}</section>
     <footer><Link href="/">PhySense STEM</Link><span>Simple ideas. Real understanding.</span></footer>
   </main>;

@@ -33,44 +33,44 @@ export function AlgebraFoundations() {
   }, { scope: root });
 
   const ticketEquation = ticketStep === 0 ? '3x + 5 = 20' : ticketStep === 1 ? '3x = 15' : 'x = 5';
-  const ticketCopy = ticketStep === 0 ? 'Remove the one-time £5 booking fee from both sides.' : ticketStep === 1 ? 'Three equal tickets cost £15, so divide both sides by 3.' : 'Each ticket costs £5. Check it: 3 × £5 + £5 = £20.';
+  const ticketCopy = ticketStep === 0 ? 'The £5 fee is for the whole order. You pay it once. Take £5 from both sides.' : ticketStep === 1 ? 'The 3 tickets cost £15 together. Divide £15 by 3.' : 'One ticket costs £5. Check: £15 for the tickets + £5 fee = £20.';
 
   return <main ref={root} className={styles.page}>
     <nav><Link href="/" className={styles.brand}>PhySense <span>STEM</span></Link><div><Link href="/math-spark">Math blocks</Link><span>Lesson M1.1</span></div></nav>
-    <header className={styles.hero}><p data-reveal>Math Lesson M1.1 · Algebra Foundations</p><h1 data-reveal>An equation is just a balanced scale.</h1><span data-reveal>Algebra helps us name what we do not know, then use what we do know to find it.</span><a data-reveal href="#meaning">Start lesson <b>↓</b></a></header>
+    <header className={styles.hero}><p data-reveal>Math Lesson M1.1 · Algebra Foundations</p><h1 data-reveal>An equation is like a balanced scale.</h1><span data-reveal>Algebra helps us find a missing number.</span><a data-reveal href="#meaning">Start lesson <b>↓</b></a></header>
 
     <section id="meaning" className={styles.meaning}>
-      <header data-scroll-card><p>The simple idea</p><h2>Letters are placeholders, not mysteries.</h2><span>When a number is unknown, we give it a short name such as x. The equation tells us everything that is known about it.</span></header>
+      <header data-scroll-card><p>The simple idea</p><h2>A letter can stand for a number.</h2><span>We use x when we do not know a number. Our job is to find the value of x.</span></header>
       <div className={styles.conceptGrid}>
-        <article data-scroll-card><span>x</span><h3>Variable</h3><p>A letter standing in for a number that can change or that we need to find.</p></article>
-        <article data-scroll-card><span>=</span><h3>Equality</h3><p>The left and right sides have exactly the same value. Think of a level scale.</p></article>
-        <article data-scroll-card><span>↺</span><h3>Inverse operation</h3><p>Undo addition with subtraction, or multiplication with division.</p></article>
+        <article data-scroll-card><span>x</span><h3>Missing number</h3><p>x is the number we need to find.</p></article>
+        <article data-scroll-card><span>=</span><h3>Equal</h3><p>Both sides have the same value.</p></article>
+        <article data-scroll-card><span>↺</span><h3>Undo</h3><p>Use subtraction to undo addition. Use division to undo multiplication.</p></article>
       </div>
     </section>
 
     <section id="try-it" className={styles.balanceSection}>
-      <div className={styles.explanation} data-scroll-card><p>See the balance</p><h2>Find what <i>x</i> is worth.</h2><div className={styles.equation} aria-label={balanceStep === 0 ? 'x plus 3 equals 7' : 'x equals 4'}>{balanceStep === 0 ? <><b>x</b><span>+ 3</span><em>=</em><span>7</span></> : <><b>x</b><em>=</em><span>4</span></>}</div><p className={styles.helper}>{balanceStep === 0 ? 'We want x by itself. Remove 3 from both sides.' : 'Balanced. The same change on both sides keeps the equation true.'}</p>{balanceStep === 0 ? <button type="button" onClick={() => setBalanceStep(1)}>Subtract 3 from both sides</button> : <button type="button" className={styles.reset} onClick={() => setBalanceStep(0)}>Reset the scale</button>}</div>
+      <div className={styles.explanation} data-scroll-card><p>See the balance</p><h2>Find <i>x</i>.</h2><div className={styles.equation} aria-label={balanceStep === 0 ? 'x plus 3 equals 7' : 'x equals 4'}>{balanceStep === 0 ? <><b>x</b><span>+ 3</span><em>=</em><span>7</span></> : <><b>x</b><em>=</em><span>4</span></>}</div><p className={styles.helper}>{balanceStep === 0 ? 'We want x alone. Take 3 from both sides.' : 'Now x is alone. x is 4.'}</p>{balanceStep === 0 ? <button type="button" onClick={() => setBalanceStep(1)}>Take 3 from both sides</button> : <button type="button" className={styles.reset} onClick={() => setBalanceStep(0)}>Try again</button>}</div>
       <div className={`${styles.balance} ${balanceStep ? styles.solved : ''}`} data-balance><div className={styles.tray}><span className={styles.xBlock}>x</span>{balanceStep === 0 && [1,2,3].map(n => <i key={n}>1</i>)}</div><div className={styles.beam}><span /></div><div className={styles.tray}>{Array.from({length: balanceStep ? 4 : 7}, (_, n) => <i key={n}>1</i>)}</div><div className={styles.base} /></div>
     </section>
 
-    <section className={styles.rule} data-scroll-card><span>Keep this one rule</span><blockquote>Change one side? Change the other side in exactly the same way.</blockquote></section>
+    <section className={styles.rule} data-scroll-card><span>Remember this rule</span><blockquote>Do the same thing to both sides.</blockquote></section>
 
     <section className={styles.realLife}>
-      <div className={styles.story} data-scroll-card><p>A real-life equation</p><h2>Three tickets and one booking fee cost £20.</h2><p>Each ticket has the same unknown price, so call it <b>x</b>. The booking fee is £5.</p><div className={styles.ticketRow}><span>Ticket x</span><span>Ticket x</span><span>Ticket x</span><i>+ £5 fee</i></div></div>
-      <div className={styles.storySolver} data-scroll-card><small>{ticketStep === 2 ? 'Solved and checked' : 'Solve it one move at a time'}</small><code>{ticketEquation}</code><p>{ticketCopy}</p><div><button type="button" disabled={ticketStep === 0} onClick={() => setTicketStep(step => Math.max(0, step - 1))}>Back</button><button type="button" onClick={() => setTicketStep(step => step === 2 ? 0 : step + 1)}>{ticketStep === 2 ? 'Try again' : 'Next move'}</button></div></div>
+      <div className={styles.story} data-scroll-card><p>A real-life example</p><h2>You buy 3 tickets. The total is £20.</h2><p>Each ticket has the same price. We call this price <b>x</b>. The website adds one £5 booking fee for all 3 tickets together.</p><div className={styles.feeNote}>You pay the £5 booking fee once, not once per ticket.</div><div className={styles.ticketRow}><span>Ticket 1<br/><b>£x</b></span><span>Ticket 2<br/><b>£x</b></span><span>Ticket 3<br/><b>£x</b></span><i>One booking fee<br/><b>+ £5</b></i></div></div>
+      <div className={styles.storySolver} data-scroll-card><small>{ticketStep === 2 ? 'Answer checked' : 'Solve it step by step'}</small><code>{ticketEquation}</code><p>{ticketCopy}</p><div><button type="button" disabled={ticketStep === 0} onClick={() => setTicketStep(step => Math.max(0, step - 1))}>Back</button><button type="button" onClick={() => setTicketStep(step => step === 2 ? 0 : step + 1)}>{ticketStep === 2 ? 'Try again' : 'Next step'}</button></div></div>
     </section>
 
     <section className={styles.physicsLab}>
-      <header data-scroll-card><p>Now connect it to Physics</p><h2>Algebra turns motion into something we can predict.</h2><span>Physics gives us the relationship <b>distance = speed × time</b>. Algebra lets us substitute measurements, calculate the missing quantity, and rearrange the formula when a different value is unknown.</span></header>
+      <header data-scroll-card><p>Use Algebra in Physics</p><h2>Find how far a car travels.</h2><span>Use this rule: <b>distance = speed × time</b>. Choose a speed and a time. The lesson will find the distance.</span></header>
       <div className={styles.motionLab} data-scroll-card>
         <div className={styles.motionScene}><div className={styles.road}><span style={{left:`${Math.min(92, 8 + distance * .7)}%`}}>car</span></div><p>The car travels <b>{distance} metres</b>.</p></div>
         <div className={styles.motionControls}><label><span>Speed <b>{speed} m/s</b></span><input type="range" min="1" max="15" value={speed} onChange={event => setSpeed(Number(event.target.value))} /></label><label><span>Time <b>{time} s</b></span><input type="range" min="1" max="10" value={time} onChange={event => setTime(Number(event.target.value))} /></label><div className={styles.physicsEquation}><span>d = v × t</span><code>d = {speed} × {time} = <b>{distance} m</b></code></div></div>
       </div>
-      <div className={styles.physicsLinks}><Link href="/block-1/1-1">See this in Physics: Kinematics <span>→</span></Link><p>Later, the same Algebra helps rearrange <b>v = d ÷ t</b> and <b>t = d ÷ v</b>.</p></div>
+      <div className={styles.physicsLinks}><Link href="/block-1/1-1">Open the Physics motion lesson <span>→</span></Link><p>You can also use Algebra to find speed or time.</p></div>
     </section>
 
-    <section className={styles.challenge}><div data-scroll-card><p>Your turn</p><h2>What makes this true?</h2><div className={styles.challengeEquation}><span>x</span><b>+ 2 = 7</b></div></div><div className={styles.answerPanel} data-scroll-card><span>Choose a value for x</span><div>{answers.map(value => <button type="button" key={value} aria-pressed={answer === value} onClick={() => setAnswer(value)}>{value}</button>)}</div>{answer !== null && <p className={correct ? styles.correct : styles.incorrect} role="status">{correct ? 'Exactly. 5 + 2 equals 7.' : `${answer} + 2 does not equal 7. Try once more.`}</p>}</div></section>
-    <section className={styles.diagnosticSection}><header><p>Check what you learned</p><h2>Algebra understanding quiz</h2><span>Ten short questions measure both your answer and your reasoning. You choose whether anonymous results are shared; otherwise they stay on this device.</span></header><KinematicsDiagnostic items={algebraFoundationsDiagnostic} lessonId="math-spark/algebra" storageSlug="math.m1.1" simulationFilename="algebra-foundations" /></section>
+    <section className={styles.challenge}><div data-scroll-card><p>Your turn</p><h2>Find <i>x</i>.</h2><div className={styles.challengeEquation}><span>x</span><b>+ 2 = 7</b></div></div><div className={styles.answerPanel} data-scroll-card><span>Choose x</span><div>{answers.map(value => <button type="button" key={value} aria-pressed={answer === value} onClick={() => setAnswer(value)}>{value}</button>)}</div>{answer !== null && <p className={correct ? styles.correct : styles.incorrect} role="status">{correct ? 'Correct. 5 + 2 = 7.' : `${answer} + 2 is not 7. Try again.`}</p>}</div></section>
+    <section className={styles.diagnosticSection}><header><p>Check your learning</p><h2>Short Algebra quiz</h2><span>There are 10 questions. Choose an answer and a reason. You can keep your result on this device. Sharing is optional.</span></header><KinematicsDiagnostic items={algebraFoundationsDiagnostic} lessonId="math-spark/algebra" storageSlug="math.m1.1" simulationFilename="algebra-foundations" /></section>
     <section className={styles.finish}><div><p>{correct ? 'Foundation complete' : 'One small step left'}</p><h2>{correct ? 'You can keep an equation balanced.' : 'Solve the practice challenge to finish.'}</h2></div>{correct ? <Link href="/math-spark">Choose another Math lesson <span>→</span></Link> : <a href="#try-it">Review the balance idea</a>}</section>
     <footer><Link href="/">PhySense STEM</Link><span>Simple ideas. Real understanding.</span></footer>
   </main>;

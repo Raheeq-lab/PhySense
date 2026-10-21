@@ -6,3 +6,4 @@
 :global(html[data-appearance="dusk"]) .navigation button:first-child,:global(html[data-appearance="dusk"]) .dataActions button.secondary{background:#191d1a;color:#edf1ed;border-color:#4b5d50}
 :global(html[data-appearance="dusk"]) .saveStatus[data-status="saved"]{background:#203128;border-color:#4b6653;color:#edf1ed}
 :global(html[data-appearance="dusk"]) .saveStatus[data-status="error"]{background:#332a1d;border-color:#80643c;color:#f2e2c6}
+.fieldHelp{margin:-6px 0 10px!important;color:var(--muted)!important;font-size:12px!important;line-height:1.45!important}

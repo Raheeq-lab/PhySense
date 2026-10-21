@@ -48,4 +48,20 @@ export const MATH_BLOCKS: MathBlock[] = [
     { code: 'M4.5', title: 'Probability', summary: 'Reason clearly when outcomes are uncertain.', physics: 'Quantum measurement', physicsHref: '/block-4/4-5' },
     { code: 'M4.6', title: 'Statistics & Uncertainty', summary: 'Use data while respecting measurement limits.', physics: 'Experimental physics', physicsHref: '/diagnostic-map' },
   ]},
+  { number: 5, symbol: 'P', title: 'Probability & Data', description: 'Turn measurements into evidence and reliable conclusions.', lessons: [
+    { code: 'M5.1', title: 'Reading Data', summary: 'Understand tables, charts, and distributions.', physics: 'Experimental results', physicsHref: '/diagnostic-map' },
+    { code: 'M5.2', title: 'Mean & Spread', summary: 'Describe the centre and variation of a data set.', physics: 'Repeated measurements', physicsHref: '/diagnostic-map' },
+    { code: 'M5.3', title: 'Probability Rules', summary: 'Calculate how likely an outcome is.', physics: 'Quantum probability', physicsHref: '/block-4/4-5' },
+    { code: 'M5.4', title: 'Measurement Error', summary: 'Separate random variation from systematic error.', physics: 'Laboratory work', physicsHref: '/block-1/1-1' },
+    { code: 'M5.5', title: 'Uncertainty', summary: 'Report what a measurement can honestly tell us.', physics: 'Experimental physics', physicsHref: '/diagnostic-map' },
+    { code: 'M5.6', title: 'Fitting a Model', summary: 'Find a mathematical pattern that matches real data.', physics: 'Motion graphs', physicsHref: '/block-1/1-1' },
+  ]},
+  { number: 6, symbol: '∇', title: 'Mathematical Physics', description: 'Bring the full toolkit together for advanced physical systems.', lessons: [
+    { code: 'M6.1', title: 'Differential Equations', summary: 'Describe how a system changes from one instant to the next.', physics: 'Oscillations', physicsHref: '/block-2/2-5' },
+    { code: 'M6.2', title: 'Partial Derivatives', summary: 'Measure change in one direction at a time.', physics: 'Thermodynamics', physicsHref: '/block-3/3-3' },
+    { code: 'M6.3', title: 'Gradients & Fields', summary: 'Find the direction of fastest spatial change.', physics: 'Electric fields', physicsHref: '/block-2/2-1' },
+    { code: 'M6.4', title: 'Vector Calculus', summary: 'Describe flow, sources, and circulation.', physics: 'Electrodynamics', physicsHref: '/block-4/4-2' },
+    { code: 'M6.5', title: 'Linear Operators', summary: 'Treat mathematical actions as reusable objects.', physics: 'Quantum mechanics', physicsHref: '/block-4/4-5' },
+    { code: 'M6.6', title: 'Symmetry & Invariance', summary: 'Use what stays unchanged to reveal physical laws.', physics: 'Relativity', physicsHref: '/block-3/3-5' },
+  ]},
 ];

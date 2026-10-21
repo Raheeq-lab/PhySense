@@ -23,7 +23,7 @@ export function MathSpark() {
 
   return <main ref={root} className={styles.page}>
     <nav className={styles.nav}><Link href="/" className={styles.brand}>PhySense <span>STEM</span></Link><div><Link href="/">Physics home</Link><span>Math pathway</span></div></nav>
-    <header className={styles.hero}><p data-intro>Math Spark</p><h1 data-intro>Learn the math behind the physics.</h1><span data-intro>Four connected blocks. Six short lessons in each. Every idea points to the Physics lesson where it comes alive.</span><a data-intro href="#curriculum">Explore the pathway <b>↓</b></a></header>
+    <header className={styles.hero}><p data-intro>Math Spark</p><h1 data-intro>Learn the math behind the physics.</h1><span data-intro>Six connected blocks. Six short lessons in each. Every idea points to the Physics lesson where it comes alive.</span><a data-intro href="#curriculum">Explore the pathway <b>↓</b></a></header>
 
     <section id="curriculum" className={styles.curriculum}>
       <header><div><p>Your Math pathway</p><h2>Choose a block.</h2></div><p>Start with Algebra Foundations if you are new. Move in order, or jump to the Math tool needed by your Physics lesson.</p></header>
@@ -31,7 +31,7 @@ export function MathSpark() {
 
       <article className={styles.lessonPanel} key={block.number}>
         <div className={styles.blockIntro}><span>{block.symbol}</span><div><small>Math Block {block.number}</small><h2>{block.title}</h2><p>{block.description}</p></div></div>
-        <ol className={styles.lessons}>{block.lessons.map((lesson, index) => <li key={lesson.code} className={lesson.href ? styles.available : ''}><span>{lesson.code}</span><div><b>{lesson.title}</b><p>{lesson.summary}</p><Link href={lesson.physicsHref}>Connects to Physics: {lesson.physics} <i>↗</i></Link></div>{lesson.href ? <Link className={styles.lessonAction} href={lesson.href}>{index === 0 ? 'Start lesson' : 'Open'} <span>→</span></Link> : <span className={styles.planned}>Planned</span>}</li>)}</ol>
+        <ol className={styles.lessons}>{block.lessons.map((lesson, index) => <li key={lesson.code} className={lesson.href ? styles.available : ''}><span>{lesson.code}</span><div>{lesson.href ? <Link className={styles.lessonTitle} href={lesson.href}>{lesson.title}</Link> : <b>{lesson.title}</b>}<p>{lesson.summary}</p><Link href={lesson.physicsHref}>Connects to Physics: {lesson.physics} <i>↗</i></Link></div>{lesson.href ? <Link className={styles.lessonAction} href={lesson.href}>{index === 0 ? 'Start lesson now' : 'Open'} <span>→</span></Link> : <span className={styles.planned}>Planned</span>}</li>)}</ol>
       </article>
     </section>
 

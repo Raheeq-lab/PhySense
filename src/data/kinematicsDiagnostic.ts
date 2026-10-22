@@ -41,13 +41,13 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
     explanation:'The velocity remains positive until the car stops. The negative acceleration reduces that positive velocity.'
   },
   {
-    id:'KIN-04',concept:'Position–time graph slope',difficulty:'developing',
+    id:'KIN-04',concept:'Reading a position–time graph',difficulty:'developing',
     misconception:'The height of a position–time graph shows the object’s speed.',
     prompt:'A position–time graph rises in a straight, steep line. What does that mean?',
     answers:[{label:'The object is stopped at a large position.'},{label:'The object has constant positive acceleration.'},{label:'The object moves in the positive direction at constant velocity.'}],
-    reasons:[{label:'A high line always means high speed.'},{label:'A constant positive slope means a constant positive velocity.'},{label:'Every rising line must curve upward.'}],
+    reasons:[{label:'The height of the line tells us the speed.'},{label:'The line rises by the same amount each second, so the car moves right at a steady velocity.'},{label:'Every line that goes up must become curved.'}],
     correctAnswer:2,correctReason:1,
-    explanation:'Velocity is the slope of the position–time graph. A straight line has constant slope, so the velocity is constant.'
+    explanation:'The line rises by the same amount each second. This means the object moves in the positive direction at a steady velocity. We call the steepness of the line its “slope.”'
   },
   {
     id:'KIN-05',concept:'Zero velocity',difficulty:'introductory',
@@ -68,31 +68,31 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
     explanation:'The unit m/s² means “metres per second of velocity added each second.”'
   },
   {
-    id:'KIN-07',concept:'Horizontal projectile motion',difficulty:'developing',
-    misconception:'Gravity gradually reduces a projectile’s horizontal velocity.',
-    prompt:'Ignoring air resistance, what happens to a basketball’s horizontal velocity after launch?',
+    id:'KIN-07',concept:'Side-to-side motion of a thrown ball',difficulty:'developing',
+    misconception:'Gravity gradually reduces a thrown ball’s side-to-side velocity.',
+    prompt:'Ignore air resistance. After a basketball is thrown, what happens to its side-to-side velocity?',
     answers:[{label:'It stays constant.'},{label:'It steadily decreases to zero.'},{label:'It increases because gravity pulls it forward.'}],
-    reasons:[{label:'Gravity acts equally in every direction.'},{label:'Any object in the air must lose all of its velocity.'},{label:'Gravity acts vertically, so there is no horizontal acceleration.'}],
+    reasons:[{label:'Gravity pulls equally in every direction.'},{label:'Anything in the air must lose all its velocity.'},{label:'Gravity pulls down, not sideways, so the side-to-side velocity stays the same.'}],
     correctAnswer:0,correctReason:2,
-    explanation:'Gravity changes the vertical velocity. With air resistance ignored, nothing changes the horizontal velocity.'
+    explanation:'Gravity changes the ball’s up-and-down velocity. When we ignore air resistance, nothing changes its side-to-side velocity.'
   },
   {
-    id:'KIN-08',concept:'Projectile at peak height',difficulty:'challenging',
-    misconception:'At the top of a projectile’s path, both velocity and acceleration are zero.',
+    id:'KIN-08',concept:'Thrown ball at its highest point',difficulty:'challenging',
+    misconception:'At the top of a thrown ball’s path, both velocity and acceleration are zero.',
     prompt:'At the highest point of a basketball’s flight, what is true?',
     answers:[{label:'Velocity and acceleration are both zero.'},{label:'Acceleration points upward before the ball falls.'},{label:'Vertical velocity is zero, but acceleration is still downward.'}],
     reasons:[{label:'Gravity continues pulling downward even during the instant the ball stops rising.'},{label:'An object cannot accelerate when its velocity is zero.'},{label:'The ball needs an upward force to begin falling.'}],
     correctAnswer:2,correctReason:0,
-    explanation:'The vertical velocity is zero for an instant at the peak, but gravity still provides about 9.8 m/s² of downward acceleration.'
+    explanation:'For one moment, the ball is not moving up or down. But gravity is still pulling it downward, so its downward acceleration is about 9.8 m/s².'
   },
   {
     id:'KIN-09',concept:'Two-dimensional motion',difficulty:'developing',
-    misconception:'Horizontal and vertical projectile motions must change one another.',
-    prompt:'Why can we study a basketball’s horizontal and vertical motion separately?',
-    answers:[{label:'The ball moves horizontally first and vertically afterward.'},{label:'The two velocity components follow different rules and combine to make one path.'},{label:'Only the vertical motion is real.'}],
-    reasons:[{label:'An object cannot move in two directions at the same time.'},{label:'Horizontal motion stops whenever vertical motion changes.'},{label:'Gravity changes the vertical component but, without air resistance, not the horizontal component.'}],
+    misconception:'A thrown ball’s side-to-side and up-and-down movements must change one another.',
+    prompt:'Why can we study a basketball’s side-to-side and up-and-down movements separately?',
+    answers:[{label:'The ball moves sideways first and moves up or down later.'},{label:'The two movements follow different rules, then join to make one curved path.'},{label:'Only the up-and-down movement is real.'}],
+    reasons:[{label:'An object cannot move in two directions at the same time.'},{label:'Side-to-side movement stops whenever up-and-down movement changes.'},{label:'Gravity changes the up-and-down movement but, without air resistance, not the side-to-side movement.'}],
     correctAnswer:1,correctReason:2,
-    explanation:'The ball moves horizontally and vertically at the same time. Treating the components separately makes the curved motion easier to understand.'
+    explanation:'The ball moves side to side and up or down at the same time. Studying each movement on its own makes the curved path easier to understand.'
   },
   {
     id:'KIN-10',concept:'Stopping distance',difficulty:'challenging',

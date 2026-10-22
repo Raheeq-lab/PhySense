@@ -15,12 +15,12 @@ export type DiagnosticItem={
 export const kinematicsDiagnostic:DiagnosticItem[]=[
   {
     id:'KIN-01',concept:'Where the car is and which way it moves',difficulty:'introductory',
-    misconception:'A car on the positive side must be moving in the positive direction.',
-    prompt:'A car is 30 m to the right of zero. It is moving left. Which answer is correct?',
-    answers:[{label:'The car is on the positive side and moving right.'},{label:'The car is on the positive side but moving left.'},{label:'The car is on the negative side but moving right.'}],
-    reasons:[{label:'Position tells us where the car is. Velocity tells us which way it is moving.'},{label:'A car to the right of zero must always move right.'},{label:'Moving left means the car must already be left of zero.'}],
+    misconception:'A car to the right of zero must always be moving right.',
+    prompt:'A car uses GO and reaches +30 m. It stops, then uses REVERSE and starts moving left. Which answer is correct now?',
+    answers:[{label:'The car is at +30 m and moving right.'},{label:'The car is at +30 m but moving left.'},{label:'The car is at −30 m and moving right.'}],
+    reasons:[{label:'The car is still to the right of zero, but REVERSE makes it move left toward zero.'},{label:'A car at +30 m must always move right.'},{label:'As soon as the car moves left, its position becomes negative.'}],
     correctAnswer:1,correctReason:0,
-    explanation:'The car is to the right of zero, so its position is positive. It is moving left, so its velocity is negative.'
+    explanation:'GO moved the car to +30 m, which is to the right of zero. BRAKE slowed the car until it stopped; braking did not instantly make it move left. REVERSE then made the car move left toward zero, so its velocity became negative. Its position stays positive until it passes 0 m.'
   },
   {
     id:'KIN-02',concept:'Speed and velocity',difficulty:'introductory',

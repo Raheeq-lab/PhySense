@@ -57,11 +57,12 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
   {
     id:'KIN-05',concept:'Zero velocity',difficulty:'introductory',
     misconception:'An object with zero velocity must be located at position zero.',
-    prompt:'A position–time graph stays flat at 40 m for three seconds. What is happening?',
+    prompt:'A position–time graph stays flat at 40 m for three seconds. During all three seconds, the object remains 40 m from zero. What is happening?',
     answers:[{label:'The object is stopped at 40 m.'},{label:'The object moves at 40 m/s.'},{label:'The object has returned to 0 m.'}],
     reasons:[{label:'The position does not change, so the object is not moving.'},{label:'A flat line must always be at 0 m.'},{label:'The height of the line tells us the velocity.'}],
     correctAnswer:0,correctReason:0,
-    explanation:'The object can be stopped anywhere. A flat position line means no change in position and therefore zero velocity.'
+    understanding:{prompt:'What big physics idea does this graph show?',options:[{label:'An object can be stopped away from zero. A flat position–time line means zero velocity.'},{label:'A flat line means the object is always at position zero.'},{label:'A line at 40 m means the object moves at 40 m/s.'}],correct:0,explanation:'This is graph reading in 1D Kinematics. The height of the line tells position. Its slope tells velocity. A flat line has zero slope, so velocity is zero.'},
+    explanation:'The graph stays at 40 m, so the object remains 40 m from zero. Its position does not change during the three seconds. No change in position means zero velocity, so the object is stopped. It does not need to be at 0 m to be stopped.'
   },
   {
     id:'KIN-06',concept:'Constant acceleration',difficulty:'developing',

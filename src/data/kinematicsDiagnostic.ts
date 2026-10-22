@@ -41,6 +41,7 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
     answers:[{label:'Velocity is positive. Acceleration is negative.'},{label:'Velocity and acceleration are both negative.'},{label:'Velocity is negative. Acceleration is positive.'}],
     reasons:[{label:'Braking makes the car move backward straight away.'},{label:'A slowing car must already have stopped.'},{label:'The car still moves right, but its acceleration acts toward the left and slows it.'}],
     correctAnswer:0,correctReason:2,
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'Velocity tells which way the car moves now. Acceleration tells how that velocity is changing.'},{label:'Negative acceleration always means the car is already moving backward.'},{label:'A moving car cannot have acceleration in the opposite direction.'}],correct:0,explanation:'This is 1D Kinematics. The car can move right while acceleration acts left. The leftward acceleration reduces the rightward velocity until the car stops.'},
     explanation:'The car still moves right, so its velocity is positive. Its acceleration acts to the left, so the car slows down.'
   },
   {

@@ -47,11 +47,12 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
   {
     id:'KIN-04',concept:'Reading a position–time graph',difficulty:'developing',
     misconception:'The height of a position–time graph shows the object’s speed.',
-    prompt:'A position–time graph has a straight line going up. What does this mean?',
+    prompt:'A graph shows time along the bottom and position up the side. Its straight line goes up by the same amount every second. What does this mean?',
     answers:[{label:'The object is stopped.'},{label:'The object is speeding up.'},{label:'The object moves in the positive direction at a steady velocity.'}],
     reasons:[{label:'A high line always means a high speed.'},{label:'The line goes up by the same amount each second, so the velocity stays the same.'},{label:'Every line going up must be curved.'}],
     correctAnswer:2,correctReason:1,
-    explanation:'The line goes up by the same amount each second. The object therefore moves in the positive direction at a steady velocity. The steepness of a line is called its slope.'
+    understanding:{prompt:'What big physics idea does this graph show?',options:[{label:'On a position–time graph, slope tells velocity. A straight rising line means steady positive velocity.'},{label:'The height of the line tells speed. A higher line always means faster movement.'},{label:'Any line going upward means the object must be speeding up.'}],correct:0,explanation:'This is graph reading in 1D Kinematics. The slope means how much position changes each second. When the slope stays the same, velocity stays the same.'},
+    explanation:'Time is along the bottom. Position is up the side. The line rises by the same amount during every second, so position changes at a steady rate. That means steady positive velocity. The steepness of the line is called its slope.'
   },
   {
     id:'KIN-05',concept:'Zero velocity',difficulty:'introductory',

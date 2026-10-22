@@ -9,6 +9,7 @@ export type DiagnosticItem={
   reasons:DiagnosticOption[];
   correctAnswer:number;
   correctReason:number;
+  understanding?:{prompt:string;options:DiagnosticOption[];correct:number;explanation:string};
   explanation:string;
 };
 
@@ -20,6 +21,7 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
     answers:[{label:'The car is at +30 m and moving right.'},{label:'The car is at +30 m but moving left.'},{label:'The car is at −30 m and moving right.'}],
     reasons:[{label:'The car is still to the right of zero, but REVERSE makes it move left toward zero.'},{label:'A car at +30 m must always move right.'},{label:'As soon as the car moves left, its position becomes negative.'}],
     correctAnswer:1,correctReason:0,
+    understanding:{prompt:'What big physics idea does this motion show?',options:[{label:'Position tells where the car is. Velocity tells which way it is moving.'},{label:'A positive position means the car must move right.'},{label:'BRAKE and REVERSE always mean the same thing.'}],correct:0,explanation:'This is 1D Kinematics. Position and velocity describe different parts of the motion. The car can be to the right of zero while moving left.'},
     explanation:'GO moved the car to +30 m, which is to the right of zero. BRAKE slowed the car until it stopped; braking did not instantly make it move left. REVERSE then made the car move left toward zero, so its velocity became negative. Its position stays positive until it passes 0 m.'
   },
   {

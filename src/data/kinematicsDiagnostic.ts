@@ -67,46 +67,51 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
   {
     id:'KIN-06',concept:'Constant acceleration',difficulty:'developing',
     misconception:'Constant acceleration means constant velocity.',
-    prompt:'A car has an acceleration of +3 m/s². What happens to its velocity every second?',
+    prompt:'A car is moving right. Its acceleration stays at +3 m/s² for several seconds. This number tells us how its velocity changes each second. What happens to the velocity?',
     answers:[{label:'It stays at 3 m/s.'},{label:'It increases by 3 m every second.'},{label:'It increases by 3 m/s each second.'}],
     reasons:[{label:'Acceleration and velocity are the same thing.'},{label:'Acceleration tells us how much velocity changes every second.'},{label:'Constant acceleration means the velocity cannot change.'}],
     correctAnswer:2,correctReason:1,
-    explanation:'+3 m/s² means the car gains 3 m/s of velocity every second.'
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'Constant acceleration means velocity changes by the same amount every second.'},{label:'Constant acceleration means velocity must stay the same.'},{label:'Acceleration of 3 m/s² means the car moves only 3 m.'}],correct:0,explanation:'This is accelerated motion in 1D Kinematics. Acceleration is not velocity. It tells us how much velocity changes during each second.'},
+    explanation:'+3 m/s² means the car gains 3 m/s of velocity every second. If it begins at 0 m/s, its velocities after one, two, and three seconds are 3 m/s, 6 m/s, and 9 m/s. The acceleration stays the same while the velocity keeps changing.'
   },
   {
     id:'KIN-07',concept:'Side-to-side motion of a thrown ball',difficulty:'developing',
     misconception:'Gravity gradually reduces a thrown ball’s side-to-side velocity.',
-    prompt:'Imagine there is no air resistance. After a basketball is thrown, what happens to its side-to-side velocity?',
+    prompt:'A basketball is thrown forward and upward. Imagine there is no air resistance. Gravity pulls straight down. What happens to the ball’s side-to-side velocity while it is in the air?',
     answers:[{label:'It stays constant.'},{label:'It steadily decreases to zero.'},{label:'It increases because gravity pulls it forward.'}],
     reasons:[{label:'Gravity pulls in every direction.'},{label:'Anything in the air must lose all its velocity.'},{label:'Gravity pulls downward, not sideways. So the side-to-side velocity stays the same.'}],
     correctAnswer:0,correctReason:2,
-    explanation:'Gravity changes the ball’s up-and-down velocity. When we ignore air resistance, nothing changes its side-to-side velocity.'
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'Gravity changes the up-and-down motion, but not the side-to-side motion when air resistance is ignored.'},{label:'Gravity reduces every part of the ball’s velocity equally.'},{label:'A thrown ball has only up-and-down motion.'}],correct:0,explanation:'This is two-dimensional Kinematics. We can study sideways motion and up-and-down motion separately because gravity acts downward.'},
+    explanation:'The ball has two motions at the same time. Gravity changes its up-and-down velocity. Gravity does not pull sideways. When we ignore air resistance, there is no sideways force, so the side-to-side velocity stays constant.'
   },
   {
     id:'KIN-08',concept:'Thrown ball at its highest point',difficulty:'challenging',
     misconception:'At the top of a thrown ball’s path, both velocity and acceleration are zero.',
-    prompt:'A basketball reaches the highest point of its path. What is true at that moment?',
+    prompt:'A basketball is thrown upward and forward. At the highest point, it stops moving upward for one very short moment, but it still moves sideways. What is true at that moment?',
     answers:[{label:'Velocity and acceleration are both zero.'},{label:'Acceleration points upward before the ball falls.'},{label:'Vertical velocity is zero, but acceleration is still downward.'}],
     reasons:[{label:'The ball stops moving upward for one moment, but gravity still pulls it downward.'},{label:'An object cannot accelerate when it stops for one moment.'},{label:'An upward force is needed to make the ball fall.'}],
     correctAnswer:2,correctReason:0,
-    explanation:'For one moment, the ball is not moving up or down. But gravity is still pulling it downward, so its downward acceleration is about 9.8 m/s².'
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'Zero velocity in one direction does not mean zero acceleration or zero motion in every direction.'},{label:'At the highest point, gravity turns off for one moment.'},{label:'The ball needs an upward acceleration before it can fall.'}],correct:0,explanation:'This is two-dimensional Kinematics. At the top, vertical velocity is zero for one moment. Sideways velocity remains, and gravity still gives downward acceleration.'},
+    explanation:'At the highest point, the up-and-down part of velocity is zero for one moment. The ball still has side-to-side velocity, so its total velocity is not zero. Gravity never turns off. It continues to give the ball about 9.8 m/s² of downward acceleration.'
   },
   {
     id:'KIN-09',concept:'Two-dimensional motion',difficulty:'developing',
     misconception:'A thrown ball’s side-to-side and up-and-down movements must change one another.',
-    prompt:'Why can we look at a basketball’s side-to-side and up-and-down movements separately?',
+    prompt:'A basketball moves sideways while it also rises and falls. Gravity pulls downward, not sideways. Why can we study these two parts of the motion separately?',
     answers:[{label:'The ball moves sideways first and moves up or down later.'},{label:'The two movements follow different rules, then join to make one curved path.'},{label:'Only the up-and-down movement is real.'}],
     reasons:[{label:'An object cannot move in two directions at the same time.'},{label:'Side-to-side movement stops when up-and-down movement changes.'},{label:'Gravity changes the up-and-down movement. If we ignore air resistance, it does not change the side-to-side movement.'}],
     correctAnswer:1,correctReason:2,
-    explanation:'The ball moves side to side and up or down at the same time. Studying each movement on its own makes the curved path easier to understand.'
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'One curved 2D path can be understood as sideways motion plus up-and-down motion happening together.'},{label:'The ball finishes its sideways motion before it begins falling.'},{label:'Only one direction of motion can be real at a time.'}],correct:0,explanation:'This is two-dimensional Kinematics. We split one complicated curved path into two simpler one-dimensional motions, then combine them.'},
+    explanation:'The ball moves sideways and up or down at the same time. Gravity changes only the up-and-down part when air resistance is ignored. We can solve each direction separately, then combine both answers to understand the curved path.'
   },
   {
     id:'KIN-10',concept:'Stopping distance',difficulty:'challenging',
     misconception:'Stopping distance includes only the distance travelled after the brake is pressed.',
-    prompt:'A driver sees danger. The driver takes some time to press the brake. What must we add to find the full stopping distance?',
+    prompt:'A driver sees danger ahead. The car keeps moving while the driver notices the danger and presses the brake. The car then keeps moving while the brakes slow it to a stop. What must we add to find the full stopping distance?',
     answers:[{label:'Only the distance travelled after pressing the brake.'},{label:'Distance travelled before pressing the brake, plus distance travelled while braking.'},{label:'Only the distance travelled before pressing the brake.'}],
     reasons:[{label:'Movement before the driver presses the brake does not count.'},{label:'The car moves while the driver reacts. It also moves while the brakes slow it down.'},{label:'The car stops as soon as the driver presses the brake.'}],
     correctAnswer:1,correctReason:1,
-    explanation:'The car moves before the driver presses the brake and while the brakes slow it down. We must add both distances.'
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'Stopping distance has two parts: reaction distance and braking distance.'},{label:'Stopping distance begins only after the brake is pressed.'},{label:'Pressing the brake makes velocity become zero immediately.'}],correct:0,explanation:'This is an application of 1D Kinematics. We study the motion before braking and the motion during braking, then add their distances.'},
+    explanation:'The car does not stop as soon as the driver sees danger. First, it travels during the driver’s reaction time. Next, it travels farther while the brakes reduce its velocity to zero. Full stopping distance equals reaction distance plus braking distance.'
   }
 ];

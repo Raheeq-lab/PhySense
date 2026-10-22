@@ -31,6 +31,7 @@ export const kinematicsDiagnostic:DiagnosticItem[]=[
     answers:[{label:'Their velocities are the same, but their speeds are different.'},{label:'Their speeds and velocities are both different.'},{label:'Their speeds are the same, but their velocities are different.'}],
     reasons:[{label:'Direction changes speed, but not velocity.'},{label:'Speed tells us how fast. Velocity tells us how fast and which way.'},{label:'Speed and velocity always mean exactly the same thing.'}],
     correctAnswer:2,correctReason:1,
+    understanding:{prompt:'What big physics idea does this example show?',options:[{label:'Two objects can have the same speed but different velocities because they move in different directions.'},{label:'Objects with the same speed must always have the same velocity.'},{label:'Direction changes speed, but it never changes velocity.'}],correct:0,explanation:'This is 1D Kinematics. Speed tells only how fast. Velocity tells how fast and in which direction.'},
     explanation:'Both speedometers read 10 m/s. Their velocities differ because the cars move in opposite directions.'
   },
   {
